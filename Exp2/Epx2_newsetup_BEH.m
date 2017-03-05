@@ -108,15 +108,20 @@ try
             exp_condtemp = zeros(expTrial,13);
             catch_condtemp = zeros(catchTrial,13);
 
-
+            %exp trials
             exp_condtemp(1:expTrial,2) = 1;  % 2 exp trial
             exp_condtemp(1:expTrial,3) = repmat(1:9,1,expTrial/9);  % 3 conscious condition
             exp_condtemp(1:expTrial,4) = repmat(1:2,1,expTrial/2);  % 4 face used
             exp_condtemp(1:expTrial/2,7) = 1;  % 7 staircase
             exp_condtemp(expTrial/2+1:expTrial,7) = 2;
 
+            %catch trials
             catch_condtemp(1:catchTrial,2) = 0;  %2 catch trial
-            catch_condtemp(1:catchTrial,3) = repmat(1:12,1,catchTrial/12);
+            catch_condtemp(1:catchTrial,3) = repmat(1:12,1,catchTrial/12); %3 condition
+            for i = 1:catchTrial
+                if catch_condtemp(i,3)<= 6 catch_condtemp(i,4) = 1; end %is white face
+                if catch_condtemp(i,3)> 6 catch_condtemp(i,4) = 2; end %is black face
+            end
             catch_condtemp(1:catchTrial/2,7) = 1;  % 7 staircase
             catch_condtemp(catchTrial/2+1:catchTrial,7) = 2;
 
@@ -383,7 +388,7 @@ try
                             end
                         end
                         
-                        if isExpTrial && stimuliIdx == 2 %white face
+                        if isExpTrial && stimuliIdx == 2 %blackface
                             for k=1:4 %conscious faces
                                     Screen('DrawTexture', wPtr, blackCon.tex{conCon,k}, [], FacePosi{place(k)},[],[],conOpc);
                             end;
