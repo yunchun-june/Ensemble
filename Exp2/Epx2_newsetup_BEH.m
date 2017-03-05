@@ -13,13 +13,12 @@ try
     %====== initial condition =====% 
         
         for i = 1:6
-            faceOpc{1}(1,i) = 0.7;  faceOpc{1}(2,i) = 0.7;  % white faces
-            faceOpc{2}(1,i) = 0.7;  faceOpc{2}(2,i) = 0.7;  % black faces
+            faceOpc{1}(1,i) = 0.4;  faceOpc{1}(2,i) = 0.04;  % white faces
+            faceOpc{2}(1,i) = 0.4;  faceOpc{2}(2,i) = 0.04;  % black faces
         end
         
         conOpc = 1;
         maskOpc = 1;
-        runTrials = 480;
         
         lowerBound = 0.02;
         upperBound = 1.00;
@@ -60,19 +59,19 @@ try
         space   = 'space';
         breakKey = 'DownArrow';
 
-        leftkey = 'LeftArrow';
-        rightkey = 'RightArrow';
+        leftkey = 'b';
+        rightkey = 'm';
         
-        placeKey{1} = '4';
-        placeKey{2} = '5';
-        placeKey{3} = '6';
-        placeKey{4} = '1';
-        placeKey{5} = '2';
-        placeKey{6} = '3';
+        placeKey{1} = 'g';
+        placeKey{2} = 'h';
+        placeKey{3} = 'j';
+        placeKey{4} = 'b';
+        placeKey{5} = 'n';
+        placeKey{6} = 'm';
 
      %====== Experimental Condition ======%
 
-        repeatNum = 20;
+        repeatNum = 16;
         repeat_catch = 5;
         condNum = 9;
         person_used = 2;

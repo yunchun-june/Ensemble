@@ -13,12 +13,12 @@ try
     %====== initial condition =====% 
         
         for i = 1:6
-            faceOpc{1}(i) = 0.7; % white faces
-            faceOpc{2}(i) = 0.7; % black faces
+            faceOpc{1}(i) = 1.0; % white faces
+            faceOpc{2}(i) = 1.0; % black faces
         end
         
         conOpc = 1;
-        maskOpc = 1;
+        maskOpc = 1.0;
         runTrials = 480;
         
         lowerBound = 0.02;
@@ -63,12 +63,12 @@ try
         leftkey = 'LeftArrow';
         rightkey = 'RightArrow';
         
-        placeKey{1} = '4';
-        placeKey{2} = '5';
-        placeKey{3} = '6';
-        placeKey{4} = '1';
-        placeKey{5} = '2';
-        placeKey{6} = '3';
+        placeKey{1} = 'g';
+        placeKey{2} = 'h';
+        placeKey{3} = 'j';
+        placeKey{4} = 'v';
+        placeKey{5} = 'b';
+        placeKey{6} = 'n';
 
      %====== Experimental Condition ======%
 

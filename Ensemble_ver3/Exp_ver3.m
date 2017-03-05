@@ -14,25 +14,25 @@ try
     %====== initial condition =====% 
         
         % white faces
-        faceOpc{1}(1,1) = 0.8;  faceOpc{1}(2,1) = 0.2;
-        faceOpc{1}(1,2) = 0.8;  faceOpc{1}(2,2) = 0.2;
-        faceOpc{1}(1,3) = 0.8;  faceOpc{1}(2,3) = 0.2;
-        faceOpc{1}(1,4) = 0.8;  faceOpc{1}(2,4) = 0.2;
+        faceOpc{1}(1,1) = 0.8;  faceOpc{1}(2,1) = 0.4;
+        faceOpc{1}(1,2) = 0.8;  faceOpc{1}(2,2) = 0.4;
+        faceOpc{1}(1,3) = 0.8;  faceOpc{1}(2,3) = 0.4;
+        faceOpc{1}(1,4) = 0.8;  faceOpc{1}(2,4) = 0.4;
         
         % black face
-        faceOpc{2}(1,1) = 0.8;  faceOpc{2}(2,1) = 0.3;
-        faceOpc{2}(1,2) = 0.8;  faceOpc{2}(2,2) = 0.3;
-        faceOpc{2}(1,3) = 0.8;  faceOpc{2}(2,3) = 0.3;
-        faceOpc{2}(1,4) = 0.8;  faceOpc{2}(2,4) = 0.3;
+        faceOpc{2}(1,1) = 0.8;  faceOpc{2}(2,1) = 0.4;
+        faceOpc{2}(1,2) = 0.8;  faceOpc{2}(2,2) = 0.4;
+        faceOpc{2}(1,3) = 0.8;  faceOpc{2}(2,3) = 0.4;
+        faceOpc{2}(1,4) = 0.8;  faceOpc{2}(2,4) = 0.4;
         
-        maskOpc = 1.00;
+        maskOpc = 0.5;
         runTrials = 480;
         disX = 240;
         
         lowerBound = 0.02;
         upperBound = 1.00;     
-        stepsize_down = 0.04; 
-        stepsize_up = 0.02;    
+        stepsize_down = 0.1; 
+        stepsize_up = 0.1 ;    
         stairCase_up = 2;
         
     %====== Setup Screen ======%
