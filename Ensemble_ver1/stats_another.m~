@@ -1,0 +1,54 @@
+clear all;
+close all;
+
+    % RESULT TEXT FILE
+    % 1 TRIALNO
+    % 2 cond  1:all negative 5:all positive
+    % 3 testface 1:sadest face 7:happy face
+    % 4 stimuli face used
+    % 5 test face used
+    % 6 percieved emotion
+    % 7 there are faces seen
+
+[trial cond faceIdx ensFace testFace judge seen]= textread('Result.txt','%d %d %d %d %d %d %d ');
+
+dataset = cell(3,7);
+
+for i=2:length(trial)
+    if faceIdx(i)<faceIdx(i-1)
+    dataset{cond(i),faceIdx(i)} (end+1) = judge(i); end
+    
+    if faceIdx(i) == faceIdx(i-1)
+    end
+    
+    if faceIdx(i)>faceIdx(i-1)
+    end
+    
+end
+
+average = zeros(5,7);
+for i=1:5
+    for j=1:7
+       average(i,j) = mean(dataset{i,j});
+    end
+end
+
+sd = zeros(5,7);
+for i=1:5
+    for j=1:7
+       sd(i,j) = std(dataset{i,j});
+    end
+end
+
+disp(average)
+disp(sd)
+
+figure
+for i=1:5
+   scatter(1:7,average(i,:),i);
+   lsline
+   hold on;
+end
+
+xlable('presented emotion')
+

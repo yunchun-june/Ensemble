@@ -1,0 +1,9 @@
+face index used
+
+A
+fearful ------> happy
+-39 -29 -18 -7 15 28 40
+
+C
+fearful -----> happy
+-50 -34 -18 22 34 47
