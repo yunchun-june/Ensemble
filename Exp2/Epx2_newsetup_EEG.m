@@ -63,12 +63,12 @@ try
         leftkey = 'LeftArrow';
         rightkey = 'RightArrow';
         
-        placeKey{1} = 'f';
-        placeKey{2} = 'g';
-        placeKey{3} = 'h';
-        placeKey{4} = 'v';
-        placeKey{5} = 'b';
-        placeKey{6} = 'n';
+        placeKey{1} = '1';
+        placeKey{2} = '3';
+        placeKey{3} = '3';
+        placeKey{4} = '4';
+        placeKey{5} = '5';
+        placeKey{6} = '6';
 
      %====== Experimental Condition ======%
 
@@ -116,7 +116,11 @@ try
             exp_condtemp(expTrial/2+1:expTrial,7) = 2;
 
             catch_condtemp(1:catchTrial,2) = 0;  %2 catch trial
-            catch_condtemp(1:catchTrial,3) = repmat(1:12,1,catchTrial/12);
+            catch_condtemp(1:catchTrial,3) = repmat(1:12,1,catchTrial/12);%3 condition
+            for i = 1:catchTrial
+                if catch_condtemp(i,3)<= 6 catch_condtemp(i,4) = 1; end %is white face
+                if catch_condtemp(i,3)> 6 catch_condtemp(i,4) = 2; end %is black face
+            end
             catch_condtemp(1:catchTrial/2,7) = 1;  % 7 staircase
             catch_condtemp(catchTrial/2+1:catchTrial,7) = 2;
 
