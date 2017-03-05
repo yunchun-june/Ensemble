@@ -500,23 +500,17 @@ try
                     end 
             end
                % decide is break trials or not
-           
+               
+               for j = 1:4
+                    if ~Seen(place(j)) isBreak = 2; end
+               end
                
                if Seen(place(5)) || Seen(place(6))
                     isBreak = 1;
                else
                    isBreak = 0; end
                
-               for j = 1:4 % didnt report seeing conscious faces, just fooling around
-                    if isExpTrial && ~Seen(place(j)) isBreak = 2; end
-               end
-               
-               if ~isExpTrial %you see a face out of nothing?
-                   if Seen(place(5)) || Seen(place(6)) isBreak = 3; end
-               end
-
-               
-            %1 trial number
+             %1 trial number
             %2 isExptrial 1 / isCatchTrial 0
             %3 condition
             %4 face used
