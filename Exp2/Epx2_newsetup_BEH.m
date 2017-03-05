@@ -503,12 +503,12 @@ try
            
                
                if Seen(place(5)) || Seen(place(6))
-                    isBreak = 1;
+                   isBreak = 1;
                else
                    isBreak = 0; end
                
                for j = 1:4 % didnt report seeing conscious faces, just fooling around
-                    if isExpTrial && ~Seen(place(j)) isBreak = 2; end
+                    if ~Seen(place(j)) isBreak = 2; end
                end
                
                if ~isExpTrial %you see a face out of nothing?
@@ -529,7 +529,7 @@ try
             % Save Result
                 condList(i,5) = answer;
                 condList(i,6) = isBreak;
-                breakRate(end+1) = isBreak;
+                if isBreak~=0 breakRate(end+1) = 1; end
                 for j=1:6, condList(i,j+7) = faceOpc{stimuliIdx}(stairCaseToUse,j); end
                 condList(i,14:19) = Seen(:);
              
@@ -545,26 +545,27 @@ try
                 
              %------ Adjust Threshold -----%
              
-             
+             if isExpTrial
                 for j = 5:6
                   % seen, decrease
                   idx = place(j);
-                  if(Seen(idx))&& isBreak
+                  if(Seen(idx))
                      faceOpc{stimuliIdx}(stairCaseToUse,idx) = faceOpc{stimuliIdx}(stairCaseToUse,idx)-stepsize_down;
                      if faceOpc{stimuliIdx}(stairCaseToUse,idx) <= lowerBound, faceOpc{stimuliIdx}(stairCaseToUse,idx) = lowerBound; end
                      numReportUnseen{stimuliIdx,stairCaseToUse}(idx) = 0;
                   end
                     
                   % unseen, increase
-                  if(~Seen(idx)) && isBreak
+                  if(~Seen(idx)) && isBreak == 0
                      numReportUnseen{stimuliIdx,stairCaseToUse}(idx) = numReportUnseen{stimuliIdx,stairCaseToUse}(idx) +1;
                      if numReportUnseen{stimuliIdx,stairCaseToUse}(idx) == stairCase_up;
-                         faceOpc{stimuliIdx}(stairCaseToUse,idx) = faceOpc{stimuliIdx}(stairCaseToUse,idxj) + stepsize_up;
+                         faceOpc{stimuliIdx}(stairCaseToUse,idx) = faceOpc{stimuliIdx}(stairCaseToUse,idx) + stepsize_up;
                          if faceOpc{stimuliIdx}(stairCaseToUse,idx) >= upperBound, faceOpc{stimuliIdx}(stairCaseToUse,idx) = upperBound; end
                          numReportUnseen{stimuliIdx,stairCaseToUse}(idx) = 0;
                      end
                   end
                 end 
+             end
             
 
         end %end of experiment
