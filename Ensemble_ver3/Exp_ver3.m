@@ -14,25 +14,25 @@ try
     %====== initial condition =====% 
         
         % white faces
-        faceOpc{1}(1,1) = 0.7;  faceOpc{1}(2,1) = 0.6;
-        faceOpc{1}(1,2) = 0.7;  faceOpc{1}(2,2) = 0.6;
-        faceOpc{1}(1,3) = 0.7;  faceOpc{1}(2,3) = 0.6;
-        faceOpc{1}(1,4) = 0.7;  faceOpc{1}(2,4) = 1.6;
+        faceOpc{1}(1,1) = 0.8;  faceOpc{1}(2,1) = 0.2;
+        faceOpc{1}(1,2) = 0.8;  faceOpc{1}(2,2) = 0.2;
+        faceOpc{1}(1,3) = 0.8;  faceOpc{1}(2,3) = 0.2;
+        faceOpc{1}(1,4) = 0.8;  faceOpc{1}(2,4) = 0.2;
         
         % black face
-        faceOpc{2}(1,1) = 0.9;  faceOpc{2}(2,1) = 0.8;
-        faceOpc{2}(1,2) = 0.9;  faceOpc{2}(2,2) = 0.8;
-        faceOpc{2}(1,3) = 0.9;  faceOpc{2}(2,3) = 0.8;
-        faceOpc{2}(1,4) = 0.9;  faceOpc{2}(2,4) = 0.8;
+        faceOpc{2}(1,1) = 0.8;  faceOpc{2}(2,1) = 0.3;
+        faceOpc{2}(1,2) = 0.8;  faceOpc{2}(2,2) = 0.3;
+        faceOpc{2}(1,3) = 0.8;  faceOpc{2}(2,3) = 0.3;
+        faceOpc{2}(1,4) = 0.8;  faceOpc{2}(2,4) = 0.3;
         
-        maskOpc = 1.0;
+        maskOpc = 1.00;
         runTrials = 480;
-        disX = 200;
+        disX = 240;
         
         lowerBound = 0.02;
-        upperBound = 1.00;    
-        stepsize_down = 0.1;
-        stepsize_up = 0.1;    
+        upperBound = 1.00;     
+        stepsize_down = 0.04; 
+        stepsize_up = 0.02;    
         stairCase_up = 2;
         
     %====== Setup Screen ======%
@@ -47,7 +47,7 @@ try
             targetProduct = 'Apple Keyboard';
             dev=PsychHID('Devices');
             devInd = find(strcmpi(targetUsageName, {dev.usageName}) & strcmpi(targetProduct, {dev.product}));
-        elseif keymode==2,
+        elseif keymode==2, 
             targetUsageName = 'Keyboard';
             targetProduct = 'USB Keykoard';
             dev=PsychHID('Devices');
