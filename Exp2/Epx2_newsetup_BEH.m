@@ -286,7 +286,7 @@ try
         numReportUnseen{2,1} = [0 0 0 0 0 0];
         numReportUnseen{2,2} = [0 0 0 0 0 0];           
         
-        for i= 1:runTrials
+        for i= 1:expTrial+catchTrial
             
             % -------hint for progress & taking break-------%
              

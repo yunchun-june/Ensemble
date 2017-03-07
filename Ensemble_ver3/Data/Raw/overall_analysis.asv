@@ -136,7 +136,7 @@ subjectnum = length(files);
     end
 
     
-% ====  average ====== %
+% ==== normalized average ====== %
         for i = 1:subjectnum
             for j = 1:5
                 for k = 1:16
@@ -145,6 +145,8 @@ subjectnum = length(files);
                 end
             end
         end
+            
+
 
 %==== result by subject =====%
 
