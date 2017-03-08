@@ -1,0 +1,18 @@
+1703082
+mask: full contrast
+she rested a lot
+9*2*16 + 12*6 = 350 trials
+9 condition * white/black faces * repeat + 12 faces* catchtrials repeat
+
+1703083
+white faces only
+9*24(repeat) + 6* 4 (repeat)= 250 trials
+finish around 30 minute
+she say fearful faces sometimes looks funny, not at all negative
+
+============
+things to do:
+1. redo forgetten trials
+2. use white faces only?
+3. analytical script (urgent)
+4. record the location where you present unconscious faces
