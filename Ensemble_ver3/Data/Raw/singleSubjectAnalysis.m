@@ -12,7 +12,7 @@ close all;
     %8-11 where does it break
     %12-15 threshold presented
 
-ID = '1703051';
+ID = '1703081';
 targetfile = dir( ['Ensem_result_' ID '.txt']);
 files = dir( ['Ensem_result_*.txt']);
     
@@ -78,9 +78,7 @@ files = dir( ['Ensem_result_*.txt']);
             xlabel('trials');
             ylabel('contrast');
             if position == 1 title(['black faces' ID]); end
-        end
-        
-        suptitle(['Staircases  subject ID:' ID]);
+        end 
         
 
     %=====break rate=====%
