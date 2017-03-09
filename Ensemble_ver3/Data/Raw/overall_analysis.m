@@ -159,6 +159,7 @@ for ensum = 1:5
     end
 errorbar(x,y,e,'.k');
 scatter(x,y);
+lsline;
 hold on;
 axis([0,5,-10,10]);
 xlabel('emotion');
@@ -203,61 +204,61 @@ axis([0,5, -0.5,0.5]);
 xlabel('emotion');
 ylabel('normalized rating');
 
-% %==== result by subject =====%
-% 
-%     resultBySubject = zeros(5,subjectnum);
-%     for j=1:5
-%         for  i=1:subjectnum
-%            resultBySubject(j,i) = nanmean(avg_normed(i,j,:));
-%         end
+%==== result by subject =====%
+
+    resultBySubject = zeros(5,subjectnum);
+    for j=1:5
+        for  i=1:subjectnum
+           resultBySubject(j,i) = nanmean(avg_normed(i,j,:));
+        end
+    end
+    
+    disp('-------result by subjects---------');
+    disp(resultBySubject);
+
+%==== result by faces =====%
+
+    resultByFaces = zeros(5,subjectnum);
+    for j=1:5
+        for  i = 1:16
+           resultByFaces(j,i) = nanmean(avg_normed(:,j,i));
+        end
+    end
+    
+    disp('-------result by faces---------');
+    disp(resultByFaces);   
+
+    
+    for i=1:5
+        for j=1:16
+           sd(i,j) = std(dataset_raw{i,j});
+        end
+    end
+
+    
+%==== over all result =====%    
+    overAllMean = zeros(5,1);
+    overAllStd = zeros(5,1);
+    
+%     for j = 1:5        
+%         overAllMean(j) = nanmean(resultByFaces(j,:));
 %     end
-%     
-%     disp('-------result by subjects---------');
-%     disp(resultBySubject);
-% 
-% %==== result by faces =====%
-% 
-%     resultByFaces = zeros(5,subjectnum);
-%     for j=1:5
-%         for  i = 1:16
-%            resultByFaces(j,i) = nanmean(avg_normed(:,j,i));
-%         end
-%     end
-%     
-%     disp('-------result by faces---------');
-%     disp(resultByFaces);   
-% 
-%     
-%     for i=1:5
-%         for j=1:16
-%            sd(i,j) = std(dataset_raw{i,j});
-%         end
-%     end
-% 
-%     
-% %==== over all result =====%    
-%     overAllMean = zeros(5,1);
-%     overAllStd = zeros(5,1);
-%     
-% %     for j = 1:5        
-% %         overAllMean(j) = nanmean(resultByFaces(j,:));
-% %     end
-% 
-%     for k = 1:5
-%         temp = [];
-%         for j = 1:subjectnum
-%             for i  =1:16
-%                 for z = 1:length(dataset_normed{j,k,i})
-%                     temp(end+1) = dataset_normed{j,k,i}(z);
-%                 end
-%             end
-%         end
-%         overAllMean(k) = mean(temp);
-%     end
-%     
-%     disp('-------over all---------');
-%     disp(overAllMean);
-%     
+
+    for k = 1:5
+        temp = [];
+        for j = 1:subjectnum
+            for i  =1:16
+                for z = 1:length(dataset_normed{j,k,i})
+                    temp(end+1) = dataset_normed{j,k,i}(z);
+                end
+            end
+        end
+        overAllMean(k) = mean(temp);
+    end
+    
+    disp('-------over all---------');
+    disp(overAllMean);
+    
     
 % %==== raw data scatter plot =====%
 %     
