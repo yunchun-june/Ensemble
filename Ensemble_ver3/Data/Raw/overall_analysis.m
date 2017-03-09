@@ -245,19 +245,21 @@ ylabel('normalized rating');
 %     end
 
     for k = 1:5
-        temp = [];
-        for j = 1:subjectnum
-            for i  =1:16
-                for z = 1:length(dataset_normed{j,k,i})
-                    temp(end+1) = dataset_normed{j,k,i}(z);
-                end
-            end
-        end
+        temp = resultBySubject(k,:);
+%         for j = 1:subjectnum
+%             for i  =1:16
+%                 for z = 1:length(dataset_normed{j,k,i})
+%                     temp(end+1) = dataset_normed{j,k,i}(z);
+%                 end
+%             end
+%         end
         overAllMean(k) = mean(temp);
+        overAllStd(k) = std(temp)/sqrt(10);
     end
     
     disp('-------over all---------');
     disp(overAllMean);
+    disp(overAllStd);
     
     
 % %==== raw data scatter plot =====%
