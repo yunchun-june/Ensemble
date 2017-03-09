@@ -3,12 +3,22 @@ mask: full contrast
 she rested a lot
 9*2*16 + 12*6 = 350 trials
 9 condition * white/black faces * repeat + 12 faces* catchtrials repeat
+#buggy script, show same faces for 300 times QQ
 
 1703083
 white faces only
 9*24(repeat) + 6* 4 (repeat)= 250 trials
 finish around 30 minute
 she say fearful faces sometimes looks funny, not at all negative
+#buggy script, show same faces for 300 times QQ
+
+1703091
+good subject... I'm an idiot
+#buggy script, show same faces for 300 times QQ
+
+1703092
+finally i fix the bug....
+doing fast
 
 ============
 things to do:
