@@ -20,23 +20,22 @@ subjectnum = length(files);
     raw_byFace_beforeOutlierDetection = cell(16);
     for subject = 1:length(files)
         [trial cond ensFace testFace judgement Break stairCase s1 s2 s3 s4 t1 t2 t3 t4]= textread(files(subject).name,'%d %d %d %d %d %d %d %d %d %d %d %f %f %f %f');
-        dataPerSubject = cell(16);
+        before_dataPerSubject = cell(16);
         after_dataPerSubject = cell(16);
         
         for i=1:length(trial)
-            if ~Break(i)
-                dataPerSubject{testFace(i)}(end+1) = judgement(i);
+            if ~Break(i) %&& ensFace(i) == 2
+                before_dataPerSubject{testFace(i)}(end+1) = judgement(i);
             end
         end
         
         % exclude outlier based on subject's own std
-        
         outlier_low = zeros(16);
         outlier_high = zeros(16);
         outlierStd= 2;
         for i = 1:16
-            outlier_low(i) = mean(dataPerSubject{i}) - outlierStd * std(dataPerSubject{i});
-            outlier_high(i) = mean(dataPerSubject{i}) + outlierStd * std(dataPerSubject{i});
+            outlier_low(i) = mean(before_dataPerSubject{i}) - outlierStd * std(before_dataPerSubject{i});
+            outlier_high(i) = mean(before_dataPerSubject{i}) + outlierStd * std(before_dataPerSubject{i});
         end
        
         for i=1:length(trial)
@@ -86,7 +85,6 @@ subjectnum = length(files);
 
         [trial cond ensFace testFace judgement Break stairCase s1 s2 s3 s4 t1 t2 t3 t4]= textread(files(subject).name,'%d %d %d %d %d %d %d %d %d %d %d %f %f %f %f');
 
-
         % put data into raw dataset
         for i=1:length(trial)
             isOutlier = judgement(i)>upperbound(testFace(i)) || judgement(i)<lowerbound(testFace(i));
@@ -97,24 +95,6 @@ subjectnum = length(files);
 
         % normalize data
 
-%         for i = 1:4
-%             set = [dataset_raw{subject,:,i*4} dataset_raw{subject,:,i*4-1} dataset_raw{subject,:,i*4-2} dataset_raw{subject,:,i*4-3}];
-%             avg_byFace(i) = nanmean(set);
-%             std_byFace(i) = nanstd(set);
-%         end
-%         
-%         for i = 1:5
-%             for j = 1:16
-%                 if j>=0 && j<=4 inx = 1; end
-%                 if j>=5 && j<=8 inx = 2; end
-%                 if j>=9 && j<=12 inx = 3; end
-%                 if j>=13 && j<=16 inx = 4; end
-%                 for z = 1:length(dataset_raw{subject,i,j})
-%                     dataset_normed{subject,i,j}(z) = ( dataset_raw{subject,i,j}(z) - avg_byFace(inx) )/std_byFace(inx);
-%                 end
-%             end
-%         end
-        
             avg_byFace = zeros(16);
             std_byFace = zeros(16);
             for j = 1:16
@@ -128,16 +108,13 @@ subjectnum = length(files);
                 std_byFace(j) = nanstd(temp);
             end
 
-
-              for i = 1:5
-                for j = 1:16
-                    for z = 1:length(dataset_raw{subject,i,j})
-                        dataset_normed{subject,i,j}(z) = ( dataset_raw{subject,i,j}(z)-avg_byFace(j) )/  std_byFace(j);
-                    end
+        for i = 1:5
+            for j = 1:16
+                for z = 1:length(dataset_raw{subject,i,j})
+                    dataset_normed{subject,i,j}(z) = ( dataset_raw{subject,i,j}(z) - avg_byFace(j) )/std_byFace(j);
                 end
-              end
-
-
+            end
+        end
     end
 
     
@@ -179,17 +156,18 @@ for ensum = 1:5
         y(emotion) = nanmean(temp{emotion});
         e(emotion) = nanstd(temp{emotion})/sqrt(length(temp{emotion}));
     end
-errorbar(x,y,e,'.k');
-scatter(x,y);
-lsline;
-hold on;
-axis([0,5,-10,10]);
-xlabel('emotion');
-ylabel('raw rating');
+    errorbar(x,y,e,'.k');
+    scatter(x,y);
+    lsline;
+    hold on;
+    axis([0,5,-10,10]);
+    xlabel('emotion');
+    ylabel('raw rating');
 end
 
 %==== Overall normalized data =====%
 
+groupByEmotion_raw = zeros(subjectnum,5,4);
 for ensum = 1:5
     for subject = 1:subjectnum
             temp1 = [avg_normed(subject,ensum,2) avg_normed(subject,ensum,6) avg_normed(subject,ensum,10) avg_normed(subject,ensum,14)];
@@ -197,26 +175,12 @@ for ensum = 1:5
             temp3 = [avg_normed(subject,ensum,3) avg_normed(subject,ensum,7) avg_normed(subject,ensum,11) avg_normed(subject,ensum,15)];
             temp4 = [avg_normed(subject,ensum,4) avg_normed(subject,ensum,8) avg_normed(subject,ensum,12) avg_normed(subject,ensum,16)];
             
-            avgByEmotion_normed_temp(subject,ensum,1) = nanmean(temp1);
-            avgByEmotion_normed_temp(subject,ensum,2) = nanmean(temp2);
-            avgByEmotion_normed_temp(subject,ensum,3) = nanmean(temp3);
-            avgByEmotion_normed_temp(subject,ensum,4) = nanmean(temp4);
+            groupByEmotion_raw(subject,ensum,1) = nanmean(temp1);
+            groupByEmotion_raw(subject,ensum,2) = nanmean(temp2);
+            groupByEmotion_raw(subject,ensum,3) = nanmean(temp3);
+            groupByEmotion_raw(subject,ensum,4) = nanmean(temp4);
     end
 end
-
-for i  =1:5
-    for j = 1:4
-        avgByEmotion_normed(i,j) = nanmean(avgByEmotion_normed_temp(:,i,j));
-        stdByEmotion_normed(i,j) = nanstd(avgByEmotion_normed_temp(:,i,j))/sqrt(10);
-    end
-end
-
-disp('---average----')
-disp(avgByEmotion_normed);
-disp('---std----')
-disp(stdByEmotion_normed);
-
-p = anova2(avgByEmotion_normed);
 
 figure
 hold on;
@@ -225,7 +189,7 @@ for ensum = 1:5
     temp = cell(4);
     for emotion = 1:4
         for j = 1:10 
-            temp{emotion}(end+1) = avgByEmotion_normed_temp(j,ensum,emotion);
+            temp{emotion}(end+1) = groupByEmotion_raw(j,ensum,emotion);
         end
         y(emotion) = nanmean(temp{emotion});
         e(emotion) = nanstd(temp{emotion})/sqrt(length(temp{emotion}));
@@ -235,7 +199,7 @@ grp(ensum) = scatter(x,y);
 end
 
 hold off
-%axis([0,5, -0.5,0.5]);
+axis([0,5, -0.5,0.5]);
 xlabel('emotion');
 ylabel('normalized rating');
 
@@ -253,15 +217,16 @@ ylabel('normalized rating');
 
 %==== result by faces =====%
 
-    resultByFaces = zeros(5,subjectnum);
+    resultByFaces = zeros(subjectnum,5);
     for j=1:5
         for  i = 1:16
-           resultByFaces(j,i) = nanmean(avg_normed(:,j,i));
+           resultByFaces(i,j) = nanmean(avg_normed(:,j,i));
         end
     end
     
     disp('-------result by faces---------');
-    disp(resultByFaces);   
+    disp(resultByFaces); 
+    p = anova1(resultByFaces);
 
     
     for i=1:5
@@ -272,24 +237,24 @@ ylabel('normalized rating');
 
     
 %==== over all result =====%    
-    overAllMean = zeros(5,4);
-    overAllStd = zeros(5,4);
+    overAllMean = zeros(5,1);
+    overAllStd = zeros(5,1);
     
 %     for j = 1:5        
 %         overAllMean(j) = nanmean(resultByFaces(j,:));
 %     end
 
     for k = 1:5
-        temp = [];
-        for j = 1:subjectnum
-            for i  =1:8
-                for z = 1:length(dataset_normed{j,k,i})
-                    temp(end+1) = dataset_normed{j,k,i}(z);
-                end
-            end
-        end
+        temp = resultBySubject(k,:);
+%         for j = 1:subjectnum
+%             for i  =1:16
+%                 for z = 1:length(dataset_normed{j,k,i})
+%                     temp(end+1) = dataset_normed{j,k,i}(z);
+%                 end
+%             end
+%         end
         overAllMean(k) = mean(temp);
-        overAllStd(k) = std(temp)/sqrt(length(temp));
+        overAllStd(k) = std(temp)/sqrt(10);
     end
     
     disp('-------over all---------');
