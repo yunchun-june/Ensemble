@@ -97,42 +97,42 @@ subjectnum = length(files);
 
         % normalize data
 
-%         for i = 1:4
-%             set = [dataset_raw{subject,:,i*4} dataset_raw{subject,:,i*4-1} dataset_raw{subject,:,i*4-2} dataset_raw{subject,:,i*4-3}];
-%             avg_byFace(i) = nanmean(set);
-%             std_byFace(i) = nanstd(set);
-%         end
-%         
-%         for i = 1:5
-%             for j = 1:16
-%                 if j>=0 && j<=4 inx = 1; end
-%                 if j>=5 && j<=8 inx = 2; end
-%                 if j>=9 && j<=12 inx = 3; end
-%                 if j>=13 && j<=16 inx = 4; end
-%                 for z = 1:length(dataset_raw{subject,i,j})
-%                     dataset_normed{subject,i,j}(z) = ( dataset_raw{subject,i,j}(z) - avg_byFace(inx) )/std_byFace(inx);
-%                 end
-%             end
-%         end
+        for i = 1:4
+            set = [dataset_raw{subject,:,i*4} dataset_raw{subject,:,i*4-1} dataset_raw{subject,:,i*4-2} dataset_raw{subject,:,i*4-3}];
+            avg_byFace(i) = nanmean(set);
+            std_byFace(i) = nanstd(set);
+        end
         
-            avg_byFace = zeros(16);
-            std_byFace = zeros(16);
+        for i = 1:5
             for j = 1:16
-                temp = [];  
-                for i = 1:5
-                    for z = 1:length(dataset_raw{subject,i,j})
-                        temp(end+1) = dataset_raw{subject,i,j}(z);
-                    end
+                if j>=0 && j<=4 inx = 1; end
+                if j>=5 && j<=8 inx = 2; end
+                if j>=9 && j<=12 inx = 3; end
+                if j>=13 && j<=16 inx = 4; end
+                for z = 1:length(dataset_raw{subject,i,j})
+                    dataset_normed{subject,i,j}(z) = ( dataset_raw{subject,i,j}(z) - avg_byFace(inx) )/std_byFace(inx);
                 end
-                avg_byFace(j) = nanmean(temp);
-                std_byFace(j) = nanstd(temp);
             end
+        end
+        
+%             avg_byFace = zeros(16);
+%             std_byFace = zeros(16);
+%             for j = 1:16
+%                 temp = [];  
+%                 for i = 1:5
+%                     for z = 1:length(dataset_raw{subject,i,j})
+%                         temp(end+1) = dataset_raw{subject,i,j}(z);
+%                     end
+%                 end
+%                 avg_byFace(j) = nanmean(temp);
+%                 std_byFace(j) = nanstd(temp);
+%             end
 
 
               for i = 1:5
                 for j = 1:16
                     for z = 1:length(dataset_raw{subject,i,j})
-                        dataset_normed{subject,i,j}(z) = ( dataset_raw{subject,i,j}(z)-avg_byFace(j) )/  std_byFace(j);
+                        dataset_normed{subject,i,j}(z) = ( dataset_raw{subject,i,j}(z)-avg_byFace(j) )/ 
                     end
                 end
               end
