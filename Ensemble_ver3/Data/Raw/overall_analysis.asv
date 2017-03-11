@@ -22,14 +22,9 @@ data_raw = cell(subjectNum,5,16);
 data_normed_byFace = cell(subjectNum,5,16);
 data_normed_byIden = cell(subjectNum,5,16);
 
-%********************************************%
-%     Here the 3 10*5*4 matrix you need      %
-%********************************************%
-    avg_raw = zeros(subjectNum,5,4);
-    avg_normed_byIden = zeros(subjectNum,5,4);
-    avg_normed_byFace = zeros(subjectNum,5,4);
-%********************************************%
-
+avg_raw = zeros(subjectNum,5,4);
+avg_normed_byIden = zeros(subjectNum,5,4);
+avg_normed_byFace = zeros(subjectNum,5,4);
 
 %===== Read in data & Exclude Outlier======%
 
@@ -66,7 +61,6 @@ data_normed_byIden = cell(subjectNum,5,16);
     end
 
     for subject = 1:subjectNum
-         [trial cond ensFace testFace judgement Break stairCase s1 s2 s3 s4 t1 t2 t3 t4]= textread(files(subject).name,'%d %d %d %d %d %d %d %d %d %d %d %f %f %f %f');
         for i=1:length(trial)
             isOutlier = judgement(i)>upperbound(testFace(i)) || judgement(i)<lowerbound(testFace(i));
             if ~Break(i) && ~isOutlier
@@ -97,9 +91,10 @@ data_normed_byIden = cell(subjectNum,5,16);
 
         end
     
-%====== Normalized Data By Identity ========%
+%======Normalized Data By Identity ========%
 
     % get average & std for each identity
+
     for identity = 1:4
         temp = [];
         for face = 4*identity-3 : 4*identity
@@ -124,7 +119,7 @@ data_normed_byIden = cell(subjectNum,5,16);
             for subject = 1:subjectNum
                 for ensum = 1:5
                     for i = 1:length(data_raw{subject,ensum,face})
-                    data_normed_byIden{subject,ensum,face}(i) = (data_raw{subject,ensum,face}(i)-avg_iden(iden)) / std_iden(iden); end
+                    data_normed_byIden{subject,ensum,face}(i) = (data_raw{subject,ensum,face}-avg_iden(iden)) / std_iden(iden); end
                 end
             end
     end
@@ -148,46 +143,34 @@ data_normed_byIden = cell(subjectNum,5,16);
 
     % nomalization
     for face = 1:16
-        for subject = 1:subjectNum
-            for ensum = 1:5
-                for i = 1:length(data_raw{subject,ensum,face})
-                data_normed_byFace{subject,ensum,face}(i) = (data_raw{subject,ensum,face}(i)-avg_face(face)) / std_face(face); end
+        if face >= 1 && face <= 4 iden = 1; end
+        if face >= 5 && face <= 8 iden = 2; end
+        if face >= 9 && face <= 12 iden = 3; end
+        if face >= 13 && face <= 16 iden = 4; end
+
+            for subject = 1:subjectNum
+                for ensum = 1:5
+                    for i = 1:length(data_raw{subject,ensum,face})
+                    data_normed_byIden{subject,ensum,face}(i) = (data_raw{subject,ensum,face}-avg_iden(iden)) / std_iden(iden); end
+                end
             end
-        end
     end
     
-%==== Get Mean ====%
+    
+    %==== Get Mean ====%
+    
+    % average_normed_byIdentity
     for emotion = 1:4
         for subject = 1:subjectNum
-            for ensum = 1:5 
-                
-                % average_rawdata
-                temp = [
-                mean(data_raw{subject,ensum,emotion*4}) 
-                mean(data_raw{subject,ensum,emotion*4-1}) 
-                mean(data_raw{subject,ensum,emotion*4-2}) 
-                mean(data_raw{subject,ensum,emotion*4-3})
-                ];
-                avg_raw(subject,ensum,emotion) = nanmean(temp);
+            for ensum = 1:5
 
-                % average_normed_byIdentity
                 temp = [
                 mean(data_normed_byIden{subject,ensum,emotion*4}) 
                 mean(data_normed_byIden{subject,ensum,emotion*4-1}) 
                 mean(data_normed_byIden{subject,ensum,emotion*4-2}) 
                 mean(data_normed_byIden{subject,ensum,emotion*4-3})
                 ];
-                avg_normed_byIden(subject,ensum,emotion) = nanmean(temp);
-                
-                % average_normed_byFace
-                temp = [
-                mean(data_normed_byFace{subject,ensum,emotion*4}) 
-                mean(data_normed_byFace{subject,ensum,emotion*4-1}) 
-                mean(data_normed_byFace{subject,ensum,emotion*4-2}) 
-                mean(data_normed_byFace{subject,ensum,emotion*4-3})
-                ];
-                avg_normed_byFace(subject,ensum,emotion) = nanmean(temp);
-                
+                avg_normed_byIden(subject,ensum,emotion) = mean(temp);
             end
         end
     end
