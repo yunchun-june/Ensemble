@@ -85,7 +85,6 @@ subjectnum = length(files);
 
         [trial cond ensFace testFace judgement Break stairCase s1 s2 s3 s4 t1 t2 t3 t4]= textread(files(subject).name,'%d %d %d %d %d %d %d %d %d %d %d %f %f %f %f');
 
-
         % put data into raw dataset
         for i=1:length(trial)
             isOutlier = judgement(i)>upperbound(testFace(i)) || judgement(i)<lowerbound(testFace(i));
@@ -157,13 +156,13 @@ for ensum = 1:5
         y(emotion) = nanmean(temp{emotion});
         e(emotion) = nanstd(temp{emotion})/sqrt(length(temp{emotion}));
     end
-errorbar(x,y,e,'.k');
-scatter(x,y);
-lsline;
-hold on;
-axis([0,5,-10,10]);
-xlabel('emotion');
-ylabel('raw rating');
+    errorbar(x,y,e,'.k');
+    scatter(x,y);
+    lsline;
+    hold on;
+    axis([0,5,-10,10]);
+    xlabel('emotion');
+    ylabel('raw rating');
 end
 
 %==== Overall normalized data =====%
@@ -218,15 +217,16 @@ ylabel('normalized rating');
 
 %==== result by faces =====%
 
-    resultByFaces = zeros(5,subjectnum);
+    resultByFaces = zeros(subjectnum,5);
     for j=1:5
         for  i = 1:16
-           resultByFaces(j,i) = nanmean(avg_normed(:,j,i));
+           resultByFaces(i,j) = nanmean(avg_normed(:,j,i));
         end
     end
     
     disp('-------result by faces---------');
-    disp(resultByFaces);   
+    disp(resultByFaces); 
+    p = anova1(resultByFaces);
 
     
     for i=1:5
