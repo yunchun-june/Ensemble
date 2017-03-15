@@ -11,25 +11,25 @@ try
         fName = ['./Data/Ensem2_result_' subjNo '.txt'];
         
     %====== initial condition =====% 
-        
+        initialThr = [0.7 0.8 0.7 0.7 0.7 0.7];
+    
         for i = 1:6
-            faceOpc{1}(1,i) = 0.7;  faceOpc{1}(2,i) = 0.7;  % white faces
-            faceOpc{2}(1,i) = 0.7;  faceOpc{2}(2,i) = 0.7;  % black faces
+            faceOpc{1}(1,i) = initialThr(i);  faceOpc{1}(2,i) = initialThr(i)-0.35;  % white faces
+            faceOpc{2}(1,i) = initialThr(i);  faceOpc{2}(2,i) = initialThr(i)-0.3;  % black faces
         end
         
         conOpc = 1;
         maskOpc = 1;
-        runTrials = 480;
         
         lowerBound = 0.02;
         upperBound = 1.00;
-        stepsize_down = 0.04;
-        stepsize_up = 0.02;
+        stepsize_down = 0.05;
+        stepsize_up = 0.03;
         stairCase_up = 2;
         
     %====== Setup Screen ======%
         screid = max(Screen('Screens'));
-        [wPtr, screenRect]=Screen('OpenWindow',screid, 0,[],32,2); % open screen
+        [wPtr, screenRect]=Screen('OpenWindow',1, 0,[],32,2); % open screen
         [width, height] = Screen('WindowSize', wPtr); %get windows size 
 
     %===== Devices======%
@@ -60,21 +60,22 @@ try
         space   = 'space';
         breakKey = 'DownArrow';
 
-        leftkey = 'LeftArrow';
-        rightkey = 'RightArrow';
+        leftkey = '1';
+        rightkey = '3';
         
-        placeKey{1} = '1';
-        placeKey{2} = '3';
-        placeKey{3} = '3';
-        placeKey{4} = '4';
-        placeKey{5} = '5';
-        placeKey{6} = '6';
+        placeKey{1} = '4';
+        placeKey{2} = '5';
+        placeKey{3} = '6';
+        placeKey{4} = '1';
+        placeKey{5} = '2';
+        placeKey{6} = '3';
+        placeKey{7} = '0';
 
      %====== Experimental Condition ======%
 
-        repeatNum = 20;
-        repeat_catch = 5;
-        condNum = 9;
+        repeatNum = 16;
+        repeat_catch = 3;
+        condNum = 9; 
         person_used = 2;
 
         expTrial = repeatNum * condNum * person_used;
@@ -103,20 +104,23 @@ try
             %5 judgement
             %6 break
             %7 staircase
-            %8-13 contrast 
+            %8-13 contrast
+            %14-19 seen
+            %20-25 place
 
             exp_condtemp = zeros(expTrial,13);
             catch_condtemp = zeros(catchTrial,13);
 
-
+            %exp trials
             exp_condtemp(1:expTrial,2) = 1;  % 2 exp trial
             exp_condtemp(1:expTrial,3) = repmat(1:9,1,expTrial/9);  % 3 conscious condition
             exp_condtemp(1:expTrial,4) = repmat(1:2,1,expTrial/2);  % 4 face used
             exp_condtemp(1:expTrial/2,7) = 1;  % 7 staircase
             exp_condtemp(expTrial/2+1:expTrial,7) = 2;
 
+            %catch trials
             catch_condtemp(1:catchTrial,2) = 0;  %2 catch trial
-            catch_condtemp(1:catchTrial,3) = repmat(1:12,1,catchTrial/12);%3 condition
+            catch_condtemp(1:catchTrial,3) = repmat(1:12,1,catchTrial/12); %3 condition
             for i = 1:catchTrial
                 if catch_condtemp(i,3)<= 6 catch_condtemp(i,4) = 1; end %is white face
                 if catch_condtemp(i,3)> 6 catch_condtemp(i,4) = 2; end %is black face
@@ -195,7 +199,7 @@ try
         
         %general posi
         cenX = width/2;
-        cenY = height/2-300;
+        cenY = height/2-325;
         L_cenX = cenX - disX;
         R_cenX = cenX + disX;
         BoxcenY = cenY;
@@ -262,6 +266,7 @@ try
                           [ L_cenX-disX-15  BoxcenY+disY-10];
                           [      L_cenX-15  BoxcenY+disY-10];
                           [ L_cenX+disX-15  BoxcenY+disY-10];
+                          [ L_cenX+0.5*disX-15  BoxcenY+1.5*disY-10];
                         ];
             R_reportbox = [[R_cenX-disX-15  BoxcenY-disY-10];
                           [      R_cenX-15  BoxcenY-disY-10];
@@ -269,6 +274,7 @@ try
                           [ R_cenX-disX-15  BoxcenY+disY-10];
                           [      R_cenX-15  BoxcenY+disY-10];
                           [ R_cenX+disX-15  BoxcenY+disY-10];
+                          [ R_cenX+0.5*disX-15  BoxcenY+1.5*disY-10];
                         ]; 
 
      %====== Time & Freq ======%
@@ -286,17 +292,17 @@ try
         numReportUnseen{2,1} = [0 0 0 0 0 0];
         numReportUnseen{2,2} = [0 0 0 0 0 0];           
         
-        for i= 1:runTrials
+        for i= 1:expTrial+catchTrial
             
             % -------hint for progress & taking break-------%
              
-             if mod(i,100) == 1 && i~= 1
+             if mod(i,65) == 1 && i~= 1
                  while 1
                     FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                    if i== 91, Writetext(wPtr,'20% done',L_cenX, R_cenX,BoxcenY, 120,100, [255 255 255],30); end
-                    if i== 181, Writetext(wPtr,'40% done',L_cenX, R_cenX,BoxcenY, 120,100, [255 255 255],30); end
-                    if i== 261, Writetext(wPtr,'60% done',L_cenX, R_cenX,BoxcenY, 120,100, [255 255 255],30); end
-                    if i== 351, Writetext(wPtr,'80% done',L_cenX, R_cenX,BoxcenY, 120,100, [255 255 255],30); end
+                    if i== 66, Writetext(wPtr,'20% done',L_cenX, R_cenX,BoxcenY, 120,100, [255 255 255],30); end
+                    if i== 131, Writetext(wPtr,'40% done',L_cenX, R_cenX,BoxcenY, 120,100, [255 255 255],30); end
+                    if i== 196, Writetext(wPtr,'60% done',L_cenX, R_cenX,BoxcenY, 120,100, [255 255 255],30); end
+                    if i== 261, Writetext(wPtr,'80% done',L_cenX, R_cenX,BoxcenY, 120,100, [255 255 255],30); end
                     
                     Writetext(wPtr,'take a break',L_cenX, R_cenX,BoxcenY, 120,40, [255 255 255],30);
                     Writetext(wPtr,'press down to start',L_cenX, R_cenX,BoxcenY, 120, -50, [255 255 255],25);
@@ -304,7 +310,7 @@ try
                     KbEventFlush();
                     [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
                     if secs(KbName(breakKey))
-                        break; end 
+                        break; end
                  end 
              
              end
@@ -325,7 +331,7 @@ try
                 
              % ------- Initialize data later to be saved--------%
                  answer = 0;
-                 Seen = [0 0 0 0 0 0];
+                 Seen = [0 0 0 0 0 0 0];
             
              % -------  Show faces and Mon ------%
              
@@ -387,7 +393,7 @@ try
                             end
                         end
                         
-                        if isExpTrial && stimuliIdx == 2 %white face
+                        if isExpTrial && stimuliIdx == 2 %blackface
                             for k=1:4 %conscious faces
                                     Screen('DrawTexture', wPtr, blackCon.tex{conCon,k}, [], FacePosi{place(k)},[],[],conOpc);
                             end;
@@ -446,19 +452,18 @@ try
                             if secs(KbName(leftkey))-timezero > 0
                                 if answer > -10, answer = answer-1; end
                             end
-                            if secs(KbName(rightkey))-timezero > 0
+                            if secs(KbName(rightkey))-timezero >0
                                 if answer < 10, answer = answer+1; end
                             end
 
                             % space pressed
-                            if secs(KbName(space))-timezero>0, waitForAnswer = 0;
-
+                            if secs(KbName(space))-timezero>0.5, waitForAnswer = 0;
                             end
 
                             % ESC pressed
                             if secs(KbName(quitkey))
                                 CreateFile(fName, condList);
-                                Screen('CloseAll'); %Closes Screen
+                                Screen('CloseAll');
                                 return;
                             end
                         end 
@@ -467,6 +472,8 @@ try
           %-------Report visible locations------%
 
             waitForAnswer = 1; 
+            timezero = GetSecs;
+            forgetLocation = 0;
             while waitForAnswer
                % show visibility report screen
                     FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
@@ -477,8 +484,9 @@ try
                     Writetext(wPtr,'4',L_cenX, R_cenX,BoxcenY,  disX+5, -disY+5, [255 255 255],20);
                     Writetext(wPtr,'5',L_cenX, R_cenX,BoxcenY,       5, -disY+5, [255 255 255],20);
                     Writetext(wPtr,'6',L_cenX, R_cenX,BoxcenY, -disX+5, -disY+5, [255 255 255],20);
+                    Writetext(wPtr,'? forget',L_cenX, R_cenX,BoxcenY, -0.5*disX+5, -1.5*disY+5, [255 255 255],20);
                     
-                    for j = 1:6
+                    for j = 1:7
                         if Seen(j) SelectionBox(wPtr,L_reportbox(j,1),R_reportbox(j,1), L_reportbox(j,2),reportboxsize,boxcolor); end
                     end
                     Screen('Flip',wPtr);
@@ -489,22 +497,39 @@ try
 
                     if  keyIsDown
                         % report seen faces
-                        for j= 1:6
+                        for j= 1:7
                            if secs(KbName(placeKey{j})) Seen(j) = ~Seen(j); end 
                         end
 
                         % space pressed
-                        if secs(KbName(space)),  waitForAnswer = 0; end
-
+                        if secs(KbName(space))-timezero > 0.5,  waitForAnswer = 0; end
+                        % ESC pressed
+                        if secs(KbName(quitkey))
+                            CreateFile(fName, condList);
+                            Screen('CloseAll');
+                            return;
+                        end
                     end 
             end
-               % decide is break trials or not
-               if Seen(place(5)) || Seen(place(6))
-                    isBreak = 1;
-               else
-                   isBreak = 0; end
+            
+           % decide is break trials or not
+           if Seen(place(5)) || Seen(place(6))  isBreak = 1;
+           else isBreak = 0; end
+
+           for j = 1:4 % didnt report seeing conscious faces
+                if ~Seen(place(j)) isBreak = 2; end
+           end
+
+           if ~isExpTrial %you see a face out of nothing?
+               if Seen(place(5)) || Seen(place(6)) isBreak = 3; end
+           end
+
+           if(Seen(7))
+               forgetLocation = 1;
+               isBreak = 4; end
+
                
-             %1 trial number
+            %1 trial number
             %2 isExptrial 1 / isCatchTrial 0
             %3 condition
             %4 face used
@@ -517,9 +542,9 @@ try
             % Save Result
                 condList(i,5) = answer;
                 condList(i,6) = isBreak;
-                breakRate(end+1) = isBreak;
+                if isBreak~=0 breakRate(end+1) = 1; end
                 for j=1:6, condList(i,j+7) = faceOpc{stimuliIdx}(stairCaseToUse,j); end
-                condList(i,14:19) = Seen(:);
+                condList(i,14:19) = Seen(1:6);
              
             % Monitoring
                 disp('-------------------------------')
@@ -533,26 +558,27 @@ try
                 
              %------ Adjust Threshold -----%
              
-             
+             if isExpTrial && ~forgetLocation && (isBreak == 0 || isBreak == 1)
                 for j = 5:6
                   % seen, decrease
                   idx = place(j);
-                  if(Seen(idx))&& isBreak
+                  if(Seen(idx))
                      faceOpc{stimuliIdx}(stairCaseToUse,idx) = faceOpc{stimuliIdx}(stairCaseToUse,idx)-stepsize_down;
                      if faceOpc{stimuliIdx}(stairCaseToUse,idx) <= lowerBound, faceOpc{stimuliIdx}(stairCaseToUse,idx) = lowerBound; end
                      numReportUnseen{stimuliIdx,stairCaseToUse}(idx) = 0;
                   end
                     
                   % unseen, increase
-                  if(~Seen(idx)) && isBreak
+                  if(~Seen(idx)) && isBreak == 0
                      numReportUnseen{stimuliIdx,stairCaseToUse}(idx) = numReportUnseen{stimuliIdx,stairCaseToUse}(idx) +1;
                      if numReportUnseen{stimuliIdx,stairCaseToUse}(idx) == stairCase_up;
-                         faceOpc{stimuliIdx}(stairCaseToUse,idx) = faceOpc{stimuliIdx}(stairCaseToUse,idxj) + stepsize_up;
+                         faceOpc{stimuliIdx}(stairCaseToUse,idx) = faceOpc{stimuliIdx}(stairCaseToUse,idx) + stepsize_up;
                          if faceOpc{stimuliIdx}(stairCaseToUse,idx) >= upperBound, faceOpc{stimuliIdx}(stairCaseToUse,idx) = upperBound; end
                          numReportUnseen{stimuliIdx,stairCaseToUse}(idx) = 0;
                      end
                   end
                 end 
+             end
             
 
         end %end of experiment

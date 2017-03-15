@@ -13,7 +13,7 @@ function[] = CreateFile(fName, condList)
 
     fd = fopen(fName, 'w');
     for i=1:length(condList)
-        fprintf(fd, '%3d %3d %3d %3d %3d %3d %3d %0.2f %0.2f %0.2f %0.2f %0.2f %0.2f %d %d %d %d %d %d\n', condList(i,:));
+        fprintf(fd, '%3d %3d %3d %3d %3d %3d %3d     %0.2f %0.2f %0.2f %0.2f %0.2f %0.2f    %d %d %d %d %d %d\n', condList(i,:));
     end
     fclose(fd);
 

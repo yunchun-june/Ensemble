@@ -13,8 +13,7 @@ try
     %====== initial condition =====% 
         
         for i = 1:6
-            faceOpc{1}(i) = 1.0; % white faces
-            faceOpc{2}(i) = 1.0; % black faces
+            faceOpc(i) = 1.0;
         end
         
         
@@ -105,6 +104,7 @@ try
             %6 break
             %7 staircase
             %8-13 contrast 
+            %14-19
 
             exp_condtemp = zeros(expTrial,13);
             catch_condtemp = zeros(catchTrial,13);
@@ -118,7 +118,7 @@ try
 
             randIdx = randperm(expTrial);
 
-            condList = zeros(expTrial,19); % nTrial cond testfaceNum judgement
+            condList = zeros(expTrial,25); % nTrial cond testfaceNum judgement
             for i=1:expTrial
                 condList(i,1) = i;
                 condList(i,2:7) = exp_condtemp(randIdx(i),2:7);
@@ -324,8 +324,8 @@ try
                         if isExpTrial
 
                             for j = 1:6
-                                if contrast(place(j))< faceOpc{stimuliIdx}(j), contrast(place(j)) = contrast(place(j))+ConIncr; end
-                                if contrast(place(j))>= faceOpc{stimuliIdx}(j), contrast(place(j)) = faceOpc{stimuliIdx}(j); end
+                                if contrast(place(j))< faceOpc(j), contrast(place(j)) = contrast(place(j))+ConIncr; end
+                                if contrast(place(j))>= faceOpc(j), contrast(place(j)) = faceOpc(j); end
                             end
                         end
                     
@@ -431,8 +431,9 @@ try
                 condList(i,5) = answer;
                 condList(i,6) = isBreak;
                 if isBreak~=0 breakRate(end+1) = 1; end
-                for j=1:6, condList(i,j+7) = faceOpc{stimuliIdx}(j); end
+                for j=1:6, condList(i,j+7) = faceOpc(j); end
                 condList(i,14:19) = Seen(:);
+                condList(i,20:25) = place(:);
              
             % Monitoring
                 disp('-------------------------------')
@@ -450,8 +451,8 @@ try
                   % seen, decrease
                   idx = place(j);
                   if(Seen(idx))
-                     faceOpc{stimuliIdx}(idx) = faceOpc{stimuliIdx}(idx)-stepsize_down;
-                     if faceOpc{stimuliIdx}(idx) <= lowerBound, faceOpc{stimuliIdx}(idx) = lowerBound; end
+                     faceOpc(idx) = faceOpc(idx)-stepsize_down;
+                     if faceOpc(idx) <= lowerBound, faceOpc(idx) = lowerBound; end
                      numReportUnseen{stimuliIdx}(idx) = 0;
                   end
                     
@@ -459,8 +460,8 @@ try
                   if(~Seen(idx)) && isBreak == 0
                      numReportUnseen{stimuliIdx}(idx) = numReportUnseen{stimuliIdx}(idx) +1;
                      if numReportUnseen{stimuliIdx}(idx) == stairCase_up;
-                         faceOpc{stimuliIdx}(idx) = faceOpc{stimuliIdx}(idx) + stepsize_up;
-                         if faceOpc{stimuliIdx}(idx) >= upperBound, faceOpc{stimuliIdx}(idx) = upperBound; end
+                         faceOpc(idx) = faceOpc(idx) + stepsize_up;
+                         if faceOpc(idx) >= upperBound, faceOpc(idx) = upperBound; end
                          numReportUnseen{stimuliIdx}(idx) = 0;
                      end
                   end
