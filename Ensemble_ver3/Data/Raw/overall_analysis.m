@@ -215,4 +215,31 @@ faceNum = length(legitFaces);
             end
         end
     end
-
+    
+    %======detect and exclude NaN======%
+    testNaN = isnan(avg_raw);
+    for i = 1:subjectNum
+        sum = 0;
+        for j = 1:5
+            for k = 1:4
+                sum = sum+testNaN(i,j,k);
+            end
+        end
+        hasNaN(i) = sum;
+    end
+    
+    temp1 = avg_raw;
+    temp2 = avg_normed_byIden;
+    temp3 = avg_normed_byFace;
+    avg_raw = zeros(0,5,4);
+    avg_normed_byIden = zeros(0,5,4);
+    avg_normed_byFace = zeros(0,5,4);
+    for i = 1:subjectNum
+        if ~hasNaN(i)
+            avg_raw(end+1,:) = temp1(i,:);
+            avg_normed_byIden(end+1,:) = temp2(i,:);
+            avg_normed_byFace(end+1,:) = temp3(i,:);
+        end
+    end
+    
+    
