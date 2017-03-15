@@ -542,7 +542,8 @@ try
             % Save Result
                 condList(i,5) = answer;
                 condList(i,6) = isBreak;
-                if isBreak~=0 breakRate(end+1) = 1; end
+                if isBreak~=0 breakRate(end+1) = 1;
+                else breakRate(end+1) = 0; end
                 for j=1:6, condList(i,j+7) = faceOpc{stimuliIdx}(stairCaseToUse,j); end
                 condList(i,14:19) = Seen(1:6);
              
