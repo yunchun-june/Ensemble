@@ -72,8 +72,8 @@ for sub = 1:subNum
         faceThrScore(sub,i) = mean(faceSet(i,:));
     end
     
-    x = cell(3,3);
-    y = cell(3,3);
+    x = cell(3);
+    y = cell(3);
     
     for i = 1:length(trial)
         if ~Break(i) && isExpTrial(i)
