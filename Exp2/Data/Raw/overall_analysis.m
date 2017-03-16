@@ -36,70 +36,92 @@ subNum = length(files);
 
 % ======== Read in all data ====== %
 
-rating_raw = cell(subNum,6);
-rating_mean = zeros(subNum,6);
-
+catch_raw = cell(subNum,6);
+catch_mean = zeros(subNum,6);
+faceThrScore = zeros(subNum,9);
+x_rawScatter = cell(3);
+y_rawScatter = cell(3);
+x_meanScatter = cell(3);
+y_meanScatter = cell(3);
+rating_raw = cell(subNum,9);
+rating_mean = zeros(subNum,9);
 
 for sub = 1:subNum
 
 [trial isExpTrial cond testFace judgement Break stairCase t1 t2 t3 t4 t5 t6 s1 s2 s3 s4 s5 s6]= textread(files(sub).name,'%d %d %d %d %d %d %d  %f %f %f %f %f %f   %d %d %d %d %d %d ');
     
+    %===== compute thr score by catch trial =======%
+    
     for i = 1:length(trial)
         if ~isExpTrial(i) && Break(i) == 0
-            rating_raw{sub,cond(i)}(end+1) = judgement(i);
+            catch_raw{sub,cond(i)}(end+1) = judgement(i);
         end
     end
     
     for i  =1:6
-        rating_mean(sub,i) = mean(rating_raw{sub,i}); end
+        catch_mean(sub,i) = mean(catch_raw{sub,i}); end
     
-    faceThrScore = zeros(sub,9);
-    faceSet  = [[rating_mean(sub,1) rating_mean(sub,2) rating_mean(sub,3) rating_mean(sub,5) ]
-                   [rating_mean(sub,1) rating_mean(sub,3) rating_mean(sub,4) rating_mean(sub,6) ]
-                   [rating_mean(sub,2) rating_mean(sub,4) rating_mean(sub,5) rating_mean(sub,6) ]
-                   [rating_mean(sub,1) rating_mean(sub,2) rating_mean(sub,3) rating_mean(sub,5) ]
-                   [rating_mean(sub,1) rating_mean(sub,3) rating_mean(sub,4) rating_mean(sub,6) ]
-                   [rating_mean(sub,2) rating_mean(sub,4) rating_mean(sub,5) rating_mean(sub,6) ]
-                   [rating_mean(sub,1) rating_mean(sub,2) rating_mean(sub,3) rating_mean(sub,5) ]
-                   [rating_mean(sub,1) rating_mean(sub,3) rating_mean(sub,4) rating_mean(sub,6) ]
-                   [rating_mean(sub,2) rating_mean(sub,4) rating_mean(sub,5) rating_mean(sub,6) ]
-                   [rating_mean(sub,1) rating_mean(sub,2) rating_mean(sub,3) rating_mean(sub,5) ]
-                   [rating_mean(sub,1) rating_mean(sub,3) rating_mean(sub,4) rating_mean(sub,6) ]
-                   [rating_mean(sub,2) rating_mean(sub,4) rating_mean(sub,5) rating_mean(sub,6) ]
+    
+    faceSet  = [[catch_mean(sub,1) catch_mean(sub,2) catch_mean(sub,3) catch_mean(sub,5) ]
+                   [catch_mean(sub,1) catch_mean(sub,3) catch_mean(sub,4) catch_mean(sub,6) ]
+                   [catch_mean(sub,2) catch_mean(sub,4) catch_mean(sub,5) catch_mean(sub,6) ]
+                   [catch_mean(sub,1) catch_mean(sub,2) catch_mean(sub,3) catch_mean(sub,5) ]
+                   [catch_mean(sub,1) catch_mean(sub,3) catch_mean(sub,4) catch_mean(sub,6) ]
+                   [catch_mean(sub,2) catch_mean(sub,4) catch_mean(sub,5) catch_mean(sub,6) ]
+                   [catch_mean(sub,1) catch_mean(sub,2) catch_mean(sub,3) catch_mean(sub,5) ]
+                   [catch_mean(sub,1) catch_mean(sub,3) catch_mean(sub,4) catch_mean(sub,6) ]
+                   [catch_mean(sub,2) catch_mean(sub,4) catch_mean(sub,5) catch_mean(sub,6) ]
+                   [catch_mean(sub,1) catch_mean(sub,2) catch_mean(sub,3) catch_mean(sub,5) ]
+                   [catch_mean(sub,1) catch_mean(sub,3) catch_mean(sub,4) catch_mean(sub,6) ]
+                   [catch_mean(sub,2) catch_mean(sub,4) catch_mean(sub,5) catch_mean(sub,6) ]
         ];
     
     for i = 1:9
         faceThrScore(sub,i) = mean(faceSet(i,:));
     end
     
-    x = cell(3);
-    y = cell(3);
+    %===== read in exp trials data =======%
+    
+    getUncon = [1 1 1 2 2 2 3 3 3];
     
     for i = 1:length(trial)
         if ~Break(i) && isExpTrial(i)
-                 condition = cond(i);
-                 if condition == 1, conCon = 1; unCon = 1; end
-                 if condition == 2, conCon = 2; unCon = 1; end
-                 if condition == 3, conCon = 3; unCon = 1; end
-                 if condition == 4, conCon = 1; unCon = 2; end
-                 if condition == 5, conCon = 2; unCon = 2; end
-                 if condition == 6, conCon = 3; unCon = 2; end
-                 if condition == 7, conCon = 1; unCon = 3; end
-                 if condition == 8, conCon = 2; unCon = 3; end
-                 if condition == 9, conCon = 3; unCon = 3; end
-            y{unCon}(end+1) = judgement(i);
-            x{unCon}(end+1) = faceThrScore(sub,cond(i));
+            unCon = getUncon(cond(i));
+            y_rawScatter{unCon}(end+1) = judgement(i);
+            x_rawScatter{unCon}(end+1) = faceThrScore(sub,cond(i));
+            rating_raw{sub,cond(i)}(end+1) = judgement(i);
         end
+    end
+    
+    for i = 1:9
+        rating_mean(sub,i) = mean(rating_raw{sub,i});
+        x_meanScatter{getUncon(i)} (end+1)= faceThrScore(sub,i);
+        y_meanScatter{getUncon(i)} (end+1)= rating_mean(sub,i);
+        
     end
 end
     
     figure
-    for i = 1:3
-        scatter(x{i},y{i});
-        lsline;
+        plot(x_rawScatter{1},y_rawScatter{1},'rx');       
         hold on;
-    end
-
+        plot(x_rawScatter{2},y_rawScatter{2},'mo');
+        plot(x_rawScatter{3},y_rawScatter{3},'b*');
+        lsline;
+        xlabel('Thr score based on subjects standard');
+        ylabel('percieved average emotion');
+        title('scatter plot based on raw data');
+        legend('fearful','neutral','happy');
+        
+    figure
+        plot(x_meanScatter{1},y_meanScatter{1},'rx');       
+        hold on;
+        plot(x_meanScatter{2},y_meanScatter{2},'mo');
+        plot(x_meanScatter{3},y_meanScatter{3},'b*');
+        lsline;
+        xlabel('Thr score based on subjects standard');
+        ylabel('percieved average emotion');
+        title('scatter plot based on mean data');
+        legend('fearful','neutral','happy');
 
 
 %     num = 1;
