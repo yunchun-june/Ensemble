@@ -37,10 +37,12 @@ subNum = length(files);
 % ======== Read in all data ====== %
 
 rating_raw = cell(subNum,6);
+rating_mean = zeros(subNum,6);
+
 
 for sub = 1:subNum
 
-[trial isExpTrial cond testFace judgement Break stairCase t1 t2 t3 t4 t5 t6 s1 s2 s3 s4 s5 s6]= textread(targetfile.name,'%d %d %d %d %d %d %d  %f %f %f %f %f %f   %d %d %d %d %d %d ');
+[trial isExpTrial cond testFace judgement Break stairCase t1 t2 t3 t4 t5 t6 s1 s2 s3 s4 s5 s6]= textread(files(sub).name,'%d %d %d %d %d %d %d  %f %f %f %f %f %f   %d %d %d %d %d %d ');
     
     for i = 1:length(trial)
         if ~isExpTrial(i) && Break(i) == 0
@@ -49,21 +51,21 @@ for sub = 1:subNum
     end
     
     for i  =1:6
-        rating_mean(i) = mean(rating_raw{sub,i}); end
+        rating_mean(sub,i) = mean(rating_raw{sub,i}); end
     
     faceThrScore = zeros(sub,9);
-    faceSet  = [[rating_mean(1) rating_mean(2) rating_mean(3) rating_mean(5) ]
-                   [rating_mean(1) rating_mean(3) rating_mean(4) rating_mean(6) ]
-                   [rating_mean(2) rating_mean(4) rating_mean(5) rating_mean(6) ]
-                   [rating_mean(1) rating_mean(2) rating_mean(3) rating_mean(5) ]
-                   [rating_mean(1) rating_mean(3) rating_mean(4) rating_mean(6) ]
-                   [rating_mean(2) rating_mean(4) rating_mean(5) rating_mean(6) ]
-                   [rating_mean(1) rating_mean(2) rating_mean(3) rating_mean(5) ]
-                   [rating_mean(1) rating_mean(3) rating_mean(4) rating_mean(6) ]
-                   [rating_mean(2) rating_mean(4) rating_mean(5) rating_mean(6) ]
-                   [rating_mean(1) rating_mean(2) rating_mean(3) rating_mean(5) ]
-                   [rating_mean(1) rating_mean(3) rating_mean(4) rating_mean(6) ]
-                   [rating_mean(2) rating_mean(4) rating_mean(5) rating_mean(6) ]
+    faceSet  = [[rating_mean(sub,1) rating_mean(sub,2) rating_mean(sub,3) rating_mean(sub,5) ]
+                   [rating_mean(sub,1) rating_mean(sub,3) rating_mean(sub,4) rating_mean(sub,6) ]
+                   [rating_mean(sub,2) rating_mean(sub,4) rating_mean(sub,5) rating_mean(sub,6) ]
+                   [rating_mean(sub,1) rating_mean(sub,2) rating_mean(sub,3) rating_mean(sub,5) ]
+                   [rating_mean(sub,1) rating_mean(sub,3) rating_mean(sub,4) rating_mean(sub,6) ]
+                   [rating_mean(sub,2) rating_mean(sub,4) rating_mean(sub,5) rating_mean(sub,6) ]
+                   [rating_mean(sub,1) rating_mean(sub,2) rating_mean(sub,3) rating_mean(sub,5) ]
+                   [rating_mean(sub,1) rating_mean(sub,3) rating_mean(sub,4) rating_mean(sub,6) ]
+                   [rating_mean(sub,2) rating_mean(sub,4) rating_mean(sub,5) rating_mean(sub,6) ]
+                   [rating_mean(sub,1) rating_mean(sub,2) rating_mean(sub,3) rating_mean(sub,5) ]
+                   [rating_mean(sub,1) rating_mean(sub,3) rating_mean(sub,4) rating_mean(sub,6) ]
+                   [rating_mean(sub,2) rating_mean(sub,4) rating_mean(sub,5) rating_mean(sub,6) ]
         ];
     
     for i = 1:9
