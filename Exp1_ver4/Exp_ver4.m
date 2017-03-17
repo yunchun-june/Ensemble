@@ -18,6 +18,7 @@ close all;
 
     maskOpc = 1;
     disX = 240;
+    waitTime = 120;
 
     lowerBound = 0.02;
     upperBound = 1.00;     
@@ -187,12 +188,18 @@ close all;
 
 %====== Load image ======%
 
-    % target faces
+    % target faces and mask
     folder = './faces/target/';
+    load mandrill
         targetFace.file = dir([folder 'target*.jpg']);
         for i= 1:length(targetFace.file)
            targetFace.img{i} = imread([folder targetFace.file(i).name]);
-           targetFace.tex{i} = Screen('MakeTexture',wPtr,targetFace.img{i});        
+           targetFace.tex{i} = Screen('MakeTexture',wPtr,targetFace.img{i});
+           
+           im =  double(targetFace.img{i})/255;
+           scramble.img{i} = imscramble(im,0.6,'range');
+           im = uint8(scramble.img{i}*255);
+           scramble.tex{i} = Screen('MakeTexture',wPtr,im);
         end
         
     % ensumble faces
@@ -222,7 +229,7 @@ close all;
     block_done = 0;
     for block = block_rand
         
-        timeLimit = GetSecs+180;
+        timeLimit = GetSecs+waitTime;
         
         %---- taking break between blocks ---%
         resting = 1;
@@ -307,7 +314,7 @@ close all;
                             Screen('DrawTexture', wPtr, mon.tex{MonIdx}, [], monPosi(p,:),[],[],maskOpc); end
                         if MonTimer == 0
                             MonIdx = MonIdx+1 ;
-                            if MonIdx == 11, MonIdx = 1; end
+                            if MonIdx == 11, MonIdx = 1; end         
                         end
                         MonTimer = MonTimer +1;
                         MonTimer = mod(MonTimer,MondN);
@@ -342,11 +349,18 @@ close all;
                 
                 % --------- show target face face for 100ms ---------%
                     timezero = GetSecs;
-
                     while GetSecs-timezero < 0.1 && noBreak
                         FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
                         Screen('DrawTexture',wPtr, targetFace.tex{targetIdx}, [], targetPosi_L);
                         Screen('DrawTexture',wPtr, targetFace.tex{targetIdx}, [], targetPosi_R);
+                        Screen('Flip',wPtr);
+                    end
+                    
+                    timezero = GetSecs;
+                    while GetSecs-timezero < 0.1 && noBreak && isExp
+                        FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
+                        Screen('DrawTexture',wPtr, scramble.tex{targetIdx}, [], targetPosi_L);
+                        Screen('DrawTexture',wPtr, scramble.tex{targetIdx}, [], targetPosi_R);
                         Screen('Flip',wPtr);
                     end
 
