@@ -1,8 +1,6 @@
 clear all;
 close all;
 
-try
-    
 %====== Input ======%
     subjNo                = input('subjNo: ','s');
     DemoEye               = input('DomEye Right 1 Left 2:');
@@ -12,12 +10,13 @@ try
 %====== initial condition =====% 
 
     % white faces
-    faceOpc{1}(1,1) = 0.8;  faceOpc{1}(2,1) = 0.4;
-    faceOpc{1}(1,2) = 0.8;  faceOpc{1}(2,2) = 0.4;
-    faceOpc{1}(1,3) = 0.8;  faceOpc{1}(2,3) = 0.4;
-    faceOpc{1}(1,4) = 0.8;  faceOpc{1}(2,4) = 0.4;
+    
+    faceOpc(1,1) = 0.8;  faceOpc(2,1) = 0.4;
+    faceOpc(1,2) = 0.8;  faceOpc(2,2) = 0.4;
+    faceOpc(1,3) = 0.8;  faceOpc(2,3) = 0.4;
+    faceOpc(1,4) = 0.8;  faceOpc(2,4) = 0.4;
 
-    maskOpc = 0.5;
+    maskOpc = 1;
     disX = 240;
 
     lowerBound = 0.02;
@@ -147,15 +146,32 @@ try
 %     3 ensumble condition
 %     4 target face
 %     5 response
-%     6 break
+%     6 done
 %     7 staircase number
 %     8-11 opacity
 %     12-15 seen
 %     16 done how many times
 
-    condList = zeros(0,16);
-    block_random = randperm(5);
-    for block = block_random
+    TRIAL       =1;
+    EXP_CATCH   =2;
+    EMSEM       =3;
+    TARGET      =4;
+    RESPONSE    =5;
+    DONE        =6;
+    STAIR       =7;
+    OPC(1)      =8;
+    OPC(2)      =9;
+    OPC(3)      =10;
+    OPC(4)      =11;
+    SEEN(1)     =12;
+    SEEN(2)     =13;
+    SEEN(3)     =14;
+    SEEN(4)     =15;
+    REPEAT      =16;
+    
+    
+    condList = cell(5);
+    for block = 1:5
         temp = zeros(trials/5,16);
         temp(1:expTrialNum/5,2) = 1;
         temp(1:trials/5,3) = block;
@@ -167,11 +183,10 @@ try
         temp_random = randperm(trials/5);
         
         for i = 1:trials/5
-            condList(end+1,2:16) = temp(temp_random(i),2:16);
+            condList{block}(end+1,2:16) = temp(temp_random(i),2:16);
         end
+        
     end
-
-    for i = 1:length(condList) condList(i,1) = i; end
     
 %====== Time & Freq ======%
     monitorFlipInterval =Screen('GetFlipInterval', wPtr);
@@ -180,15 +195,108 @@ try
     MondN  = round(refreshRate/MondFreq); % frames/img
     ConIncr= 7.5 /(10*refreshRate); % 7.5% increase per second
 
+%====== Load image ======%
+
+    % target faces
+    folder = './faces/target/';
+        target.file = dir([folder 'target*.jpg']);
+        for i= 1:length(target.file)
+           target.img{i} = imread([folder target.file(i).name]);
+           target.tex{i} = Screen('MakeTexture',wPtr,target.img{i});        
+        end
+        
+    % ensumble faces
+    folder = './faces/ensem/';
+        for i = 1:5
+            ensem.file = dir([folder 'con' num2str(i) '_*.jpg']);
+            for j = 1:4
+            ensem.img{i,j} = imread([folder ensem.file(j).name]);
+            ensem.tex{i,j} = Screen('MakeTexture',wPtr,ensem.img{i,j});
+            end
+        end
+        
+    % mondrians
+    mon.file = dir('./Mon/*.JPG');
+    for i= 1:10
+       mon.img{i} = imread(['./Mon/' mon.file(i).name]);
+       mon.tex{i} = Screen('MakeTexture',wPtr,mon.img{i});        
+    end
+    
+%====== Experiment running ======%
+    
+    breakRate = [];
+    numReportUnseen{1} = [0 0 0 0];
+    numReportUnseen{2} = [0 0 0 0];
+    
+    block_rand = randperm(5);
+    block_done = 0;
+    for block = block_rand
+        
+        timeLimit = GetSecs+180;
+        
+        %---- taking break between blocks ---%
+        resting = 1;
+        while resting && block_done ~= 0
+            remain = ceil(timeLimit-GetSecs);
+            FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
+            if block_done == 1, Writetext(wPtr,'20% done',L_cenX, R_cenX,BoxcenY, 70,50, [255 255 255],20); end
+            if block_done == 2, Writetext(wPtr,'40% done',L_cenX, R_cenX,BoxcenY, 70,50, [255 255 255],20); end
+            if block_done == 3, Writetext(wPtr,'60% done',L_cenX, R_cenX,BoxcenY, 70,50, [255 255 255],20); end
+            if block_done == 4, Writetext(wPtr,'80% done',L_cenX, R_cenX,BoxcenY, 70,50, [255 255 255],20); end
+            Writetext(wPtr,'take a rest',L_cenX, R_cenX,BoxcenY, 70,15, [255 255 255],20);
+            
+            if remain > 0
+                Writetext(wPtr,[num2str(remain) 's'],L_cenX, R_cenX,BoxcenY, 30,-25, [255 255 255],20);
+            else
+                Writetext(wPtr,'press space to start',L_cenX, R_cenX,BoxcenY, 70,-25, [255 255 255],15);  
+                KbEventFlush();
+                [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
+                if secs(KbName(space)) resting = 0; end 
+            end
+            
+            Screen('Flip',wPtr);
+        end
+        
+        %---- start of the block ---%
+        
+        while(sum(condList{block}(:,DONE)) ~= trials/5)
+            for i = 1:trials/5
+                
+                if condList{block}(i,DONE) continue; end
+                
+                % --------press space to start----------%
+                while 1
+                    FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
+                    Writetext(wPtr,'press space to start ',L_cenX, R_cenX,BoxcenY, 70,60, [255 255 255],15);
+                    Screen('Flip',wPtr);
+                    KbEventFlush();
+                    [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
+                    if secs(KbName(space)) break; end 
+                end
+                
+                %delay
+                FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
+                Screen('Flip',wPtr);
+                WaitSecs(1);
+                
+                
+                % ------- Initialize data later to be saved--------%
+                 answer = 0;
+                 noBreak = 1;
+                 Seen = [0 0 0 0];
+
+                 
+                
+                
+                
+            end
+        end
+    end
     
 %===== Write Results and Quit =====%
-    CreateFile(fName, condList);
+    condListAll = zeros(trials,16);
+    for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
+    CreateFile(fName, condListAll);
     Screen('CloseAll'); %Closes Screen  
     return;
     
-catch
-    disp('****** Error *****')
-    CreateFile(fName, condList);
-    Screen('CloseAll');
-    return;
-end
