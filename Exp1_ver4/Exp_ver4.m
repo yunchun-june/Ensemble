@@ -52,18 +52,18 @@ close all;
 
 %======Keyboard======%
 
-    KbName('UnifyKeyNames');
-    quitkey = 'ESCAPE';
-    space   = 'space';
-    breakKey = '0';
+        KbName('UnifyKeyNames');
+        quitkey = 'ESCAPE';
+        space   = 'space';
+        breakKey = 'DownArrow';
 
-    leftkey = '1';
-    rightkey = '3';
-
-    placeKey{1} = '4';
-    placeKey{2} = '5';
-    placeKey{3} = '1';
-    placeKey{4} = '2';
+        leftkey = 'LeftArrow';
+        rightkey = 'RightArrow';
+        
+        placeKey{1} = '4';
+        placeKey{2} = '5';
+        placeKey{3} = '1';
+        placeKey{4} = '2';
     
 %====== Position ======%
 
@@ -245,10 +245,10 @@ close all;
             if remain > 0
                 Writetext(wPtr,[num2str(remain) 's'],L_cenX, R_cenX,BoxcenY, 30,-25, [255 255 255],20);
             else
-                Writetext(wPtr,'press space to start',L_cenX, R_cenX,BoxcenY, 70,-25, [255 255 255],15);  
+                Writetext(wPtr,'press down to start',L_cenX, R_cenX,BoxcenY, 70,-25, [255 255 255],15);  
                 KbEventFlush();
                 [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
-                if secs(KbName(space)) resting = 0; end 
+                if secs(KbName(breakKey)) resting = 0; end 
             end
             
             Screen('Flip',wPtr);
