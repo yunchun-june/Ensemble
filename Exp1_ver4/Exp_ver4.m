@@ -1,11 +1,14 @@
 clear all;
 close all;
 
+try
+
 %====== Input ======%
     subjNo                = input('subjNo: ','s');
     DemoEye               = input('DomEye Right 1 Left 2:');
     keymode               = input('keymode1 MAC keymode2 Dell 3 EEG:');
     fName = ['./Data/Ensem_result_' subjNo '.txt'];
+    fName_thr = ['./Data/Ensem_threshold_' subjNo '.txt'];
 
 %====== initial condition =====% 
 
@@ -141,8 +144,6 @@ close all;
     catchTrialNum = targetFaceNum*catch_rep;
     trials = expTrialNum + catchTrialNum;
     
-    
-
     EXP_CATCH   =1;
     ENSEM       =2;
     TARGET      =3;
@@ -179,6 +180,8 @@ close all;
         end
     end
     
+    thrList = zeros(0,5);
+    
 %====== Time & Freq ======%
     monitorFlipInterval =Screen('GetFlipInterval', wPtr);
     refreshRate = round(1/monitorFlipInterval); % Monitor refreshrate
@@ -197,7 +200,7 @@ close all;
            targetFace.tex{i} = Screen('MakeTexture',wPtr,targetFace.img{i});
            
            im =  double(targetFace.img{i})/255;
-           scramble.img{i} = imscramble(im,0.6,'range');
+           scramble.img{i} = imscramble(im,0.75,'range');
            im = uint8(scramble.img{i}*255);
            scramble.tex{i} = Screen('MakeTexture',wPtr,im);
         end
@@ -330,6 +333,7 @@ close all;
                             condListAll = zeros(0,15);
                             for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
                             CreateFile(fName, condListAll);
+                            CreateFile_thr(fName_thr, thrList);
                             Screen('CloseAll'); %Closes Screen  
                             return;
                         end
@@ -410,6 +414,7 @@ close all;
                                     condListAll = zeros(0,15);
                                     for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
                                     CreateFile(fName, condListAll);
+                                    CreateFile_thr(fName_thr, thrList);
                                     Screen('CloseAll'); %Closes Screen  
                                     return;
                                 end
@@ -452,6 +457,7 @@ close all;
                                     condListAll = zeros(0,15);
                                     for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
                                     CreateFile(fName, condListAll);
+                                    CreateFile_thr(fName_thr, thrList);
                                     Screen('CloseAll'); %Closes Screen  
                                     return;
                                 end
@@ -462,7 +468,11 @@ close all;
                     condList{block}(i,RESPONSE) = answer;
                     condList{block}(i,DONE) = noBreak;
                     condList{block}(i,SEEN(:)) = Seen(:);
+                    condList{block}(i,REPEAT)= condList{block}(i,REPEAT)+1;
                     if isExp condList{block}(i,OPC(:)) = faceOpc(stair,:); end
+                    if noBreak, thrList(end+1,1:4) = faceOpc(stair,:);
+                        thrList(end,5) = stair;
+                        end
                     
                 %---------- Monitoring ----------%
                     disp('-------------------------------')
@@ -504,6 +514,15 @@ close all;
     condListAll = zeros(0,15);
     for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
     CreateFile(fName, condListAll);
+    CreateFile_thr(fName_thr, thrList);
     Screen('CloseAll'); %Closes Screen  
     return;
-    
+
+catch
+    Screen('CloseAll'); %Closes Screen  
+    condListAll = zeros(0,15);
+    for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
+    CreateFile(fName, condListAll);
+    CreateFile_thr(fName_thr, thrList);
+    return;
+end
