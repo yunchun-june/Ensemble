@@ -67,6 +67,8 @@ try
         placeKey{2} = '5';
         placeKey{3} = '1';
         placeKey{4} = '2';
+        
+        notSure = 'UpArrow';
     
 %====== Position ======%
 
@@ -367,7 +369,7 @@ try
                         if secs(KbName(breakKey))-timezero > 0, noBreak = 0; end
                     end
                 
-                % --------- show target face face for 100ms ---------%
+                % --------- show target face and mask---------%
                     timezero = GetSecs;
                     while GetSecs-timezero < 0.1 && noBreak && isExp
                         FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
@@ -391,13 +393,20 @@ try
                         Screen('Flip',wPtr);
                     end
 
+                    while GetSecs-timezero < 0.1 && noBreak && ~isExp
+                        FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
+                        Screen('DrawTexture',wPtr, catchMask.tex{targetIdx}, [], targetPosi_L);
+                        Screen('DrawTexture',wPtr, catchMask.tex{targetIdx}, [], targetPosi_R);
+                        Screen('Flip',wPtr);
+                    end
+                    
                     % delay
                     FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
                     Screen('Flip',wPtr);
                     WaitSecs(.5);
                     
                 % -------------make emotion judgement-------------%
-            
+                    forget = 0;
                     waitForAnswer = 1;
                     timezero = GetSecs;
                     while waitForAnswer && noBreak
@@ -408,7 +417,9 @@ try
                             Writetext(wPtr,'negative',L_cenX, R_cenX,BoxcenY, 70,-10, [255 255 255],15);
                             Writetext(wPtr,'very',L_cenX, R_cenX,BoxcenY, -25,10, [255 255 255],15);
                             Writetext(wPtr,'positive',L_cenX, R_cenX,BoxcenY, -20,-10, [255 255 255],15);
+                            Writetext(wPtr,'? not Sure',L_cenX, R_cenX,BoxcenY, 50,-50, [255 255 255],15);
                             Writetext(wPtr, num2str(answer), L_cenX, R_cenX, BoxcenY, 5-answer*(boxsize-20)/10,-60, [255 255 255],15);
+                            if forget SelectionBox(wPtr,L_cenX-50-15,R_cenX-50-15, BoxcenY-50-10,reportboxsize,boxcolor); end
                             SelectionBar(wPtr,L_cenX,R_cenX,BoxcenY, boxsize, answer);
                             Screen('Flip',wPtr);
 
@@ -425,6 +436,9 @@ try
                                     if answer < 10, answer = answer+1; end
                                 end
 
+                                % not sure
+                                if secs(KbName(norSure))-timezero>0, forget = ~forget;
+                                    
                                 % space pressed
                                 if secs(KbName(space))-timezero>0, waitForAnswer = 0;
 
@@ -445,6 +459,7 @@ try
                             end 
                     end
                      
+                    
                     
                 %-------Break Trials & Report visible locations------%
             
@@ -486,7 +501,9 @@ try
                                 end
                             end 
                     end 
-                        
+                    
+                    if forget == 1, noBreak = 0; end
+                    
                 %--------- Save Result ----------%
                     condList{block}(i,RESPONSE) = answer;
                     condList{block}(i,DONE) = noBreak;
