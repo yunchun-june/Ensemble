@@ -510,8 +510,9 @@ close all;
                     condList{block}(i,SEEN(:)) = Seen(:);
                     condList{block}(i,REPEAT)= condList{block}(i,REPEAT)+1;
                     if isExp condList{block}(i,OPC(:)) = faceOpc(stair,:); end
-                    if noBreak, thrList(end+1,1:4) = faceOpc(stair,:);
-                        thrList(end,5) = stair;
+                    thrList(end+1,1) = noBreak;
+                    thrList(end,2:5) = faceOpc(stair,:);
+                    thrList(end,6) = stair;
                         end
                     
                 %---------- Monitoring ----------%
