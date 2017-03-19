@@ -25,8 +25,8 @@ close all;
 
     lowerBound = 0.02;
     upperBound = 1.00;     
-    stepsize_down = 0.04; 
-    stepsize_up = 0.02;    
+    stepsize_down = 0.1; 
+    stepsize_up = 0.1 ;    
     stairCase_up = 2;
 
 %====== Setup Screen & Keyboard ======%
@@ -280,6 +280,7 @@ close all;
         while(sum(condList{block}(:,DONE)) ~= trials/5)
             for i = 1:trials/5
                 
+                if condList{block}(i,EXP_CATCH)==0 continue; end
                 if condList{block}(i,DONE) continue; end
                 
                 % --------press space to start----------%
@@ -308,7 +309,7 @@ close all;
                      randPlace = randperm(4);
                      ensemIdx = condList{block}(i,ENSEM);
                      targetIdx = condList{block}(i,TARGET);
-                     stair = condList{block}(i,STAIR);
+                     stair = 1
                      isExp = condList{block}(i,EXP_CATCH);
 
                      MonIdx=1;
@@ -368,103 +369,12 @@ close all;
                         [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
                         if secs(KbName(breakKey))-timezero > 0, noBreak = 0; end
                     end
-                
-                % --------- show target face and mask---------%
-                    timezero = GetSecs;
-                    while GetSecs-timezero < 0.1 && noBreak && isExp
-                        FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                        Screen('DrawTexture',wPtr, targetFace.tex{targetIdx}, [], targetPosi_L);
-                        Screen('DrawTexture',wPtr, targetFace.tex{targetIdx}, [], targetPosi_R);
-                        Screen('Flip',wPtr);
-                    end
-                    
-                    while GetSecs-timezero < 0.2 && noBreak &&  ~isExp
-                        FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                        Screen('DrawTexture',wPtr, catchFace.tex{targetIdx}, [], targetPosi_L);
-                        Screen('DrawTexture',wPtr, catchFace.tex{targetIdx}, [], targetPosi_R);
-                        Screen('Flip',wPtr);
-                    end
-                       
-                    timezero = GetSecs;
-                    while GetSecs-timezero < 0.1 && noBreak && isExp
-                        FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                        Screen('DrawTexture',wPtr, targetMask.tex{targetIdx}, [], targetPosi_L);
-                        Screen('DrawTexture',wPtr, targetMask.tex{targetIdx}, [], targetPosi_R);
-                        Screen('Flip',wPtr);
-                    end
-
-                    while GetSecs-timezero < 0.1 && noBreak && ~isExp
-                        FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                        Screen('DrawTexture',wPtr, catchMask.tex{targetIdx}, [], targetPosi_L);
-                        Screen('DrawTexture',wPtr, catchMask.tex{targetIdx}, [], targetPosi_R);
-                        Screen('Flip',wPtr);
-                    end
-                    
-                    % delay
-                    FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                    Screen('Flip',wPtr);
-                    WaitSecs(.5);
-                    
-                % -------------make emotion judgement-------------%
-                    forget = 0;
-                    waitForAnswer = 1;
-                    timezero = GetSecs;
-                    while waitForAnswer && noBreak
-                        % show emotion judgement screen
-                            FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                            Writetext(wPtr,'Emotion',L_cenX, R_cenX,BoxcenY, 30,60, [255 255 255],15);
-                            Writetext(wPtr,'very',L_cenX, R_cenX,BoxcenY, 65,10, [255 255 255],15);
-                            Writetext(wPtr,'negative',L_cenX, R_cenX,BoxcenY, 70,-10, [255 255 255],15);
-                            Writetext(wPtr,'very',L_cenX, R_cenX,BoxcenY, -25,10, [255 255 255],15);
-                            Writetext(wPtr,'positive',L_cenX, R_cenX,BoxcenY, -20,-10, [255 255 255],15);
-                            %Writetext(wPtr,'? not Sure',L_cenX, R_cenX,BoxcenY, 50,-50, [255 255 255],15);
-                            Writetext(wPtr, num2str(answer), L_cenX, R_cenX, BoxcenY, 5-answer*(boxsize-20)/10,-60, [255 255 255],15);
-                            if forget SelectionBox(wPtr,L_cenX-50-15,R_cenX-50-15, BoxcenY-50-10,reportboxsize,boxcolor); end
-                            SelectionBar(wPtr,L_cenX,R_cenX,BoxcenY, boxsize, answer);
-                            Screen('Flip',wPtr);
-
-                        % get keyboard response
-                            KbEventFlush();
-                            [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
-
-                            if  keyIsDown
-                                % left right
-                                if secs(KbName(leftkey))-timezero > 0
-                                    if answer > -10, answer = answer-1; end
-                                end
-                                if secs(KbName(rightkey))-timezero > 0
-                                    if answer < 10, answer = answer+1; end
-                                end
-
-                                % not sure
-                                if secs(KbName(notSure))-timezero>0, forget = ~forget;end
-                                    
-                                % space pressed
-                                if secs(KbName(space))-timezero>0, waitForAnswer = 0;
-
-                                end
-                                % break key pressed
-                                if secs(KbName(breakKey))-timezero > 0, noBreak = 0; end
-
-                                % ESC pressed
-                                if secs(KbName(quitkey))
-                                    condListAll = zeros(0,15);
-                                    for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
-                                    CreateFile(fName, condListAll);
-                                    CreateFile_thr(fName_thr, thrList);
-                                    Screen('CloseAll'); %Closes Screen  
-                                    return;
-                                end
-
-                            end 
-                    end
                      
-                    
                     
                 %-------Break Trials & Report visible locations------%
             
                     waitForAnswer = 1; 
-                    while waitForAnswer && ~noBreak
+                    while waitForAnswer
                        % show visibility report screen
                             FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
                             Writetext(wPtr,'Location',L_cenX, R_cenX,BoxcenY, 25,70, [255 255 255],14);
@@ -502,7 +412,6 @@ close all;
                             end 
                     end 
                     
-                    if forget == 1, noBreak = 0; end
                     
                 %--------- Save Result ----------%
                     condList{block}(i,RESPONSE) = answer;
