@@ -19,7 +19,7 @@ close all;
     faceOpc(1,3) = 0.8;  faceOpc(2,3) = 0.4;
     faceOpc(1,4) = 0.8;  faceOpc(2,4) = 0.4;
 
-    maskOpc = 1;
+    maskOpc = 0.10;
     disX = 240;
     waitTime = 120;
 
@@ -309,7 +309,7 @@ close all;
                      randPlace = randperm(4);
                      ensemIdx = condList{block}(i,ENSEM);
                      targetIdx = condList{block}(i,TARGET);
-                     stair = 1
+                     stair = 1;
                      isExp = condList{block}(i,EXP_CATCH);
 
                      MonIdx=1;

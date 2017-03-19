@@ -14,14 +14,14 @@ close all;
 
     % white faces
     
-    faceOpc(1,1) = 0.8;  faceOpc(2,1) = 0.4;
-    faceOpc(1,2) = 0.8;  faceOpc(2,2) = 0.4;
-    faceOpc(1,3) = 0.8;  faceOpc(2,3) = 0.4;
-    faceOpc(1,4) = 0.8;  faceOpc(2,4) = 0.4;
+    faceOpc(1,1) = 0.4;  faceOpc(2,1) = 0.04;
+    faceOpc(1,2) = 0.4;  faceOpc(2,2) = 0.04;
+    faceOpc(1,3) = 0.4;  faceOpc(2,3) = 0.04;
+    faceOpc(1,4) = 0.4;  faceOpc(2,4) = 0.04;
 
-    maskOpc = 1;
+    maskOpc = 0.1;
     disX = 240;
-    waitTime = 120;
+    waitTime = 60;
 
     lowerBound = 0.02;
     upperBound = 1.00;     
@@ -142,7 +142,7 @@ close all;
     catchFaceNum = 10;
     conditionNum = 5;
     rep = 6;
-    catch_rep = 10;
+    catch_rep = 5;
     expTrialNum = targetFaceNum*conditionNum*rep;
     catchTrialNum = catchFaceNum*catch_rep;
     
@@ -174,7 +174,7 @@ close all;
         temp(1:expTrialNum/5,STAIR) = repmat(1:2,1,expTrialNum/(5*2));
         
         temp(expTrialNum/5+1:trials/5,EXP_CATCH) = 0;
-        temp(expTrialNum/5+1:trials/5,TARGET) =  repmat(1:catchFaceNum,1,2);
+        temp(expTrialNum/5+1:trials/5,TARGET) =  repmat(1:catchFaceNum,1,1);
         temp(expTrialNum/5+1:trials/5,STAIR) = 1;
        
         temp_random = randperm(trials/5);
