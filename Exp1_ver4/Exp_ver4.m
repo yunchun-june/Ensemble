@@ -1,7 +1,7 @@
 clear all;
 close all;
 
-try
+% try
 
 %====== Input ======%
     subjNo                = input('subjNo: ','s');
@@ -174,7 +174,7 @@ try
         temp(1:expTrialNum/5,STAIR) = repmat(1:2,1,expTrialNum/(5*2));
         
         temp(expTrialNum/5+1:trials/5,EXP_CATCH) = 0;
-        temp(expTrialNum/5+1:trials/5,TARGET) = 1:catchFaceNum;
+        temp(expTrialNum/5+1:trials/5,TARGET) =  repmat(1:catchFaceNum,1,2);
         temp(expTrialNum/5+1:trials/5,STAIR) = 1;
        
         temp_random = randperm(trials/5);
@@ -378,7 +378,7 @@ try
                         Screen('Flip',wPtr);
                     end
                     
-                    while GetSecs-timezero < 0.1 && noBreak &&  ~isExp
+                    while GetSecs-timezero < 0.2 && noBreak &&  ~isExp
                         FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
                         Screen('DrawTexture',wPtr, catchFace.tex{targetIdx}, [], targetPosi_L);
                         Screen('DrawTexture',wPtr, catchFace.tex{targetIdx}, [], targetPosi_R);
@@ -417,7 +417,7 @@ try
                             Writetext(wPtr,'negative',L_cenX, R_cenX,BoxcenY, 70,-10, [255 255 255],15);
                             Writetext(wPtr,'very',L_cenX, R_cenX,BoxcenY, -25,10, [255 255 255],15);
                             Writetext(wPtr,'positive',L_cenX, R_cenX,BoxcenY, -20,-10, [255 255 255],15);
-                            Writetext(wPtr,'? not Sure',L_cenX, R_cenX,BoxcenY, 50,-50, [255 255 255],15);
+                            %Writetext(wPtr,'? not Sure',L_cenX, R_cenX,BoxcenY, 50,-50, [255 255 255],15);
                             Writetext(wPtr, num2str(answer), L_cenX, R_cenX, BoxcenY, 5-answer*(boxsize-20)/10,-60, [255 255 255],15);
                             if forget SelectionBox(wPtr,L_cenX-50-15,R_cenX-50-15, BoxcenY-50-10,reportboxsize,boxcolor); end
                             SelectionBar(wPtr,L_cenX,R_cenX,BoxcenY, boxsize, answer);
@@ -437,7 +437,7 @@ try
                                 end
 
                                 % not sure
-                                if secs(KbName(norSure))-timezero>0, forget = ~forget;
+                                if secs(KbName(notSure))-timezero>0, forget = ~forget;end
                                     
                                 % space pressed
                                 if secs(KbName(space))-timezero>0, waitForAnswer = 0;
@@ -548,7 +548,7 @@ try
         end %end of the block
         
         block_done = block_done+1;
-    end 
+    end
     
 %===== Write Results and Quit =====%
     condListAll = zeros(0,15);
@@ -558,11 +558,11 @@ try
     Screen('CloseAll'); %Closes Screen  
     return;
 
-catch
-    Screen('CloseAll'); %Closes Screen  
-    condListAll = zeros(0,15);
-    for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
-    CreateFile(fName, condListAll);
-    CreateFile_thr(fName_thr, thrList);
-    return;
-end
+% catch
+%     Screen('CloseAll'); %Closes Screen  
+%     condListAll = zeros(0,15);
+%     for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
+%     CreateFile(fName, condListAll);
+%     CreateFile_thr(fName_thr, thrList);
+%     return;
+% end
