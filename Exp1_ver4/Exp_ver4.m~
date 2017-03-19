@@ -8,6 +8,7 @@ close all;
     DemoEye               = input('DomEye Right 1 Left 2:');
     keymode               = input('keymode1 MAC keymode2 Dell 3 EEG:');
     fName = ['./Data/Ensem_result_' subjNo '.txt'];
+    fName_thr = ['./Data/Ensem_threshold_' subjNo '.txt'];
 
 %====== initial condition =====% 
 
@@ -18,7 +19,7 @@ close all;
     faceOpc(1,3) = 0.4;  faceOpc(2,3) = 0.04;
     faceOpc(1,4) = 0.4;  faceOpc(2,4) = 0.04;
 
-    maskOpc = 0.5;
+    maskOpc = 0.1;
     disX = 240;
     waitTime = 60;
 
@@ -152,6 +153,7 @@ close all;
     TARGET      =3;
     RESPONSE    =4;
     DONE        =5;
+    NO_BREAK    =5;
     STAIR       =6;
     OPC(1)      =7;
     OPC(2)      =8;
@@ -351,8 +353,10 @@ close all;
                         [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
                         if secs(KbName(breakKey))-timezero > 0, noBreak = 0; end
                         if secs(KbName(quitkey))
-                            
-                            CreateFile(fName, resultList);
+                            condListAll = zeros(0,15);
+                            for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
+                            CreateFile(fName, condListAll);
+                            CreateFile_thr(fName_thr, resultList);
                             Screen('CloseAll'); %Closes Screen  
                             return;
                         end
@@ -418,7 +422,9 @@ close all;
                             Writetext(wPtr,'negative',L_cenX, R_cenX,BoxcenY, 70,-10, [255 255 255],15);
                             Writetext(wPtr,'very',L_cenX, R_cenX,BoxcenY, -25,10, [255 255 255],15);
                             Writetext(wPtr,'positive',L_cenX, R_cenX,BoxcenY, -20,-10, [255 255 255],15);
+                            %Writetext(wPtr,'? not Sure',L_cenX, R_cenX,BoxcenY, 50,-50, [255 255 255],15);
                             Writetext(wPtr, num2str(answer), L_cenX, R_cenX, BoxcenY, 5-answer*(boxsize-20)/10,-60, [255 255 255],15);
+                            if forget SelectionBox(wPtr,L_cenX-50-15,R_cenX-50-15, BoxcenY-50-10,reportboxsize,boxcolor); end
                             SelectionBar(wPtr,L_cenX,R_cenX,BoxcenY, boxsize, answer);
                             Screen('Flip',wPtr);
 
@@ -439,14 +445,18 @@ close all;
                                 if secs(KbName(notSure))-timezero>0, forget = ~forget;end
                                     
                                 % space pressed
-                                if secs(KbName(space))-timezero>0, waitForAnswer = 0;end
+                                if secs(KbName(space))-timezero>0, waitForAnswer = 0;
 
+                                end
                                 % break key pressed
                                 if secs(KbName(breakKey))-timezero > 0, noBreak = 0; end
 
                                 % ESC pressed
                                 if secs(KbName(quitkey))
-                                    CreateFile(fName, resultList);
+                                    condListAll = zeros(0,15);
+                                    for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
+                                    CreateFile(fName, condListAll);
+                                    CreateFile_thr(fName_thr, resultList);
                                     Screen('CloseAll'); %Closes Screen  
                                     return;
                                 end
@@ -487,23 +497,29 @@ close all;
 
                                 % ESC pressed
                                 if secs(KbName(quitkey))
-                                    CreateFile(fName, resultList);
+                                    condListAll = zeros(0,15);
+                                    for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
+                                    CreateFile(fName, condListAll);
+                                    CreateFile_thr(fName_thr, resultList);
                                     Screen('CloseAll'); %Closes Screen  
                                     return;
                                 end
                             end 
                     end 
                     
+                    if forget == 1, noBreak = 0; end
                     
                 %--------- Save Result ----------%
                     condList{block}(i,RESPONSE) = answer;
                     condList{block}(i,DONE) = noBreak;
                     condList{block}(i,SEEN(:)) = seen(:);
-                    condList{block}(i,PLACE(:)) = randPlace(:);
+                    condList{block}(i,PLACE(:)) = place(:);
                     if isExp condList{block}(i,OPC(:)) = faceOpc(stair,:); end
                     condList{block}(i,REPEAT)= condList{block}(i,REPEAT)+1;
+                    
                     resultList(end+1,:) = condList{block}(i,:);
                     
+                        end
                     
                 %---------- Monitoring ----------%
                     disp('-------------------------------')
@@ -537,13 +553,15 @@ close all;
                 
             end %end of trials
         end %end of the block
+        
         block_done = block_done+1;
     end
-        
     
 %===== Write Results and Quit =====%
-    
-    CreateFile(fName, resultList);
+    condListAll = zeros(0,15);
+    for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
+    CreateFile(fName, condListAll);
+    CreateFile_thr(fName_thr, resultList);
     Screen('CloseAll'); %Closes Screen  
     return;
 
@@ -552,6 +570,6 @@ close all;
 %     condListAll = zeros(0,15);
 %     for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
 %     CreateFile(fName, condListAll);
-%     CreateFile(fName_thr, thrList);
+%     CreateFile_thr(fName_thr, thrList);
 %     return;
 % end
