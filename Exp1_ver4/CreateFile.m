@@ -22,7 +22,8 @@ function[] = CreateFile(fName, resultList)
 %     PLACE(4)    =19;
 
     fd = fopen(fName, 'w');
-    for i=1:length(resultList)
+    fileLength = length(resultList);
+    for i=1:fileLength
         fprintf(fd, '%3d %3d %3d %3d %3d %3d %0.2f %0.2f %0.2f %0.2f %3d %3d %3d %3d %3d %3d %3d %3d %3d\n', resultList(i,:));
     end
     fclose(fd);

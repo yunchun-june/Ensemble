@@ -1,13 +1,12 @@
 clear all;
 close all;
 
-ID = '1703193';
+ID = '1703221';
 resultfile = dir( ['Ensem_result_' ID '.txt']);
 thrfile = dir( ['Ensem_threshold_' ID '.txt']);
     
     
-[isExp cond targetFace judgement done staircase t1 t2 t3 t4 s1 s2 s3 s4 repeat]= textread(resultfile.name,'%d %d %d %d %d %d %f %f %f %f %d %d %d %d %d ');
-[t1 t2 t3 t4 staircase]= textread(thrfile.name,'%f %f %f %f %d');
+[isExp cond targetFace judgement noBreak staircase t1 t2 t3 t4 s1 s2 s3 s4 repeat p1 p2 p3 p4]= textread(resultfile.name,'%d %d %d %d %d %d %f %f %f %f %d %d %d %d %d %d %d %d %d ');
 
     %======staircase data=======%
     
@@ -18,10 +17,12 @@ thrfile = dir( ['Ensem_threshold_' ID '.txt']);
         end
     
         for i=1:length(t1)
+            if isExp(i)&& noBreak(i)
                     thrData{staircase(i),1}(end+1) = t1(i);
                     thrData{staircase(i),2}(end+1) = t2(i);
                     thrData{staircase(i),3}(end+1) = t3(i);
                     thrData{staircase(i),4}(end+1) = t4(i);
+            end
         end
         
         figure
@@ -34,7 +35,7 @@ thrfile = dir( ['Ensem_threshold_' ID '.txt']);
             axis([0,120,0,1]);
             xlabel('trials');
             ylabel('contrast');
-            if position == 1 title(['white faces' ID]); end
+            if position == 1 title(ID); end
         end
         
         catchResponse = cell(10);

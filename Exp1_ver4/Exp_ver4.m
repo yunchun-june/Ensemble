@@ -10,16 +10,14 @@ close all;
     fName = ['./Data/Ensem_result_' subjNo '.txt'];
 
 %====== initial condition =====% 
-
-    % white faces
     
-    faceOpc(1,1) = 0.4;  faceOpc(2,1) = 0.04;
-    faceOpc(1,2) = 0.4;  faceOpc(2,2) = 0.04;
-    faceOpc(1,3) = 0.4;  faceOpc(2,3) = 0.04;
-    faceOpc(1,4) = 0.4;  faceOpc(2,4) = 0.04;
+    faceOpc(1,1) = 0.4;  faceOpc(2,1) = 0.05;
+    faceOpc(1,2) = 0.4;  faceOpc(2,2) = 0.05;
+    faceOpc(1,3) = 1.0;  faceOpc(2,3) = 0.5;
+    faceOpc(1,4) = 0.4;  faceOpc(2,4) = 0.05;
 
-    maskOpc = 0.5;
-    disX = 240;
+    maskOpc = 1;
+    disX = 200;
     waitTime = 60;
 
     lowerBound = 0.02;
@@ -514,7 +512,8 @@ close all;
                     disp(condList{block}(i,SEEN(:)));
                     disp('block complete');
                     disp([num2str(block_done) '   ' num2str(sum(condList{block}(:,DONE))) '/' num2str(trials/5)]);
-                    
+                    disp('break rate')
+                    disp(1-mean(resultList(:,DONE)));
                 %---------- Adjust Threshold ----------%
                     for j = 1:4
                       % seen, decrease

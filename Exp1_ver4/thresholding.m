@@ -19,8 +19,8 @@ close all;
     faceOpc(1,3) = 0.8;  faceOpc(2,3) = 0.4;
     faceOpc(1,4) = 0.8;  faceOpc(2,4) = 0.4;
 
-    maskOpc = 0.10;
-    disX = 240;
+    maskOpc = 1;
+    disX = 200;
     waitTime = 120;
 
     lowerBound = 0.02;
