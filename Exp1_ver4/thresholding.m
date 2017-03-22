@@ -20,7 +20,7 @@ close all;
     faceOpc(1,4) = 0.8;  faceOpc(2,4) = 0.4;
 
     maskOpc = 1;
-    disX = 200;
+    disX = 180;
     waitTime = 120;
 
     lowerBound = 0.02;
