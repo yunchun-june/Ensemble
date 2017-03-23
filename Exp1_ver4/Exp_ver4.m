@@ -11,13 +11,13 @@ close all;
 
 %====== initial condition =====% 
     
-    faceOpc(1,1) = 0.3;  faceOpc(2,1) = 0.02;
-    faceOpc(1,2) = 0.3;  faceOpc(2,2) = 0.02;
-    faceOpc(1,3) = 0.3;  faceOpc(2,3) = 0.02;
-    faceOpc(1,4) = 0.3;  faceOpc(2,4) = 0.02;
+    faceOpc(1,1) = 0.6;  faceOpc(2,1) = 0.2;
+    faceOpc(1,2) = 0.6;  faceOpc(2,2) = 0.2;
+    faceOpc(1,3) = 0.6;  faceOpc(2,3) = 0.2;
+    faceOpc(1,4) = 0.6;  faceOpc(2,4) = 0.2 ;
 
-    maskOpc = 0.5;
-    disX = 190;
+    maskOpc = 1;
+    disX = 200;
     waitTime = 60;
 
     lowerBound = 0.02;
@@ -514,6 +514,7 @@ close all;
                     disp([num2str(block_done) '   ' num2str(sum(condList{block}(:,DONE))) '/' num2str(trials/5)]);
                     disp('break rate')
                     disp(1-mean(resultList(:,DONE)));
+                    
                 %---------- Adjust Threshold ----------%
                     for j = 1:4
                       % seen, decrease
