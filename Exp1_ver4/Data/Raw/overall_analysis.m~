@@ -34,11 +34,11 @@ avg_normed_byIden = zeros(subjectNum,5,6);
     sub_high = zeros(subjectNum,6);
 
     for sub = 1:subjectNum
-        [isExp cond target judgement noBreak stairCase t1 t2 t3 t4 s1 s2 s3 s4 rep p1 p2 p3 p4]= textread(files(sub).name,'%d %d %d %d %d %d %f %f %f %f %d %d %d %d %d %d %d %d %d');
+        [isExp cond target judgement noBreak stairCase t1 t2 t3 t4 s1 s2 s3 s4 rep p1 p2 p3 p4]= textread(files(sub).name,'%3d %3d %3d %3d %3d %3d %0.2f %0.2f %0.2f %0.2f %d %d %d %d %d %d %d %d %d');
         temp_byFace = cell(6);
 
         for i=1:length(isExp)
-            if noBreak(i) && isExp(i)
+            if noBreak
                 temp_byFace{target(i)}(end+1) = judgement(i);
             end
         end
@@ -50,7 +50,7 @@ avg_normed_byIden = zeros(subjectNum,5,6);
         
         for i=1:length(isExp)
             isOutlier_all = judgement(i)< sub_low(target(i)) && judgement(i) > sub_high(target(i));
-            if noBreak(i) && isExp(i) && ~isOutlier_all
+            if noBreak(i) && ~isOutlier_all
                 raw_byFace_computeOutlier{target(i)}(end+1) = judgement(i);
             end
         end
@@ -60,43 +60,40 @@ avg_normed_byIden = zeros(subjectNum,5,6);
     % exclude outlier based on overall distribution
     all_high = [];
     all_low = [];
-    for i=1:6
+    for i=1:16
         all_high(i) = mean(raw_byFace_computeOutlier{i}) + overallOutlierStd *std(raw_byFace_computeOutlier{i});
         all_low(i) = mean(raw_byFace_computeOutlier{i}) - overallOutlierStd *std(raw_byFace_computeOutlier{i});
     end
 
     for sub = 1:subjectNum
-         [isExp cond target judgement noBreak stairCase t1 t2 t3 t4 s1 s2 s3 s4 rep p1 p2 p3 p4]= textread(files(sub).name,'%d %d %d %d %d %d %f %f %f %f %d %d %d %d %d %d %d %d %d');
+         [isExp cond target judgement noBreak stairCase t1 t2 t3 t4 s1 s2 s3 s4 rep p1 p2 p3 p4]= textread(files(sub).name,'%3d %3d %3d %3d %3d %3d %0.2f %0.2f %0.2f %0.2f %d %d %d %d %d %d %d %d %d');
         for i=1:length(isExp)
-            if isExp(i)
-                isOutlier_sub = judgement(i)>sub_high(sub,target(i)) || judgement(i)<sub_low(sub,target(i));
-                isOutlier_all = judgement(i)>all_high(target(i)) || judgement(i)<all_low(target(i));
-                if ~noBreak(i) && ~isOutlier_all  && ~isOutlier_sub
-                    data_raw{sub,cond(i),target(i)}(end+1) = judgement(i);
-                end
+            isOutlier_sub = judgement(i)>sub_high(sub,target(i)) || judgement(i)<sub_low(sub,target(i));
+            isOutlier_all = judgement(i)>all_high(target(i)) || judgement(i)<all_low(target(i));
+            if ~noBreak(i) && ~isOutlier_all  && ~isOutlier_sub
+                data_raw{sub,cond(i),target(i)}(end+1) = judgement(i);
             end
         end
     end
     
 % ======== Draw Overall Distribution Chart==== %      
-
-figure
+        figure
         for j = 1:6
         x_dis = -10:10;
         y_dis = zeros(21);
         
-        for i = 1:length(raw_byFace_computeOutlier{j})
-            iden = raw_byFace_computeOutlier{j}(i) +11;
+        for i = 1:length(raw_byFace_forOutlierDetection{j})
+            iden = raw_byFace_forOutlierDetection{j}(i) +11;
             y_dis(iden) = y_dis(iden)+1;
         end
         
-        subplot(2,3,j)
+        subplot(4,4,j)
             plot(x_dis,y_dis);
-            axis([-10,10,0,70]);
-            stat = {['mean:' num2str(mean(raw_byFace_computeOutlier{j})) '  std:' num2str(std(raw_byFace_computeOutlier{j}))]};
+            axis([-10,10,0,50]);
+            stat = {['mean:' num2str(mean(raw_byFace_forOutlierDetection{j})) '  std:' num2str(std(raw_byFace_forOutlierDetection{j}))]};
             text(-8,45,stat);
-            text(all_high(j),5,'|');
-            text(all_low(j),5,'|');
+            text(upperbound(j),5,'|');
+            text(lowerbound(j),5,'|');
             ylabel('counts');
             xlabel('emotion score');
             title(['face No.' num2str(j) ]);
