@@ -39,8 +39,8 @@ thrfile = dir( ['Ensem_threshold_' ID '.txt']);
         end
         
         catchResponse = cell(10);
-        catchMean = [];
-        catchStd = [];
+        catchMean = zeros(10);
+        catchStd = zeros(10);
         data_raw = cell(5,6);
         
         for i = 1:length(isExp)
@@ -49,7 +49,7 @@ thrfile = dir( ['Ensem_threshold_' ID '.txt']);
             end
             
             if isExp(i)
-                data_raw{cond(i),targetFace(i)}(end+1) = judgement(i);
+                data_raw{cond(i),targetface(i)}(end+1) = judgement(i);
             end
         end
         
@@ -60,4 +60,3 @@ thrfile = dir( ['Ensem_threshold_' ID '.txt']);
         
         disp(catchMean);
         disp(catchStd);
-        disp(data_raw)

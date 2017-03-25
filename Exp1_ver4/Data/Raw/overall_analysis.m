@@ -138,9 +138,11 @@ figure
 %======Normalized Data By Face ========%
 
 % get average & std for each identity
-    avg_face = [];
-    std_face = [];
+
     for sub = 1:subjectNum
+        avg_face = [];
+        std_face = [];
+        
         for face = 1:6
             temp = [];
             for ensum = 1:5
@@ -150,14 +152,14 @@ figure
             avg_face(face) = nanmean(temp);
             std_face(face) = nanstd(temp);
         end
-    end
 
-    % nomalization
-    for face = 1:6
-        for sub = 1:subjectNum
-            for ensum = 1:5
-                for i = 1:length(data_raw{sub,ensum,face})
-                data_normed_byFace{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_face(face)) / std_face(face); end
+        % nomalization
+        for face = 1:6
+            for sub = 1:subjectNum
+                for ensum = 1:5
+                    for i = 1:length(data_raw{sub,ensum,face})
+                    data_normed_byFace{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_face(face)) / std_face(face); end
+                end
             end
         end
     end
@@ -181,10 +183,7 @@ figure
         end
     end
     
-    
-    
-    
-    disp(avg_raw);
+    disp(data_raw);
     
     
     
