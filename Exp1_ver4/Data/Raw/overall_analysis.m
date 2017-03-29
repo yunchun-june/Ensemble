@@ -187,6 +187,7 @@ figure
     end
      
     disp(avg_normed_byFace);
+
     
     overall = [];
     for ensum = 1:5
@@ -201,6 +202,20 @@ figure
     disp('overall average');
     disp('most negative ensum condition ---------- most positive');
     disp(overall);
+    
+    %=== ANOVA ====%
+    anova = zeros(0,4);
+    
+    for ensum = 1:5
+        for sub = 1:subjectNum
+            for emotion  =1:3
+                temp = [avg_normed_byFace(sub,ensum,emotion) ensum emotion sub]
+                anova(end+1,:) = temp;
+            end
+        end
+    end
+    
+    RMAOV2(anova);
  
 %     x = cell(1,5);
 %     y = cell(1,5);
