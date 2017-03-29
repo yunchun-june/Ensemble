@@ -20,15 +20,18 @@ avg_normed_byIden = zeros(subjectNum,5,3);
  
 %===== Read in data & Exclude Outlier======%
  
-    % exclude outlier based on subject's own std
+    
+    % readin data excluding outlier based on subject's own std
     raw_byFace_computeOutlier = cell(6);
     sub_low = zeros(subjectNum,6);
     sub_high = zeros(subjectNum,6);
- 
+    sub_mean = zeros(subjectNum,6);
+    
     for sub = 1:subjectNum
         [isExp cond target judgement noBreak stairCase t1 t2 t3 t4 s1 s2 s3 s4 rep p1 p2 p3 p4]= textread(files(sub).name,'%d %d %d %d %d %d %f %f %f %f %d %d %d %d %d %d %d %d %d');
         temp_byFace = cell(6);
  
+        %compute outlier
         for i=1:length(isExp)
             if noBreak(i) && isExp(i)
                 temp_byFace{target(i)}(end+1) = judgement(i);
@@ -44,58 +47,35 @@ avg_normed_byIden = zeros(subjectNum,5,3);
             if isExp(i)
                 isOutlier = judgement(i)< sub_low(sub,target(i)) && judgement(i) > sub_high(sub,target(i));
                 if noBreak(i) && isExp(i) && ~isOutlier
-                    raw_byFace_computeOutlier{target(i)}(end+1) = judgement(i);
-                end
-            end
-        end
-         
-    end
-     
-    % exclude outlier based on overall distribution
-    all_high = [];
-    all_low = [];
-    for i=1:6
-        all_high(i) = mean(raw_byFace_computeOutlier{i}) + overallOutlierStd *std(raw_byFace_computeOutlier{i});
-        all_low(i) = mean(raw_byFace_computeOutlier{i}) - overallOutlierStd *std(raw_byFace_computeOutlier{i});
-    end
- 
-    for sub = 1:subjectNum
-         [isExp cond target judgement noBreak stairCase t1 t2 t3 t4 s1 s2 s3 s4 rep p1 p2 p3 p4]= textread(files(sub).name,'%d %d %d %d %d %d %f %f %f %f %d %d %d %d %d %d %d %d %d');
-         for i=1:length(isExp)
-            if isExp(i) && noBreak(i)
-                isOutlier_sub = judgement(i)>sub_high(sub,target(i)) || judgement(i)<sub_low(sub,target(i));
-                isOutlier_all = judgement(i)>all_high(target(i)) || judgement(i)<all_low(target(i));
-                if noBreak(i) && ~isOutlier_all  && ~isOutlier_sub
                     data_raw{sub,cond(i),target(i)}(end+1) = judgement(i);
                 end
             end
         end
     end
-     
-% ======== Draw Overall Distribution Chart==== %      
- 
-figure
-        for j = 1:6
-        x_dis = -10:10;
-        y_dis = zeros(21);
-         
-        for i = 1:length(raw_byFace_computeOutlier{j})
-            iden = raw_byFace_computeOutlier{j}(i) +11;
-            y_dis(iden) = y_dis(iden)+1;
+    
+    %excluding subjects base on group
+    
+    for sub = 1:subjectNum
+        for face = 1:6
+            temp = [];
+            for ensum = 1:5
+                for i = 1: length(data_raw{sub,ensum,face}) temp(end+1) = data_raw{sub,ensum,face}(i); end
+            end
+            sub_mean(sub,face) = mean(temp);
+            sub_std(sub,face) = std(temp);
         end
-         
-        subplot(2,3,j)
-            plot(x_dis,y_dis);
-            axis([-10,10,0,70]);
-            stat = {['mean:' num2str(mean(raw_byFace_computeOutlier{j})) '  std:' num2str(std(raw_byFace_computeOutlier{j}))]};
-            text(-8,45,stat);
-            text(all_high(j),5,'|');
-            text(all_low(j),5,'|');
-            ylabel('counts');
-            xlabel('emotion score');
-            title(['face No.' num2str(j) ]);
- 
+    end
+    
+    for sub = 1:subjectNum
+        for face = 1:6
+            z = ( sub_mean(sub,face) - mean(sub_mean(:,face)) ) / std(sub_mean(:,face));
+            if z>2 || z<-2
+                disp(['subject' num2str(sub) ' is excluded based on judgement on face ' num2str(face)]);
+                data_raw(sub,:,:) = [];
+                subjectNum = subjectNum - 1;
+            end
         end
+    end
      
 %====== Normalized Data By Identity ========%
  
@@ -103,15 +83,15 @@ figure
     for sub = 1:subjectNum
          
     for identity = 1:2
-        temp1 = [];
+        temp = [];
         for face = 3*identity-2 : 3*identity
                 for ensum = 1:5
                     for i = 1:length(data_raw{sub,ensum,face})
-                    temp1(end+1) = data_raw{sub,ensum,face}(i); end
+                    temp(end+1) = data_raw{sub,ensum,face}(i); end
                 end
         end
-        avg_iden(identity) = nanmean(temp1);
-        std_iden(identity) = nanstd(temp1);
+        avg_iden(identity) = nanmean(temp);
+        std_iden(identity) = nanstd(temp);
     end
  
     % nomalization
@@ -134,20 +114,19 @@ figure
         std_face = [];
    
         for face = 1:6
-            temp1 = [];
+            temp = [];
             for ensum = 1:5
                 for i = 1:length(data_raw{sub,ensum,face})
-                temp1(end+1) = data_raw{sub,ensum,face}(i); end
+                temp(end+1) = data_raw{sub,ensum,face}(i); end
             end
-            avg_face(face) = nanmean(temp1);
-            std_face(face) = nanstd(temp1);
+            avg_face(face) = nanmean(temp);
+            std_face(face) = nanstd(temp);
         end
  
         % nomalization
         for face = 1:6
             for ensum = 1:5
                 for i = 1:length(data_raw{sub,ensum,face})
-                     
                 data_normed_byFace{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_face(face)) / std_face(face); end
             end
         end
@@ -185,14 +164,46 @@ figure
             end
         end
     end
+    
+    %===== for each subject =====%
+    
+    overall = zeros(subjectNum,5);
+    overallStd = zeros(subjectNum,5);
+    
+    for ensum = 1:5
+        for sub = 1:subjectNum
+            temp = [];
+            for emotion  = 1:3
+                temp(end+1) = avg_normed_byFace(sub,ensum,emotion);
+            end
+            overall(sub,ensum) = mean(temp);
+            overallStd(sub,ensum) = std(temp)/sqrt(30);
+        end
+    end
+    
+    figure
+    y = 1:5;
+    
+    for sub = 1:subjectNum
+        subplot(3,3,sub);
+        %errorbar(y,overall(sub,:),overallStd(sub,:));
+        scatter(y,overall(sub,:));
+        lsline;
+        set(gca,'XTickLabel', {'4F','3F1H','2F2H','1F3H','4H'});
+        xlabel('Ensemble condition');
+        ylabel('Emotion rating ');
+        axis([1 5 -0.6 0.6]);
+        if sub == 2  title('Result for each subject'); end
+    end
 
+    %=====overall =====%
     
     overall = [];
     overallStd = [];
     for ensum = 1:5
         temp = [];
         for sub = 1:subjectNum
-            for emotion  =2
+            for emotion  = 1:3
                 temp(end+1) = avg_normed_byFace(sub,ensum,emotion);
             end
         end
@@ -207,7 +218,7 @@ figure
     set(gca,'XTickLabel', {'','4F','','3F1H','','2F2H','','1F3H','','4H'});
     xlabel('Ensemble condition');
     ylabel('Emotion rating (nomalized by face)');
-    title('Overall Result using normed data');
+    title('Overall Result across subjects');
     
     
     %=== ANOVA ====%
@@ -215,9 +226,9 @@ figure
     
     for ensum = 1:5
         for sub = 1:subjectNum
-            for emotion  =1:3
-                temp1 = [avg_normed_byFace(sub,ensum,emotion) ensum emotion sub]
-                anova(end+1,:) = temp1;
+            for emotion  = 1:3
+                temp = [avg_normed_byFace(sub,ensum,emotion) ensum emotion sub];
+                anova(end+1,:) = temp;
             end
         end
     end
