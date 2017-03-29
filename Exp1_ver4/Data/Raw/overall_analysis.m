@@ -120,7 +120,7 @@ figure
             if face >= 4 && face <= 6 iden = 2; end
                 for ensum = 1:5
                     for i = 1:length(data_raw{sub,ensum,face})
-                    data_normed_byIden{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_iden(iden)) / std_iden(iden); end
+                    data_normed_byIden{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_iden(iden))/ std_iden(iden); end
                 end
          end
     end
@@ -185,24 +185,26 @@ figure
             end
         end
     end
-     
-    disp(avg_normed_byFace);
 
     
-    overall_normed_byFace = [];
+    overall = [];
+    overallStd = [];
     for ensum = 1:5
         temp = [];
         for sub = 1:subjectNum
-            for emotion  =1:3
+            for emotion  =2
                 temp(end+1) = avg_normed_byFace(sub,ensum,emotion);
             end
         end
-        overall_normed_byFace(ensum) = mean(temp);
+        overall(ensum) = mean(temp);
+        overallStd(ensum) = std(temp)/sqrt(30);
     end
     
     figure
-    plot(overall_normed_byFace);
-    set(gca,'XTickLabel', {'4F','','3F1H','','2F2H','','1F3H','','4H'});
+    y = 1:5;
+    %plot(overall);
+    errorbar(y,overall,overallStd);
+    set(gca,'XTickLabel', {'','4F','','3F1H','','2F2H','','1F3H','','4H'});
     xlabel('Ensemble condition');
     ylabel('Emotion rating (nomalized by face)');
     title('Overall Result using normed data');
@@ -223,28 +225,28 @@ figure
     RMAOV2(anova);
  
     
-    x = cell(1,5);
-    y = cell(1,5);
-    
-    mapping = [1 2 3 1 2 3];
-    for ensum = 1:5
-        for sub = 1:subjectNum
-            for face = 1:6
-               y{ensum}(end+1) = avg_normed_byFace(sub,ensum,mapping(face));
-               x{ensum}(end+1) = mapping(face);
-            end
-        end
-    end
-    
-    style = ['rx' 'mo' 'b*' 'yo' 'g*'];
-   figure
-        plot(x{1},y{1},'rx');       
-        hold on;
-        plot(x{2},y{2},'go');
-        plot(x{3},y{3},'mo');
-        plot(x{4},y{4},'y*');
-        plot(x{5},y{5},'b*');
-        lsline;
-        xlabel('Emotion');
-        ylabel('percieved average emotion(using raw data)');
-        legend('4F','3F1H','2F2H','1F3H','4H');
+%     x = cell(1,5);
+%     y = cell(1,5);
+%     
+%     mapping = [1 2 3 1 2 3];
+%     for ensum = 1:5
+%         for sub = 1:subjectNum
+%             for face = 1:6
+%                y{ensum}(end+1) = avg_normed_byFace(sub,ensum,mapping(face));
+%                x{ensum}(end+1) = mapping(face);
+%             end
+%         end
+%     end
+%     
+%     style = ['rx' 'mo' 'b*' 'yo' 'g*'];
+%    figure
+%         plot(x{1},y{1},'rx');       
+%         hold on;
+%         plot(x{2},y{2},'go');
+%         plot(x{3},y{3},'mo');
+%         plot(x{4},y{4},'y*');
+%         plot(x{5},y{5},'b*');
+%         lsline;
+%         xlabel('Emotion');
+%         ylabel('percieved average emotion(using raw data)');
+%         legend('4F','3F1H','2F2H','1F3H','4H');
