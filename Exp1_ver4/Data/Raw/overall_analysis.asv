@@ -230,20 +230,19 @@ figure
     for ensum = 1:5
         for sub = 1:subjectNum
             for face = 1:6
-               y{ensum}(end+1) = avg_normed_byFace(sub,ensum,mapping(face));
+               y{ensum}(end+1) = avg_raw(sub,ensum,mapping(face));
                x{ensum}(end+1) = mapping(face);
             end
         end
     end
     
-    style = ['rx' 'mo' 'b*' 'yo' 'g*'];
+    style = ['rx' 'mo' 'b*' 'y#' 'gv'];
    figure
-        plot(x{1},y{1},'rx');       
+        scatter(x{1},y{1},style(1));
         hold on;
-        plot(x{2},y{2},'go');
-        plot(x{3},y{3},'mo');
-        plot(x{4},y{4},'y*');
-        plot(x{5},y{5},'b*');
+        for i  = 2:5
+        scatter(x{i},y{i},style(i));       
+        end
         lsline;
         xlabel('Emotion');
         ylabel('percieved average emotion(using raw data)');
