@@ -1,7 +1,7 @@
 clear all;
 close all;
 
-ID = '1703301';
+ID = '1703052';
 resultfile = dir( ['Ensem_result_' ID '.txt']);
 thrfile = dir( ['Ensem_threshold_' ID '.txt']);
     
