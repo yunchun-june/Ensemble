@@ -2,7 +2,7 @@ clear all;
 close all;
  
 singleOutlierStd= 2; 
-overallOutlierStd = 2;
+overallOutlierStd = 2.5;
  
 files = dir( 'Ensem_result_*.txt');
 subjectNum = length(files);
@@ -66,13 +66,15 @@ avg_normed_byIden = zeros(subjectNum,5,3);
         end
     end
     
+    deleted = 0;
     for sub = 1:subjectNum
         for face = 1:6
             z = ( sub_mean(sub,face) - mean(sub_mean(:,face)) ) / std(sub_mean(:,face));
-            if z>2 || z<-2
+            if z>overallOutlierStd || z< -overallOutlierStd
                 disp(['subject' num2str(sub) ' is excluded based on judgement on face ' num2str(face)]);
-                data_raw(sub,:,:) = [];
+                data_raw(sub-deleted,:,:) = [];
                 subjectNum = subjectNum - 1;
+                deleted = deleted+1;
             end
         end
     end
@@ -173,7 +175,7 @@ avg_normed_byIden = zeros(subjectNum,5,3);
     for ensum = 1:5
         for sub = 1:subjectNum
             temp = [];
-            for emotion  = 1:3
+            for emotion  = 2
                 temp(end+1) = avg_normed_byFace(sub,ensum,emotion);
             end
             overall(sub,ensum) = mean(temp);
@@ -185,7 +187,7 @@ avg_normed_byIden = zeros(subjectNum,5,3);
     y = 1:5;
     
     for sub = 1:subjectNum
-        subplot(3,3,sub);
+        subplot(4,4,sub);
         %errorbar(y,overall(sub,:),overallStd(sub,:));
         scatter(y,overall(sub,:));
         lsline;
@@ -193,7 +195,7 @@ avg_normed_byIden = zeros(subjectNum,5,3);
         xlabel('Ensemble condition');
         ylabel('Emotion rating ');
         axis([1 5 -0.6 0.6]);
-        if sub == 2  title('Result for each subject'); end
+        title(files(sub).name);
     end
 
     %=====overall =====%
