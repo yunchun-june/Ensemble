@@ -194,7 +194,7 @@ avg_normed_byIden = zeros(subjectNum,5,3);
         set(gca,'XTickLabel', {'4F','3F1H','2F2H','1F3H','4H'});
         xlabel('Ensemble condition');
         ylabel('Emotion rating ');
-        axis([1 5 -0.6 0.6]);
+        axis([1 5 -1 1]);
         title(files(sub).name);
     end
 
