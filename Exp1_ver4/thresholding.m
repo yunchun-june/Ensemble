@@ -7,7 +7,7 @@ close all;
     subjNo                = input('subjNo: ','s');
     DemoEye               = input('DomEye Right 1 Left 2:');
     keymode               = input('keymode1 MAC keymode2 Dell 3 EEG:');
-    fName = ['./Data/Ensem_result_' subjNo '.txt'];
+    fName = ['./Data/Ensem_result_' subjNo  '.txt'];
     fName_thr = ['./Data/Ensem_threshold_' subjNo '.txt'];
 
 %====== initial condition =====% 
@@ -19,8 +19,8 @@ close all;
     faceOpc(1,3) = 1;  faceOpc(2,3) = 0.4;
     faceOpc(1,4) = 1;  faceOpc(2,4) = 0.4;
 
-    maskOpc = 0.2;
-    disX = 240;
+    maskOpc = 0.25;
+    disX = 220;
     waitTime = 60;
 
     lowerBound = 0.02;

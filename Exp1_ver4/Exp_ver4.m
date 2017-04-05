@@ -11,19 +11,19 @@ close all;
 
 %====== initial condition =====% 
     
-    faceOpc(1,1) = 0.5;  faceOpc(2,1) = 0.1;
-    faceOpc(1,2) = 1.0;  faceOpc(2,2) = 0.5;
-    faceOpc(1,3) = 0.5;  faceOpc(2,3) = 0.1;
-    faceOpc(1,4) = 1.0;  faceOpc(2,4) = 0.5;
+    faceOpc(1,1) = 0.8;  faceOpc(2,1) = 0.4;
+    faceOpc(1,2) = 0.8;  faceOpc(2,2) = 0.4;
+    faceOpc(1,3) = 0.8;  faceOpc(2,3) = 0.4;
+    faceOpc(1,4) = 0.8;  faceOpc(2,4) = 0.4;
 
-    maskOpc = 0.15;
-    disX = 240;
+    maskOpc = 0.3;
+    disX = 220;
     waitTime = 60;
 
     lowerBound = 0.02;
     upperBound = 1.00;     
     stepsize_down = 0.04; 
-    stepsize_up = 0.03;    
+    stepsize_up = 0.02;    
     stairCase_up = 2;
 
 %====== Setup Screen & Keyboard ======%

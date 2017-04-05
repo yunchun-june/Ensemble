@@ -210,7 +210,7 @@ avg_normed_byIden = zeros(subjectNum,5,3);
             end
         end
         overall(ensum) = mean(temp);
-        overallStd(ensum) = std(temp)/sqrt(30);
+        overallStd(ensum) = std(temp)/sqrt(3*subjectNum);
     end
     
     figure
