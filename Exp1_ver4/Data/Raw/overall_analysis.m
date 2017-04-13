@@ -31,12 +31,18 @@ avg_normed_byIden = zeros(subjectNum,5,3);
         [isExp cond target judgement noBreak stairCase t1 t2 t3 t4 s1 s2 s3 s4 rep p1 p2 p3 p4]= textread(files(sub).name,'%d %d %d %d %d %d %f %f %f %f %d %d %d %d %d %d %d %d %d');
         temp_byFace = cell(6);
  
+        false = 0;
         %compute outlier
         for i=1:length(isExp)
             if noBreak(i) && isExp(i)
                 temp_byFace{target(i)}(end+1) = judgement(i);
             end
+            
+            if ~noBreak(i) && ~isExp(i)
+                false = false+1;
+            end
         end
+        disp(['subject ' files(sub).name ' false alarm: ' num2str(false)]);
          
         for i = 1:6
             sub_low(sub,i) = mean(temp_byFace{i}) - singleOutlierStd * std(temp_byFace{i});
