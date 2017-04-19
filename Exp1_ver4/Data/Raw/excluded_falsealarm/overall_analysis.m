@@ -108,13 +108,13 @@ avg_normed_byIden = zeros(subjectNum,5,3);
             if face >= 4 && face <= 6 iden = 2; end
                 for ensum = 1:5
                     for i = 1:length(data_raw{sub,ensum,face})
-                    if std_iden(iden) ~= 0,
-                    data_normed_byIden{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_iden(iden))/ std_iden(iden); end
-                    if std_iden(iden) == 0,
-                    data_normed_byIden{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_iden(iden)); end
+                    if std_iden(iden) ~= 0
+                        data_normed_byIden{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_iden(iden))/ std_iden(iden); end
+                    if std_iden(iden) == 0
+                        data_normed_byIden{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_iden(iden));end
                     end
                 end
-         end
+        end
     end
  
 %======Normalized Data By Face ========%
@@ -139,9 +139,9 @@ avg_normed_byIden = zeros(subjectNum,5,3);
         for face = 1:6
             for ensum = 1:5
                 for i = 1:length(data_raw{sub,ensum,face})
-                    if std_face(face) ~= 0
+                if std_face(face) ~= 0,
                     data_normed_byFace{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_face(face)) / std_face(face); end
-                    if std_face(face) == 0
+                if std_face(face) == 0,
                     data_normed_byFace{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_face(face)); end
                 end
             end
@@ -215,6 +215,8 @@ avg_normed_byIden = zeros(subjectNum,5,3);
     end
     
     suptitle('trend for each subjects(across emotion)');
+    
+    return;
     
     %===== for each subject (neutral)=====%
     
