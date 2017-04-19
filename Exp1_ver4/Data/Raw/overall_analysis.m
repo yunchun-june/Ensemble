@@ -352,7 +352,8 @@ avg_normed_byIden = zeros(subjectNum,5,3);
         for sub = 1:subjectNum
             for emotion  = 1:3
                 if ensum == 5, condition = 1;
-                else condition = 2; end
+                elseif ensum ==1, condition = 2;
+                else continue; end
                 temp = [avg_normed_byFace(sub,ensum,emotion) condition emotion sub];
                 anova(end+1,:) = temp;
             end
