@@ -2,7 +2,7 @@ clear all;
 close all;
  
 singleOutlierStd= 2; 
-overallOutlierStd = 2;
+overallOutlierStd = 2.5;
  
 files = dir( 'Ensem_result_*.txt');
 subjectNum = length(files);
@@ -335,3 +335,35 @@ avg_normed_byIden = zeros(subjectNum,5,3);
     end
     
     RMAOV2(anova);
+    
+    
+    %=== ANOVA have feaful/ all happy ====%
+    anova = zeros(0,4);
+    
+    for ensum = 1:5
+        for sub = 1:subjectNum
+            for emotion  = 1:3
+                if ensum == 5, condition = 1;
+                else condition = 2; end
+                temp = [avg_normed_byFace(sub,ensum,emotion) condition emotion sub];
+                anova(end+1,:) = temp;
+            end
+        end
+    end
+    
+    RMAOV2(anova);
+    
+    %=== ANOVA diff number of fearful faces ====%
+    anova = zeros(0,4);
+    
+    for ensum = 1:4
+        for sub = 1:subjectNum
+            for emotion  = 1:3
+                temp = [avg_normed_byFace(sub,ensum,emotion) ensum emotion sub];
+                anova(end+1,:) = temp;
+            end
+        end
+    end
+    
+    RMAOV2(anova);
+    
