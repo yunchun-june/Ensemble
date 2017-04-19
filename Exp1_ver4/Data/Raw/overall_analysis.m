@@ -194,7 +194,7 @@ avg_normed_byIden = zeros(subjectNum,5,3);
     x = 1:5;
     
     for sub = 1:subjectNum
-        subplot(4,4,sub);
+        subplot(4,5,sub);
         %errorbar(y,overall(sub,:),overallStd(sub,:));
         scatter(x,overall(sub,:));
         lsline;
@@ -229,7 +229,7 @@ avg_normed_byIden = zeros(subjectNum,5,3);
     x = 1:5;
     
     for sub = 1:subjectNum
-        subplot(4,4,sub);
+        subplot(4,5,sub);
         %errorbar(y,overall(sub,:),overallStd(sub,:));
         scatter(x,overall(sub,:));
         lsline;
