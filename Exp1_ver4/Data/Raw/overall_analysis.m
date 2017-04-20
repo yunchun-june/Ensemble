@@ -202,19 +202,17 @@ avg_normed_byIden = zeros(subjectNum,5,3);
     x = 1:5;
     
     for sub = 1:subjectNum
-        subplot(4,5,sub);
+        subplot(5,5,sub);
         %errorbar(y,overall(sub,:),overallStd(sub,:));
         scatter(x,overall(sub,:));
         lsline;
         set(gca,'XTickLabel', {'4F','3F1H','2F2H','1F3H','4H'});
-        xlabel('Ensemble condition');
-        ylabel('Emotion rating ');
         axis([1 5 -1 1]);
         rsqare = getr2(x,overall(sub,:));
         title(['R2 = ' num2str(rsqare)]);
     end
     
-    suptitle('trend for each subjects(across emotion)');
+    %suptitle('trend for each subjects(across emotion)');
     
     %===== for each subject (neutral)=====%
     
@@ -237,19 +235,17 @@ avg_normed_byIden = zeros(subjectNum,5,3);
     x = 1:5;
     
     for sub = 1:subjectNum
-        subplot(4,5,sub);
+        subplot(5,5,sub);
         %errorbar(y,overall(sub,:),overallStd(sub,:));
         scatter(x,overall(sub,:));
         lsline;
         set(gca,'XTickLabel', {'4F','3F1H','2F2H','1F3H','4H'});
-        xlabel('Ensemble condition');
-        ylabel('Emotion rating ');
         axis([1 5 -1 1]);
         rsqare = getr2(x,overall(sub,:));
         title(['R2 = ' num2str(rsqare)]);
     end
     
-    suptitle('trend for each subjects(neutral face only)');
+    %suptitle('trend for each subjects(neutral face only)');
     
     
 
@@ -362,17 +358,68 @@ avg_normed_byIden = zeros(subjectNum,5,3);
     
     RMAOV2(anova);
     
-    %=== ANOVA diff number of fearful faces ====%
+        %=== ANOVA have feaful/ all happy ====%
     anova = zeros(0,4);
     
-    for ensum = 1:4
+    for ensum = 1:5
         for sub = 1:subjectNum
             for emotion  = 1:3
-                temp = [avg_normed_byFace(sub,ensum,emotion) ensum emotion sub];
+                if ensum == 5, condition = 1;
+                elseif ensum ==2, condition = 2;
+                else continue; end
+                temp = [avg_normed_byFace(sub,ensum,emotion) condition emotion sub];
                 anova(end+1,:) = temp;
             end
         end
     end
     
     RMAOV2(anova);
+    
+        %=== ANOVA have feaful/ all happy ====%
+    anova = zeros(0,4);
+    
+    for ensum = 1:5
+        for sub = 1:subjectNum
+            for emotion  = 1:3
+                if ensum == 5, condition = 1;
+                elseif ensum ==3, condition = 2;
+                else continue; end
+                temp = [avg_normed_byFace(sub,ensum,emotion) condition emotion sub];
+                anova(end+1,:) = temp;
+            end
+        end
+    end
+    
+    RMAOV2(anova);
+    
+        %=== ANOVA have feaful/ all happy ====%
+    anova = zeros(0,4);
+    
+    for ensum = 1:5
+        for sub = 1:subjectNum
+            for emotion  = 1:3
+                if ensum == 5, condition = 1;
+                elseif ensum ==4, condition = 2;
+                else continue; end
+                temp = [avg_normed_byFace(sub,ensum,emotion) condition emotion sub];
+                anova(end+1,:) = temp;
+            end
+        end
+    end
+    
+    RMAOV2(anova);
+    
+%     %=== ANOVA diff number of fearful faces ====%
+%     anova = zeros(0,4);
+%     
+%     for ensum = 1:4
+%         for sub = 1:subjectNum
+%             for emotion  = 1:3
+%                 temp = [avg_normed_byFace(sub,ensum,emotion) ensum emotion sub];
+%                 anova(end+1,:) = temp;
+%             end
+%         end
+%     end
+%     
+%     RMAOV2(anova);
     
