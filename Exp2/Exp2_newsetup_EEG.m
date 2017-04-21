@@ -29,7 +29,7 @@ try
         
     %====== Setup Screen ======%
         screid = max(Screen('Screens'));
-        [wPtr, screenRect]=Screen('OpenWindow',1, 0,[],32,2); % open screen
+        [wPtr, screenRect]=Screen('OpenWindow',screid, 0,[],32,2); % open screen
         [width, height] = Screen('WindowSize', wPtr); %get windows size 
 
     %===== Devices======%
