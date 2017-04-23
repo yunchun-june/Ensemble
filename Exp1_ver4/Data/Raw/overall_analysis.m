@@ -2,7 +2,7 @@ clear all;
 close all;
  
 singleOutlierStd= 2; 
-overallOutlierStd = 3;
+overallOutlierStd = 2.5;
  
 files = dir( 'Ensem_result_*.txt');
 subjectNum = length(files);
