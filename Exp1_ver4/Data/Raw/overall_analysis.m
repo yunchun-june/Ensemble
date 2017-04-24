@@ -1,6 +1,6 @@
 clear all;
 close all;
- 
+
 singleOutlierStd= 2; 
 overallOutlierStd = 2.5;
  
@@ -200,39 +200,74 @@ data_normed_byFace = cell(subjectNum,5,6);
     
     %suptitle('trend for each subjects(across emotion)');
     
-    %===== for each subject (neutral)=====%
-    
-    overall = zeros(subjectNum,5);
-    overallStd = zeros(subjectNum,5);
+%     %===== for each subject (neutral)=====%
+%     
+%     overall = zeros(subjectNum,5);
+%     overallStd = zeros(subjectNum,5);
+%     
+%     for ensum = 1:5
+%         for sub = 1:subjectNum
+%             temp = [];
+%             for emotion  = 2
+%                 temp(end+1) = avg_normed(sub,ensum,emotion);
+%                 temp(end+1) = avg_normed(sub,ensum,3+emotion);
+%             end
+%             overall(sub,ensum) = mean(temp);
+%             overallStd(sub,ensum) = std(temp)/sqrt(30);
+%         end
+%     end
+%     
+%     figure
+%     
+%     x = 1:5;
+%     
+%     for sub = 1:subjectNum
+%         subplot(4,5,sub);
+%         %errorbar(y,overall(sub,:),overallStd(sub,:));
+%         scatter(x,overall(sub,:));
+%         lsline;
+%         set(gca,'XTickLabel', {'4F','3F1H','2F2H','1F3H','4H'});
+%         axis([1 5 -1 1]);
+%         rsqare = getr2(x,overall(sub,:));
+%         title(['R2 = ' num2str(rsqare)]);
+%     end
+%     
+%     suptitle('trend for each subjects(neutral face only)');
+
+    %=====overall (seperate two faces)=====%
     
     for ensum = 1:5
+        temp1 = [];
+        temp2 = [];
         for sub = 1:subjectNum
-            temp = [];
-            for emotion  = 2
-                temp(end+1) = avg_normed(sub,ensum,emotion);
-                temp(end+1) = avg_normed(sub,ensum,3+emotion);
+            for emotion  = 1:3
+                temp1(end+1) = avg_normed(sub,ensum,emotion);
+                temp2(end+1) = avg_normed(sub,ensum,3+emotion);
             end
-            overall(sub,ensum) = mean(temp);
-            overallStd(sub,ensum) = std(temp)/sqrt(30);
         end
+        overall1(ensum) = mean(temp1);
+        overallStd1(ensum) = std(temp1)/sqrt(3*subjectNum);
+        overall2(ensum) = mean(temp2);
+        overallStd2(ensum) = std(temp2)/sqrt(3*subjectNum);
     end
     
     figure
-    
     x = 1:5;
+    subplot(1,2,1);
+    errorbar(x,overall1,overallStd1);
+    axis([0 6 -0.3 0.3]);
+    set(gca,'XTickLabel', {'','4F','3F1H','2F2H','1F3H','4H'});
+    xlabel('Ensemble condition');
+    ylabel('Emotion rating (nomalized)');
+    title('Overall Result (across emotions)');
     
-    for sub = 1:subjectNum
-        subplot(4,5,sub);
-        %errorbar(y,overall(sub,:),overallStd(sub,:));
-        scatter(x,overall(sub,:));
-        lsline;
-        set(gca,'XTickLabel', {'4F','3F1H','2F2H','1F3H','4H'});
-        axis([1 5 -1 1]);
-        rsqare = getr2(x,overall(sub,:));
-        title(['R2 = ' num2str(rsqare)]);
-    end
-    
-    %suptitle('trend for each subjects(neutral face only)');
+    subplot(1,2,2);
+    errorbar(x,overall2,overallStd2);
+    axis([0 6 -0.3 0.3]);
+    set(gca,'XTickLabel', {'','4F','3F1H','2F2H','1F3H','4H'});
+    xlabel('Ensemble condition');
+    ylabel('Emotion rating (nomalized)');
+    title('Overall Result (across emotions)');
 
     %=====overall (across emotion )=====%
     
@@ -260,33 +295,33 @@ data_normed_byFace = cell(subjectNum,5,6);
     ylabel('Emotion rating (nomalized)');
     title('Overall Result (across emotions)');
     
-    %=====overall (neutral face only)=====%
+%     %=====overall (neutral face only)=====%
+%     
+%     overall = [];
+%     overallStd = [];
+%     for ensum = 1:5
+%         temp = [];
+%         for sub = 1:subjectNum
+%             for emotion  = 2
+%                 temp(end+1) = avg_normed(sub,ensum,emotion);
+%                 temp(end+1) = avg_normed(sub,ensum,3+emotion);
+%             end
+%         end
+%         overall(ensum) = mean(temp);
+%         overallStd(ensum) = std(temp)/sqrt(2*subjectNum);
+%     end
+%     
+%     figure
+%     x = 1:5;
+%     %plot(overall);
+%     errorbar(x,overall,overallStd);
+%     axis([0 6 -0.3 0.3]);
+%     set(gca,'XTickLabel', {'','4F','3F1H','2F2H','1F3H','4H'});
+%     xlabel('Ensemble condition');
+%     ylabel('Emotion rating (nomalized)');
+%     title('Overall Result (neutral face only)');
     
-    overall = [];
-    overallStd = [];
-    for ensum = 1:5
-        temp = [];
-        for sub = 1:subjectNum
-            for emotion  = 2
-                temp(end+1) = avg_normed(sub,ensum,emotion);
-                temp(end+1) = avg_normed(sub,ensum,3+emotion);
-            end
-        end
-        overall(ensum) = mean(temp);
-        overallStd(ensum) = std(temp)/sqrt(2*subjectNum);
-    end
-    
-    figure
-    x = 1:5;
-    %plot(overall);
-    errorbar(x,overall,overallStd);
-    axis([0 6 -0.3 0.3]);
-    set(gca,'XTickLabel', {'','4F','3F1H','2F2H','1F3H','4H'});
-    xlabel('Ensemble condition');
-    ylabel('Emotion rating (nomalized)');
-    title('Overall Result (neutral face only)');
-    
-   %===== for each subject (neutral)=====%
+   %===== raw data =====%
    
     x = cell(5);
     y = cell(5);
@@ -310,16 +345,16 @@ data_normed_byFace = cell(subjectNum,5,6);
         ylabel('Emotion rating ');
         axis([1 3 -6 6]);
         legend('4F','3F1H','2F2H','1F3H','4H');
-        
-    %=== ANOVA raw data====%
+       
+    %=== ANOVA overall normed 1:5====%
     anova = zeros(0,4);
     
     for ensum = 1:5
         for sub = 1:subjectNum
             for emotion  = 1:3
-                temp = [avg_raw(sub,ensum,emotion) ensum emotion sub];
+                temp = [avg_normed(sub,ensum,emotion) ensum emotion sub];
                 anova(end+1,:) = temp;
-                temp = [avg_raw(sub,ensum,3+emotion) ensum emotion sub];
+                temp = [avg_normed(sub,ensum,3+emotion) ensum emotion sub];
                 anova(end+1,:) = temp;
             end
         end
@@ -328,7 +363,7 @@ data_normed_byFace = cell(subjectNum,5,6);
     RMAOV2(anova);
     
     
-    %=== ANOVA ====%
+    %=== ANOVA overall normed 1:4====%
     anova = zeros(0,4);
     
     for ensum = 1:4
@@ -343,76 +378,40 @@ data_normed_byFace = cell(subjectNum,5,6);
     end
     
     RMAOV2(anova);
+  
     
-    %=== ANOVA have feaful/ all happy ====%
-    anova = zeros(0,4);
+    %=== T-test between conditions ====%
     
-    for ensum = [1 5]
-        for sub = 1:subjectNum
-            for emotion  = 1:3
-                if ensum ==5 condition = 1;
-                else condition = 2; end
-                temp = [avg_normed(sub,ensum,emotion) condition 1 sub];
-                anova(end+1,:) = temp;
-                temp = [avg_normed(sub,ensum,3+emotion) condition 1 sub];
-                anova(end+1,:) = temp;
+    Ttest_p = zeros(5,5);
+    Ttest_h = zeros(5,5);
+    
+    for con1 = 1:5
+        for con2 = 1:5
+
+            x = [];
+            y = [];
+            for ensum = 1:5
+                for sub = 1:subjectNum
+                    for face  = 1:6
+                       if ensum == con1
+                           x(end+1) = avg_normed(sub,ensum,face);
+                       end
+                       if ensum == con2
+                           y(end+1) = avg_normed(sub,ensum,face);
+                       end
+                    end
+                end
             end
+            [h,p,ci,stats] = ttest2(x,y);
+            Ttest_p(con1,con2) = p;
+            Ttest_h(con1,con2) = h;
         end
     end
     
-    RMAOV2(anova);
+    disp(Ttest_p);
+    disp(Ttest_h);
     
-    %=== ANOVA have feaful/ all happy ====%
-    anova = zeros(0,4);
     
-    for ensum = [2 5]
-        for sub = 1:subjectNum
-            for emotion  = 1:3
-                if ensum ==5 condition = 1;
-                else condition = 2; end
-                temp = [avg_normed(sub,ensum,emotion) condition 1 sub];
-                anova(end+1,:) = temp;
-                temp = [avg_normed(sub,ensum,3+emotion) condition 1 sub];
-                anova(end+1,:) = temp;
-            end
-        end
-    end
     
-    RMAOV2(anova);
     
-    %=== ANOVA have feaful/ all happy ====%
-    anova = zeros(0,4);
-    
-    for ensum = [3 5]
-        for sub = 1:subjectNum
-            for emotion  = 1:3
-                if ensum ==5 condition = 1;
-                else condition = 2; end
-                temp = [avg_normed(sub,ensum,emotion) condition 1 sub];
-                anova(end+1,:) = temp;
-                temp = [avg_normed(sub,ensum,3+emotion) condition 1 sub];
-                anova(end+1,:) = temp;
-            end
-        end
-    end
-    
-    RMAOV2(anova);
-    
-    %=== ANOVA have feaful/ all happy ====%
-    anova = zeros(0,4);
-    
-    for ensum = [4 5]
-        for sub = 1:subjectNum
-            for emotion  = 1:3
-                if ensum ==5 condition = 1;
-                else condition = 2; end
-                temp = [avg_normed(sub,ensum,emotion) condition 1 sub];
-                anova(end+1,:) = temp;
-                temp = [avg_normed(sub,ensum,3+emotion) condition 1 sub];
-                anova(end+1,:) = temp;
-            end
-        end
-    end
-    
-    RMAOV2(anova);
     
