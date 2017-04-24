@@ -14,16 +14,16 @@ close all;
 
     % white faces
     
-    faceOpc(1,1) = 1;  faceOpc(2,1) = 0.4;
-    faceOpc(1,2) = 1;  faceOpc(2,2) = 0.4;
-    faceOpc(1,3) = 1;  faceOpc(2,3) = 0.4;
-    faceOpc(1,4) = 1;  faceOpc(2,4) = 0.4;
+    faceOpc(1,1) = 1;  faceOpc(2,1) = 0.1;
+    faceOpc(1,2) = 1;  faceOpc(2,2) = 0.1;
+    faceOpc(1,3) = 1;  faceOpc(2,3) = 0.1;
+    faceOpc(1,4) = 1;  faceOpc(2,4) = 0.5;
 
-    maskOpc = 0.10;
-    disX = 180;
+    maskOpc = 1;
+    disX = 210;
     waitTime = 60;
 
-    lowerBound = 0.02;
+    lowerBound = 0.02; 
     upperBound = 1.00;     
     stepsize_down = 0.1; 
     stepsize_up = 0.1 ;    
