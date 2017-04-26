@@ -188,7 +188,7 @@ data_normed_byFace = cell(subjectNum,5,6);
     x = 1:5;
     
     for sub = 1:subjectNum
-        subplot(4,5,sub);
+        subplot(5,5,sub);
         %errorbar(y,overall(sub,:),overallStd(sub,:));
         scatter(x,overall(sub,:));
         lsline;
@@ -354,8 +354,8 @@ data_normed_byFace = cell(subjectNum,5,6);
             for emotion  = 1:3
                 temp = [avg_normed(sub,ensum,emotion) ensum emotion sub];
                 anova(end+1,:) = temp;
-                temp = [avg_normed(sub,ensum,3+emotion) ensum emotion sub];
-                anova(end+1,:) = temp;
+                %temp = [avg_normed(sub,ensum,3+emotion) ensum emotion sub];
+                %anova(end+1,:) = temp;
             end
         end
     end
