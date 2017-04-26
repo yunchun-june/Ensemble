@@ -22,6 +22,7 @@ data_normed_byFace = cell(subjectNum,5,6);
     for sub = 1:subjectNum
         [isExp cond target judgement noBreak stairCase t1 t2 t3 t4 s1 s2 s3 s4 rep p1 p2 p3 p4]= textread(files(sub).name,'%d %d %d %d %d %d %f %f %f %f %d %d %d %d %d %d %d %d %d');
         temp_byFace = cell(6);
+        temp_byFace_blank = cell(6);
  
         false = 0;
         %compute outlier
@@ -354,8 +355,8 @@ data_normed_byFace = cell(subjectNum,5,6);
             for emotion  = 1:3
                 temp = [avg_normed(sub,ensum,emotion) ensum emotion sub];
                 anova(end+1,:) = temp;
-                %temp = [avg_normed(sub,ensum,3+emotion) ensum emotion sub];
-                %anova(end+1,:) = temp;
+                temp = [avg_normed(sub,ensum,3+emotion) ensum emotion sub];
+                anova(end+1,:) = temp;
             end
         end
     end
@@ -392,7 +393,7 @@ data_normed_byFace = cell(subjectNum,5,6);
             y = [];
             for ensum = 1:5
                 for sub = 1:subjectNum
-                    for face  = 1:6
+                    for face  = 1:3
                        if ensum == con1
                            x(end+1) = avg_normed(sub,ensum,face);
                        end
@@ -402,7 +403,7 @@ data_normed_byFace = cell(subjectNum,5,6);
                     end
                 end
             end
-            [h,p,ci,stats] = ttest2(x,y);
+            [h,p,ci,stats] = ttest(x,y);
             Ttest_p(con1,con2) = p;
             Ttest_h(con1,con2) = h;
         end
