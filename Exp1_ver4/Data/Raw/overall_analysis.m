@@ -12,8 +12,7 @@ data_blank = cell(subjectNum,10);
 data_normed = cell(subjectNum,5,6);
  
 %===== Read in data & Exclude Outlier======%
- 
-    
+
     % readin data excluding outlier based on subject's own std
     raw_byFace_computeOutlier = cell(6);
     sub_low = zeros(subjectNum,6);
@@ -37,8 +36,8 @@ data_normed = cell(subjectNum,5,6);
             if ~noBreak(i) && ~isExp(i)
                 falseAlarm = falseAlarm+1;
             end
-            
         end
+        
         disp(['subject ' files(sub).name ' false alarm: ' num2str(falseAlarm)]);
          
         for i = 1:6
@@ -55,14 +54,12 @@ data_normed = cell(subjectNum,5,6);
             if noBreak(i)
                 if isExp(i)
                     isOutlier = judgement(i)< sub_low(sub,target(i)) || judgement(i) > sub_high(sub,target(i));
-                    if ~isOutlier data_raw{sub,cond(i),target(i)}(end+1) = judgement(i);
-                    else disp('outlier!'); end
+                    if ~isOutlier data_raw{sub,cond(i),target(i)}(end+1) = judgement(i);end
                 end
 
                 if ~isExp(i)
                     isOutlier = judgement(i)< sub_low_blank(sub,target(i)) || judgement(i) > sub_high_blank(sub,target(i));
-                    if ~isOutlier data_blank{sub,target(i)}(end+1) = judgement(i);
-                    else disp('outlier!'); end
+                    if ~isOutlier data_blank{sub,target(i)}(end+1) = judgement(i);end
                 end 
                 
             end
@@ -181,8 +178,40 @@ data_normed = cell(subjectNum,5,6);
 %======== Subject's judgement on faces==== %         
         
         figure
+        for sub = 1:subjectNum
+            x1 = 1:5;
+            x2 = 6:10;
+            y = [];
+            error = [];
+            
+            subplot(4,4,sub);
+            errorbar(x1,avg_blank(sub,1:5),std_blank(sub,1:5));
+            hold on;
+            errorbar(x2,avg_blank(sub,6:10),std_blank(sub,6:10));
+            axis([0,11,-10,10]);
+            ylabel('judgement score');
+            xlabel('face No.');
+            title(files(sub).name);
+        end
         
-        
+        figure
+        for sub = 10
+            x1 = 1:5;
+            x2 = 6:10;
+            y = [];
+            error = [];
+            
+            errorbar(x1,avg_blank(sub,1:5),std_blank(sub,1:5));
+            hold on;
+            errorbar(x2,avg_blank(sub,6:10),std_blank(sub,6:10));
+            axis([0,11,-10,10]);
+            ylabel('judgement score');
+            xlabel('face No.');
+            title(files(sub).name);
+        end
+
+
+        figure
         for sub = 1:subjectNum
             x1 = 1:3;
             x2 = 4:6;
@@ -200,7 +229,7 @@ data_normed = cell(subjectNum,5,6);
                 error(end+1) = std(temp);
             end
             
-            subplot(5,4,sub);
+            subplot(4,4,sub);
             errorbar(x1,y(1:3),error(1:3));
             hold on;
             errorbar(x2,y(4:6),error(4:6));
@@ -208,26 +237,6 @@ data_normed = cell(subjectNum,5,6);
             ylabel('judgement score');
             xlabel('face No.');
             title(files(sub).name);
-
-        end
-        
-        
-        figure
-        for sub = 1:subjectNum
-            x1 = 1:5;
-            x2 = 6:10;
-            y = [];
-            error = [];
-            
-            subplot(5,4,sub);
-            errorbar(x1,avg_blank(sub,1:5),std_blank(sub,1:5));
-            hold on;
-            errorbar(x2,avg_blank(sub,6:10),std_blank(sub,6:10));
-            axis([0,11,-10,10]);
-            ylabel('judgement score');
-            xlabel('face No.');
-            title(files(sub).name);
-
         end
 
     
@@ -292,7 +301,6 @@ data_normed = cell(subjectNum,5,6);
     
     
     %=====overall - target face emotion=====%
-    
 
     figure
     x = 1:3;
@@ -348,7 +356,7 @@ data_normed = cell(subjectNum,5,6);
     set(gca,'XTickLabel', {'','4F','3F1H','2F2H','1F3H','4H'});
     xlabel('Ensemble condition');
     ylabel('Emotion rating (nomalized)');
-    title('Overall Result (across emotions)');
+    title('Effect of Ensemble Contition(Person A)');
     
     subplot(1,2,2);
     errorbar(x,overall2,overallStd2);
@@ -356,12 +364,9 @@ data_normed = cell(subjectNum,5,6);
     set(gca,'XTickLabel', {'','4F','3F1H','2F2H','1F3H','4H'});
     xlabel('Ensemble condition');
     ylabel('Emotion rating (nomalized)');
-    title('Overall Result (across emotions)');
-
-
+    title('Effect of Ensemble Contition(Person B)');
     
-    
-   %===== raw data =====%
+   %===== raw data (scatter plot )=====%
    
     x = cell(5);
     y = cell(5);
@@ -386,8 +391,43 @@ data_normed = cell(subjectNum,5,6);
         axis([1 3 -6 6]);
         legend('4F','3F1H','2F2H','1F3H','4H');
         
-       
-    %=== ANOVA overall normed 1:5====%
+        
+%===== raw data (Bar chart )=====%
+
+figure
+for emotion  = 1:3
+    y = [];
+    error = [];
+    for ensem = 1:5
+        temp = [];
+        for sub = 1:subjectNum
+            temp(end+1) = avg_rawData(sub,ensem,emotion);
+            temp(end+1) = avg_rawData(sub,ensem,3+emotion);
+        end
+        y(ensem) = mean(temp);
+        error(ensem) = std(temp)/sqrt(2*subjectNum);
+    end
+    subplot(1,3,emotion);
+    errorbar(1:5,y,error);
+end
+
+%=== ANOVA overall normed ====%
+    anova = zeros(0,4);
+    
+    for ensum = 1:5
+        for sub = 1:subjectNum
+            for emotion  = 1:3
+                temp = [avg_normed(sub,ensum,emotion) ensum emotion sub];
+                anova(end+1,:) = temp;
+                temp = [avg_normed(sub,ensum,3+emotion) ensum emotion sub];
+                anova(end+1,:) = temp;
+            end
+        end
+    end
+    
+    RMAOV2(anova);
+    
+    %=== ANOVA overall raw data ====%
     anova = zeros(0,4);
     
     for ensum = 1:5
@@ -402,8 +442,6 @@ data_normed = cell(subjectNum,5,6);
     end
     
     RMAOV2(anova);
-    
-
     
     %=== T-test between conditions ====%
     

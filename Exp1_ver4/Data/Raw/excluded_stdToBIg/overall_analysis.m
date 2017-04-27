@@ -184,7 +184,7 @@ data_normed = cell(subjectNum,5,6);
             y = [];
             error = [];
             
-            subplot(4,4,sub);
+            subplot(4,5,sub);
             errorbar(x1,avg_blank(sub,1:5),std_blank(sub,1:5));
             hold on;
             errorbar(x2,avg_blank(sub,6:10),std_blank(sub,6:10));
@@ -214,7 +214,7 @@ data_normed = cell(subjectNum,5,6);
                 error(end+1) = std(temp);
             end
             
-            subplot(4,4,sub);
+            subplot(4,5,sub);
             errorbar(x1,y(1:3),error(1:3));
             hold on;
             errorbar(x2,y(4:6),error(4:6));
@@ -224,33 +224,6 @@ data_normed = cell(subjectNum,5,6);
             title(files(sub).name);
         end
 
-        
-        figure
-        for sub = 4
-            x1 = 1:3;
-            x2 = 4:6;
-            y = [];
-            error = [];
-            
-            for face = 1:6
-                temp = [];
-                for ensem = 1:5
-                    for i= 1:length(data_raw{sub,ensem,face})
-                        temp(end+1) = data_raw{sub,ensem,face}(i);
-                    end
-                end
-                y(end+1) = mean(temp);
-                error(end+1) = std(temp);
-            end
-            
-           errorbar(x1,y(1:3),error(1:3));
-            hold on;
-            errorbar(x2,y(4:6),error(4:6));
-            axis([0,7,-10,10]);
-            ylabel('judgement score');
-            xlabel('face No.');
-            title(files(sub).name);
-        end
     
 %===== for each subject(all emotion) =====%
     

@@ -38,26 +38,6 @@ thrfile = dir( ['Ensem_threshold_' ID '.txt']);
             if position == 1 title(ID); end
         end
         
-        catchResponse = cell(10);
-        catchMean = [];
-        catchStd = [];
-        data_raw = cell(5,6);
         
-        for i = 1:length(isExp)
-            if ~isExp(i)
-                catchResponse{targetFace(i)}(end+1) = judgement(i);
-            end
-            
-            if isExp(i)
-                data_raw{cond(i),targetFace(i)}(end+1) = judgement(i);
-            end
-        end
+      
         
-        for i = 1:10
-            catchMean(i) = mean(catchResponse{i});
-            catchStd(i) = std(catchResponse{i});
-        end
-        
-        disp(catchMean);
-        disp(catchStd);
-        disp(data_raw)
