@@ -50,48 +50,6 @@ try
     
     resultFileColNum = 19; 
  
-%====== Experimental Design ======%
-    
-    %--- Thresholding Procedure ---%
-    lowerBound      = 0.02;
-    upperBound      = 1.00;     
-    stepsize_down	= 0.04; 
-    stepsize_up     = 0.02;    
-    stairCase_up	= 2; %2up1down
-    stairCaseNum    = 2;
-    
-    %--- Experiment Condition ---%
-    targetFaceNum = 6;
-    blankFaceNum  = 10;
-    ensemConditionNum  = 5;
-    exp_rep = 6;
-    blank_rep = 5;
-    expTrialNumInBlock = targetFaceNum*exp_rep;
-    blankTrialNumInBlock = blankFaceNum*blank_rep;
-    trialNumInBlock = expTrialNumInBlock + blankTrialNumInBlock;
-    
-    %--- Generate Condition List ---%
-    condList = cell(5);
-    for block = 1:ensemConditionNum
-        expTrialIndex = 1:expTrialNumInBlock;
-        blankTrialIndex = expTrialNumInBlock+1:trialNumInBlock;
-        
-        temp = zeros(trialNumInBlock,resultFileColNum);
-        temp(1:trialNumInBlock,ENSEM)         = block;
-        temp(expTrialIndex    ,IS_EXP_TRIAL)  = 1;
-        temp(expTrialIndex    ,TARGET)        = repmat(1:targetFaceNum,1,expTrialNumInBlock/targetFaceNum);
-        temp(expTrialIndex    ,STAIRCASE)     = repmat(1:stairCaseNum,1,expTrialNumInBlock/stairCaseNum);
-        
-        temp(blankTrialIndex  ,IS_EXP_TRIAL) = 0;
-        temp(blankTrialIndex  ,TARGET)       = repmat(1:blankFaceNum,1,blank_rep/ensemConditionNum);
-        temp(blankTrialIndex  ,STAIRCASE)    = 1;
-        
-        randomIndex = randperm(trialNumInBlock);
-        for i = 1:trialNumInBlock
-            condList{block}(end+1,:) = temp(randomIndex(i),:);
-        end
-    end
-    
 %====== Setup Screen & Keyboard ======%
     screid = max(Screen('Screens'));
     [wPtr, screenRect]=Screen('OpenWindow',screid, 0,[],32,2);
@@ -193,7 +151,49 @@ try
                         [R_cenX-reportdis-15 BoxcenY+reportdis-10];
                         [R_cenX+reportdis-15 BoxcenY+reportdis-10];
                       ];
-
+    
+%====== Experimental Design ======%
+    
+    %--- Thresholding Procedure ---%
+    lowerBound      = 0.02;
+    upperBound      = 1.00;     
+    stepsize_down	= 0.04; 
+    stepsize_up     = 0.02;    
+    stairCase_up	= 2; %2up1down
+    stairCaseNum    = 2;
+    
+    %--- Experiment Condition ---%
+    targetFaceNum = 6;
+    blankFaceNum  = 10;
+    ensemConditionNum  = 5;
+    exp_rep = 6;
+    blank_rep = 5;
+    expTrialNumInBlock = targetFaceNum*exp_rep;
+    blankTrialNumInBlock = blankFaceNum*blank_rep;
+    trialNumInBlock = expTrialNumInBlock + blankTrialNumInBlock;
+    
+    %--- Generate Condition List ---%
+    condList = cell(5);
+    for block = 1:ensemConditionNum
+        expTrialIndex = 1:expTrialNumInBlock;
+        blankTrialIndex = expTrialNumInBlock+1:trialNumInBlock;
+        
+        temp = zeros(trialNumInBlock,resultFileColNum);
+        temp(1:trialNumInBlock,ENSEM)         = block;
+        temp(expTrialIndex    ,IS_EXP_TRIAL)  = 1;
+        temp(expTrialIndex    ,TARGET)        = repmat(1:targetFaceNum,1,expTrialNumInBlock/targetFaceNum);
+        temp(expTrialIndex    ,STAIRCASE)     = repmat(1:stairCaseNum,1,expTrialNumInBlock/stairCaseNum);
+        
+        temp(blankTrialIndex  ,IS_EXP_TRIAL) = 0;
+        temp(blankTrialIndex  ,TARGET)       = repmat(1:blankFaceNum,1,1);
+        temp(blankTrialIndex  ,STAIRCASE)    = 1;
+        
+        randomIndex = randperm(trialNumInBlock);
+        for i = 1:trialNumInBlock
+            condList{block}(end+1,:) = temp(randomIndex(i),:);
+        end
+    end
+    
 %====== Time & Freq ======%
 
     waitTime        = 60;
