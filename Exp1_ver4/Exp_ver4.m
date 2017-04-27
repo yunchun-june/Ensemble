@@ -22,10 +22,10 @@ try
     
 %====== Some Constant ======%
     
-    RIGHT = 1;
-    LEFT = 2;
-    TRUE = 1;
-    FALSE = 0;
+    RIGHT   = 1;
+    LEFT    = 2;
+    TRUE    = 1;
+    FALSE   = 0;
     
 %====== Content of Result File =======%
 
@@ -299,10 +299,10 @@ try
                 
                 %-----Initialize Trials----%
 
-                     ensemCon   = condList{block}(i,ENSEM);
-                     targetFace = condList{block}(i,TARGET);
-                     stair      = condList{block}(i,STAIRCASE);
-                     isExp      = condList{block}(i,IS_EXP_TRIAL);
+                     ensemCon       = condList{block}(i,ENSEM);
+                     targetFaceIdx  = condList{block}(i,TARGET);
+                     stair          = condList{block}(i,STAIRCASE);
+                     isExp          = condList{block}(i,IS_EXP_TRIAL);
                      
                      answer     = 0;
                      noBreak    = TRUE;
@@ -396,23 +396,23 @@ try
                     timezero = GetSecs;
                     while GetSecs-timezero < 0.1 && noBreak && isExp
                         FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                        Screen('DrawTexture',wPtr, targetFace.tex{targetFace}, [], targetFacePosi_L);
-                        Screen('DrawTexture',wPtr, targetFace.tex{targetFace}, [], targetFacePosi_R);
+                        Screen('DrawTexture',wPtr, targetFace.tex{targetFaceIdx}, [], targetFacePosi_L);
+                        Screen('DrawTexture',wPtr, targetFace.tex{targetFaceIdx}, [], targetFacePosi_R);
                         Screen('Flip',wPtr);
                     end
                     
                     while GetSecs-timezero < 0.2 && noBreak &&  ~isExp
                         FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                        Screen('DrawTexture',wPtr, blankFace.tex{targetFace}, [], targetFacePosi_L);
-                        Screen('DrawTexture',wPtr, blankFace.tex{targetFace}, [], targetFacePosi_R);
+                        Screen('DrawTexture',wPtr, blankFace.tex{targetFaceIdx}, [], targetFacePosi_L);
+                        Screen('DrawTexture',wPtr, blankFace.tex{targetFaceIdx}, [], targetFacePosi_R);
                         Screen('Flip',wPtr);
                     end
                        
                     timezero = GetSecs;
                     while GetSecs-timezero < 0.1 && noBreak && isExp
                         FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                        Screen('DrawTexture',wPtr, targetMask.tex{targetFace}, [], targetFacePosi_L);
-                        Screen('DrawTexture',wPtr, targetMask.tex{targetFace}, [], targetFacePosi_R);
+                        Screen('DrawTexture',wPtr, targetMask.tex{targetFaceIdx}, [], targetFacePosi_L);
+                        Screen('DrawTexture',wPtr, targetMask.tex{targetFaceIdx}, [], targetFacePosi_R);
                         Screen('Flip',wPtr);
                     end
 
