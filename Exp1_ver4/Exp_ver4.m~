@@ -201,7 +201,7 @@ try
 
     % ------Target Faces(exp trials)-----%
     folder = './faces/target/';
-    
+    load mandrill
         targetFace.file = dir([folder 'target*.jpg']);
         for i= 1:length(targetFace.file)
            targetFace.img{i} = imread([folder targetFace.file(i).name]);
@@ -216,6 +216,7 @@ try
     
     % ------ Target Faces(blank trials) ------%
     folder = './faces/blank/';
+    load mandrill
         blankFace.file = dir([folder 'blank*.jpg']);
         for i= 1:length(blankFace.file)
            blankFace.img{i} = imread([folder blankFace.file(i).name]);
@@ -223,9 +224,9 @@ try
            
            %create scramble mask
            im =  double(blankFace.img{i})/255;
-           blankMask.img{i} = imscramble(im,0.75,'range');
-           im = uint8(blankMask.img{i}*255);
-           blankMask.tex{i} = Screen('MakeTexture',wPtr,im);
+           catchMask.img{i} = imscramble(im,0.75,'range');
+           im = uint8(catchMask.img{i}*255);
+           catchMask.tex{i} = Screen('MakeTexture',wPtr,im);
         end   
      
     % -------- Ensemble Faces ---------%
@@ -417,8 +418,8 @@ try
 
                     while GetSecs-timezero < 0.1 && noBreak && ~isExp
                         FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                        Screen('DrawTexture',wPtr, blankMask.tex{targetFace}, [], targetFacePosi_L);
-                        Screen('DrawTexture',wPtr, blankMask.tex{targetFace}, [], targetFacePosi_R);
+                        Screen('DrawTexture',wPtr, catchMask.tex{targetFace}, [], targetFacePosi_L);
+                        Screen('DrawTexture',wPtr, catchMask.tex{targetFace}, [], targetFacePosi_R);
                         Screen('Flip',wPtr);
                     end
                     
