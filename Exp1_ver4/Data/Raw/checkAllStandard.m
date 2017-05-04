@@ -1,8 +1,6 @@
-clear all;
-close all;
+function checkAllStandard(filename)
 
-ID = '1703193';
-resultfile = dir(['Ensem_result_' ID '.txt']);
+resultfile = dir(filename);
 
 % Standards for excluding subjects
 % Breaking rate in any quadrant below 10%
@@ -66,33 +64,33 @@ thr_SD = 5;
     end
     
 %====== Draw StairCases Graph =======%
-    figure
-    x1 = 1:90;
-    x2 = 1:90;
-
-    for position = 1:4
-        subplot(2,2,position)
-        plot(x1,thrData{1,position},x2, thrData{2,position});
-        axis([0,120,0,1]);
-        xlabel('trials');
-        ylabel('contrast');
-        if position == 1 title(ID); end
-    end
+%     figure
+%     x1 = 1:90;
+%     x2 = 1:90;
+% 
+%     for position = 1:4
+%         subplot(2,2,position)
+%         plot(x1,thrData{1,position},x2, thrData{2,position});
+%         axis([0,120,0,1]);
+%         xlabel('trials');
+%         ylabel('contrast');
+%         if position == 1 title(ID); end
+%     end
     
 %=== Draw Graph of Judgement on each faces ====%
-    x1 = 1:5;
-    x2 = 6:10;
-    y = [];
-    error = [];
-    
-    figure
-    errorbar(x1,avg_blank(1:5),std_blank(1:5));
-    hold on;
-    errorbar(x2,avg_blank(6:10),std_blank(6:10));
-    axis([0,11,-10,10]);
-    ylabel('judgement score');
-    xlabel('face No.');
-    title(ID);
+%     x1 = 1:5;
+%     x2 = 6:10;
+%     y = [];
+%     error = [];
+%     
+%     figure
+%     errorbar(x1,avg_blank(1:5),std_blank(1:5));
+%     hold on;
+%     errorbar(x2,avg_blank(6:10),std_blank(6:10));
+%     axis([0,11,-10,10]);
+%     ylabel('judgement score');
+%     xlabel('face No.');
+%     title(ID);
     
 %====== Check All standards =======%
     exclude = 0;
@@ -107,15 +105,22 @@ thr_SD = 5;
     end
     
 %====== Show Result =======%
-
-        disp(['breaking rate'])
+    if exclude == 1
+        disp(['Exclude ' filename ' base on breaking rate'])
         disp(breakingRate);
+    end
 
-        disp(['false alarm rate'])
+    if exclude == 2
+        disp(['Exclude ' filename ' base on false alarm rate'])
         disp(mean(falseAlarm));
+    end
     
-        disp(['std on each faces'])
+    if exclude == 3
+        disp(['Exclude ' filename ' base on enstable standard'])
         disp(std_blank);
+    end
+
+end
     
     
     

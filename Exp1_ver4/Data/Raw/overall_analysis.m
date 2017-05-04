@@ -11,6 +11,12 @@ data_raw = cell(subjectNum,5,6);
 data_blank = cell(subjectNum,10);
 data_normed = cell(subjectNum,5,6);
  
+disp('=========== To Exclude ============');
+for sub = 1:subjectNum
+    checkAllStandard(files(sub).name);
+end
+disp('====================================');
+
 %===== Read in data & Exclude Outlier======%
 
     % readin data excluding outlier based on subject's own std
@@ -23,8 +29,6 @@ data_normed = cell(subjectNum,5,6);
         [isExp cond target judgement noBreak stairCase t1 t2 t3 t4 s1 s2 s3 s4 rep p1 p2 p3 p4]= textread(files(sub).name,'%d %d %d %d %d %d %f %f %f %f %d %d %d %d %d %d %d %d %d');
         temp_byFace = cell(6);
         temp_blank = cell(10);
- 
-        falseAlarm = 0;
         
         %compute outlier
         for i=1:length(isExp)
@@ -32,13 +36,8 @@ data_normed = cell(subjectNum,5,6);
                 if isExp(i) temp_byFace{target(i)}(end+1) = judgement(i); end
                 if ~isExp(i) temp_blank{target(i)}(end+1) = judgement(i); end
             end
-            
-            if ~noBreak(i) && ~isExp(i)
-                falseAlarm = falseAlarm+1;
-            end
         end
-        
-        disp(['subject ' files(sub).name ' false alarm: ' num2str(falseAlarm)]);
+
          
         for i = 1:6
             sub_low(sub,i) = mean(temp_byFace{i}) - singleOutlierStd * std(temp_byFace{i});
