@@ -440,8 +440,7 @@ try
                             Writetext(wPtr,'negative',L_cenX, R_cenX,BoxcenY, 70,-10, [255 255 255],15);
                             Writetext(wPtr,'very',L_cenX, R_cenX,BoxcenY, -25,10, [255 255 255],15);
                             Writetext(wPtr,'positive',L_cenX, R_cenX,BoxcenY, -20,-10, [255 255 255],15);
-                            Writetext(wPtr, num2str(answer), L_cenX, R_cenX, BoxcenY, 5-answer*(boxsize-20)/10,-60, [255 255 255],15);
-                            SelectionBar(wPtr,L_cenX,R_cenX,BoxcenY, boxsize, answer);
+                            Slider(wPtr,L_cenX,R_cenX,BoxcenY, boxsize, answer);
                             Screen('Flip',wPtr);
 
                         % get keyboard response
