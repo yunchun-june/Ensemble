@@ -27,8 +27,8 @@ try
     TRUE    = 1;
     FALSE   = 0;
 
-%   Content of Result File
-%-------------------------------
+%====== Content of Result File ======%
+
 %   column name    colunm number  
     IS_EXP_TRIAL    =1;
     ENSEM           =2;
@@ -53,6 +53,7 @@ try
     resultFileColNum = 19;
  
 %====== Experimental Design ======%
+
     
     %--- Thresholding Procedure ---%
     lowerBound      = 0.02;
@@ -521,14 +522,14 @@ try
                     
                 %---------- Monitoring ----------%
                     disp('-------------------------------')
-                    disp('trial condition: ');
+                    disp('   isExp Ensem Targ.  Ans. Done  Staircase');
                     disp(condList{block}(i,1:6));
-                    disp('threshold: ');
+                    disp('Threshold: ');
                     disp(condList{block}(i,CON(:)));
                     disp(condList{block}(i,SEEN(:)));
-                    disp('block complete');
-                    disp([num2str(doneBlockNum) '   ' num2str(sum(condList{block}(:,DONE))) '/' num2str(trialNumInBlock)]);
-                    disp('break rate')
+                    disp('Blk DoneTrials');
+                    disp([num2str(doneBlockNum+1) '   ' num2str(sum(condList{block}(:,DONE))) '/' num2str(trialNumInBlock)]);
+                    disp('Overall Break Rate')
                     disp(1-mean(resultList(:,DONE)));
                     
                 %---------- Adjust Threshold ----------%

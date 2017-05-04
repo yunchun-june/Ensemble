@@ -522,13 +522,13 @@ try
                     
                 %---------- Monitoring ----------%
                     disp('-------------------------------')
-                    disp('trial condition: ');
+                    disp('   isExp Ensem Targ.  Ans. Done  Staircase');
                     disp(condList{block}(i,1:6));
-                    disp('threshold: ');
+                    disp('Threshold: ');
                     disp(condList{block}(i,CON(:)));
                     disp(condList{block}(i,SEEN(:)));
-                    disp('block complete');
-                    disp([num2str(doneBlockNum) '   ' num2str(sum(condList{block}(:,DONE))) '/' num2str(trialNumInBlock)]);
+                    disp('Block Num.');
+                    disp([num2str(doneBlockNum+1) '   ' num2str(sum(condList{block}(:,DONE))) '/' num2str(trialNumInBlock)]);
                     disp('break rate')
                     disp(1-mean(resultList(:,DONE)));
                     
