@@ -417,8 +417,8 @@ try
 
                     while GetSecs-timezero < 0.1 && noBreak && ~isExp
                         FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                        Screen('DrawTexture',wPtr, blankMask.tex{targetFace}, [], targetFacePosi_L);
-                        Screen('DrawTexture',wPtr, blankMask.tex{targetFace}, [], targetFacePosi_R);
+                        Screen('DrawTexture',wPtr, blankMask.tex{targetFaceIdx}, [], targetFacePosi_L);
+                        Screen('DrawTexture',wPtr, blankMask.tex{targetFaceIdx}, [], targetFacePosi_R);
                         Screen('Flip',wPtr);
                     end
                     
@@ -527,7 +527,7 @@ try
                     disp(condList{block}(i,CON(:)));
                     disp(condList{block}(i,SEEN(:)));
                     disp('block complete');
-                    disp([num2str(doneBlockNum) '   ' num2str(sum(condList{block}(:,DONE))) '/' num2str(trialNumInBlock/5)]);
+                    disp([num2str(doneBlockNum) '   ' num2str(sum(condList{block}(:,DONE))) '/' num2str(trialNumInBlock)]);
                     disp('break rate')
                     disp(1-mean(resultList(:,DONE)));
                     
