@@ -20,15 +20,15 @@ try
     keyboard        = input('keyboard (MAC1 Dell2 EEG3):');
     filePath = ['./Data/Ensem_result_' subjNo '.txt'];  
     
-%====== Constants ======%
+%====== Some Constant ======%
     
-    RIGHT   = 1;
-    LEFT    = 2;
-    TRUE    = 1;
-    FALSE   = 0;
+    RIGHT = 1;
+    LEFT = 2;
+    TRUE = 1;
+    FALSE = 0;
+    
+%====== Content of Result File =======%
 
-%   Content of Result File
-%-------------------------------
 %   column name    colunm number  
     IS_EXP_TRIAL    =1;
     ENSEM           =2;
@@ -50,7 +50,7 @@ try
     PLACE(3)        =18;
     PLACE(4)        =19;
     
-    resultFileColNum = 19;
+    resultFileColNum = 19; 
  
 %====== Experimental Design ======%
     
@@ -65,14 +65,14 @@ try
     waitTime        = 60;
     
     %--- Experiment Condition ---%
-    targetFaceNum       = 6;
-    blankFaceNum        = 10;
-    ensemConditionNum   = 5;
-    exp_rep             = 6;
-    blank_rep           = 5;
-    expTrialNumInBlock      = targetFaceNum*exp_rep;
-    blankTrialNumInBlock    = blankFaceNum*blank_rep/ensemConditionNum;
-    trialNumInBlock         = expTrialNumInBlock + blankTrialNumInBlock;
+    targetFaceNum = 6;
+    blankFaceNum  = 10;
+    ensemConditionNum  = 5;
+    exp_rep = 6;
+    blank_rep = 5;
+    expTrialNumInBlock = targetFaceNum*exp_rep;
+    blankTrialNumInBlock = blankFaceNum*blank_rep/ensemConditionNum;
+    trialNumInBlock = expTrialNumInBlock + blankTrialNumInBlock;
     
     %--- Generate Condition List ---%
     condList = cell(5);
@@ -88,7 +88,7 @@ try
         
         temp(blankTrialIndex  ,IS_EXP_TRIAL) = 0;
         temp(blankTrialIndex  ,TARGET)       = repmat(1:blankFaceNum,1,blank_rep/ensemConditionNum);
-        temp(blankTrialIndex  ,STAIRCASE)    = 0;
+        temp(blankTrialIndex  ,STAIRCASE)    = 1;
         
         randomIndex = randperm(trialNumInBlock);
         for i = 1:trialNumInBlock
@@ -201,7 +201,7 @@ try
 
     % ------Target Faces(exp trials)-----%
     folder = './faces/target/';
-    
+    load mandrill
         targetFace.file = dir([folder 'target*.jpg']);
         for i= 1:length(targetFace.file)
            targetFace.img{i} = imread([folder targetFace.file(i).name]);
@@ -216,6 +216,7 @@ try
     
     % ------ Target Faces(blank trials) ------%
     folder = './faces/blank/';
+    load mandrill
         blankFace.file = dir([folder 'blank*.jpg']);
         for i= 1:length(blankFace.file)
            blankFace.img{i} = imread([folder blankFace.file(i).name]);
@@ -223,18 +224,18 @@ try
            
            %create scramble mask
            im =  double(blankFace.img{i})/255;
-           blankMask.img{i} = imscramble(im,0.75,'range');
-           im = uint8(blankMask.img{i}*255);
-           blankMask.tex{i} = Screen('MakeTexture',wPtr,im);
+           catchMask.img{i} = imscramble(im,0.75,'range');
+           im = uint8(catchMask.img{i}*255);
+           catchMask.tex{i} = Screen('MakeTexture',wPtr,im);
         end   
      
     % -------- Ensemble Faces ---------%
     folder = './faces/ensem/';
         for i = 1:5
             ensemFace.file = dir([folder 'con' num2str(i) '_*.jpg']);
-            for p = 1:4
-            ensemFace.img{i,p} = imread([folder ensemFace.file(p).name]);
-            ensemFace.tex{i,p} = Screen('MakeTexture',wPtr,ensemFace.img{i,p});
+            for j = 1:4
+            ensemFace.img{i,j} = imread([folder ensemFace.file(j).name]);
+            ensemFace.tex{i,j} = Screen('MakeTexture',wPtr,ensemFace.img{i,j});
             end
         end
         
@@ -298,10 +299,10 @@ try
                 
                 %-----Initialize Trials----%
 
-                     ensemCon       = condList{block}(i,ENSEM);
-                     targetFaceIdx  = condList{block}(i,TARGET);
-                     stair          = condList{block}(i,STAIRCASE);
-                     isExp          = condList{block}(i,IS_EXP_TRIAL);
+                     ensemCon   = condList{block}(i,ENSEM);
+                     targetFace = condList{block}(i,TARGET);
+                     stair      = condList{block}(i,STAIRCASE);
+                     isExp      = condList{block}(i,IS_EXP_TRIAL);
                      
                      answer     = 0;
                      noBreak    = TRUE;
@@ -352,12 +353,9 @@ try
                         end
                     end
 
-                    %Draw Mondrians
+                    %draw and adjust mondrians
                     for p = 1:4
-                        Screen('DrawTexture', wPtr, mon.tex{MonIdx}, [], monPosi(p,:),[],[],maskOpc);
-                    end
-                    
-                    % Adjust Mondrians
+                        Screen('DrawTexture', wPtr, mon.tex{MonIdx}, [], monPosi(p,:),[],[],maskOpc); end
                     if MonTimer == 0
                         MonIdx = MonIdx+1 ;
                         if MonIdx == 11, MonIdx = 1; end         
@@ -391,34 +389,33 @@ try
                 end
                 
                 % --------- show target face and scramble mask---------%
-                
                     timezero = GetSecs;
                     while GetSecs-timezero < 0.1 && noBreak && isExp
                         FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                        Screen('DrawTexture',wPtr, targetFace.tex{targetFaceIdx}, [], targetFacePosi_L);
-                        Screen('DrawTexture',wPtr, targetFace.tex{targetFaceIdx}, [], targetFacePosi_R);
+                        Screen('DrawTexture',wPtr, targetFace.tex{targetFace}, [], targetFacePosi_L);
+                        Screen('DrawTexture',wPtr, targetFace.tex{targetFace}, [], targetFacePosi_R);
                         Screen('Flip',wPtr);
                     end
                     
                     while GetSecs-timezero < 0.2 && noBreak &&  ~isExp
                         FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                        Screen('DrawTexture',wPtr, blankFace.tex{targetFaceIdx}, [], targetFacePosi_L);
-                        Screen('DrawTexture',wPtr, blankFace.tex{targetFaceIdx}, [], targetFacePosi_R);
+                        Screen('DrawTexture',wPtr, blankFace.tex{targetFace}, [], targetFacePosi_L);
+                        Screen('DrawTexture',wPtr, blankFace.tex{targetFace}, [], targetFacePosi_R);
                         Screen('Flip',wPtr);
                     end
                        
                     timezero = GetSecs;
                     while GetSecs-timezero < 0.1 && noBreak && isExp
                         FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                        Screen('DrawTexture',wPtr, targetMask.tex{targetFaceIdx}, [], targetFacePosi_L);
-                        Screen('DrawTexture',wPtr, targetMask.tex{targetFaceIdx}, [], targetFacePosi_R);
+                        Screen('DrawTexture',wPtr, targetMask.tex{targetFace}, [], targetFacePosi_L);
+                        Screen('DrawTexture',wPtr, targetMask.tex{targetFace}, [], targetFacePosi_R);
                         Screen('Flip',wPtr);
                     end
 
                     while GetSecs-timezero < 0.1 && noBreak && ~isExp
                         FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-                        Screen('DrawTexture',wPtr, blankMask.tex{targetFace}, [], targetFacePosi_L);
-                        Screen('DrawTexture',wPtr, blankMask.tex{targetFace}, [], targetFacePosi_R);
+                        Screen('DrawTexture',wPtr, catchMask.tex{targetFace}, [], targetFacePosi_L);
+                        Screen('DrawTexture',wPtr, catchMask.tex{targetFace}, [], targetFacePosi_R);
                         Screen('Flip',wPtr);
                     end
                     
@@ -428,8 +425,8 @@ try
                     WaitSecs(.5);
                     
                 % -------------make emotion judgement-------------%
-
-                    waitForAnswer = TRUE;
+                    forget = 0;
+                    waitForAnswer = 1;
                     timezero = GetSecs;
                     while waitForAnswer && noBreak
                         % show emotion judgement screen
@@ -465,7 +462,7 @@ try
                                 % ESC pressed
                                 if secs(KbName(quitkey))
                                     CreateFile(filePath, resultList);
-                                    Screen('CloseAll');
+                                    Screen('CloseAll'); %Closes Screen  
                                     return;
                                 end
                             end 
@@ -473,7 +470,7 @@ try
 
                 %-------Break Trials & Report visible locations------%
             
-                    waitForAnswer = TRUE; 
+                    waitForAnswer = 1; 
                     while waitForAnswer && ~noBreak
                        % show visibility report screen
                             FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
@@ -482,8 +479,8 @@ try
                             Writetext(wPtr,'2',L_cenX, R_cenX,BoxcenY, -reportdis+5,reportdis+5, [255 255 255],14);
                             Writetext(wPtr,'3',L_cenX, R_cenX,BoxcenY, reportdis+5,-reportdis+5, [255 255 255],14);
                             Writetext(wPtr,'4',L_cenX, R_cenX,BoxcenY, -reportdis+5,-reportdis+5, [255 255 255],14);
-                            for p = 1:4 
-                                if seen(p) SelectionBox(wPtr,L_reportBoxPosi(p,1),R_reportBoxPosi(p,1), L_reportBoxPosi(p,2),reportBoxSize,boxcolor); end
+                            for j = 1:4 
+                                if seen(j) SelectionBox(wPtr,L_reportBoxPosi(j,1),R_reportBoxPosi(j,1), L_reportBoxPosi(j,2),reportBoxSize,boxcolor); end
                             end
                             Screen('Flip',wPtr);
 
@@ -493,8 +490,8 @@ try
 
                             if  keyIsDown
                                 % report seen faces
-                                for p= 1:4
-                                   if secs(KbName(placeKey(p))) seen(p) = ~seen(p); end 
+                                for j= 1:4
+                                   if secs(KbName(placeKey(j))) seen(j) = ~seen(j); end 
                                 end
 
                                 % space pressed
@@ -511,13 +508,13 @@ try
                     
                     
                 %--------- Save Result to Result List----------%
-                    condList{block}(i,JUDGEMENT)        = answer;
-                    condList{block}(i,DONE)             = noBreak;
-                    condList{block}(i,SEEN(:))          = seen(:);
-                    condList{block}(i,PLACE(:))         = randPosi(:);
-                    if isExp condList{block}(i,CON(:))  = faceCon(stair,:); end
-                    condList{block}(i,REPEAT)           = condList{block}(i,REPEAT)+1;
-                    resultList(end+1,:)                 = condList{block}(i,:);
+                    condList{block}(i,JUDGEMENT) = answer;
+                    condList{block}(i,DONE) = noBreak;
+                    condList{block}(i,SEEN(:)) = seen(:);
+                    condList{block}(i,PLACE(:)) = randPosi(:);
+                    if isExp condList{block}(i,CON(:)) = faceCon(stair,:); end
+                    condList{block}(i,REPEAT)= condList{block}(i,REPEAT)+1;
+                    resultList(end+1,:) = condList{block}(i,:);
                     
                 %---------- Monitoring ----------%
                     disp('-------------------------------')
@@ -532,21 +529,21 @@ try
                     disp(1-mean(resultList(:,DONE)));
                     
                 %---------- Adjust Threshold ----------%
-                    for p = 1:4
+                    for j = 1:4
                       % seen, decrease
-                      if(seen(p)) && isExp
-                         faceCon(stair,p) = faceCon(stair,p)-stepsize_down;
-                         if faceCon(stair,p) <= lowerBound, faceCon(stair,p) = lowerBound; end
-                         numReportUnseen{stair}(p) = 0;
+                      if(seen(j)) && isExp
+                         faceCon(stair,j) = faceCon(stair,j)-stepsize_down;
+                         if faceCon(stair,j) <= lowerBound, faceCon(stair,j) = lowerBound; end
+                         numReportUnseen{stair}(j) = 0;
                       end
 
                       % unseen, increase
-                      if(~seen(p)) && isExp
-                         numReportUnseen{stair}(p) = numReportUnseen{stair}(p) +1;
-                         if numReportUnseen{stair}(p) == stairCase_up;
-                             faceCon(stair,p) = faceCon(stair,p) + stepsize_up;
-                             if faceCon(stair,p) >= upperBound, faceCon(stair,p) = upperBound; end
-                             numReportUnseen{stair}(p) = 0;
+                      if(~seen(j)) && isExp
+                         numReportUnseen{stair}(j) = numReportUnseen{stair}(j) +1;
+                         if numReportUnseen{stair}(j) == stairCase_up;
+                             faceCon(stair,j) = faceCon(stair,j) + stepsize_up;
+                             if faceCon(stair,j) >= upperBound, faceCon(stair,j) = upperBound; end
+                             numReportUnseen{stair}(j) = 0;
                          end
                       end
                     end     
