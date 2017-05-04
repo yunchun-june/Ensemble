@@ -11,12 +11,12 @@ close all;
 
 %====== initial condition =====% 
     
-    faceOpc(1,1) = 0.8;  faceOpc(2,1) = 0.4;
-    faceOpc(1,2) = 0.8;  faceOpc(2,2) = 0.4;
-    faceOpc(1,3) = 0.8;  faceOpc(2,3) = 0.4;
-    faceOpc(1,4) = 0.8;  faceOpc(2,4) = 0.4;
+    faceOpc(1,1) = 0.8;  faceOpc(2,1) = 0.3;
+    faceOpc(1,2) = 0.8;  faceOpc(2,2) = 0.3;
+    faceOpc(1,3) = 0.8;  faceOpc(2,3) = 0.3;
+    faceOpc(1,4) = 0.8;  faceOpc(2,4) = 0.3;
 
-    maskOpc = 0.15;
+    maskOpc = 0.25;
     disX = 210;
     waitTime = 60;
 
