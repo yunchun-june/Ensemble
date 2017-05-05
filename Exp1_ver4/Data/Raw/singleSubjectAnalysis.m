@@ -1,7 +1,7 @@
 clear all;
 close all;
 
-ID = '1703193';
+ID = '1705032';
 resultfile = dir(['Ensem_result_' ID '.txt']);
 
 % Standards for excluding subjects

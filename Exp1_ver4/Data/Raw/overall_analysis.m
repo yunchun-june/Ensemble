@@ -90,10 +90,19 @@ disp('====================================');
             end
         end
     end
-     
+
+%==== Get Blank Mean ====%     
+    avg_blank = zeros(subjectNum,10);
+    std_blank = zeros(subjectNum,10);
+    
+    for face = 1:10
+        for sub = 1:subjectNum
+            avg_blank(sub,face) = mean(data_blank{sub,face});
+            std_blank(sub,face) = std(data_blank{sub,face});
+        end
+    end
  
 %======Normalized Data By Face ========%
- 
  
     for sub = 1:subjectNum
         avg_face = [];
@@ -110,6 +119,8 @@ disp('====================================');
         end
  
         for face = 1:6
+            indexInBlank = [ 2 3 4 6 7 8];
+            
             for ensum = 1:5
                 for i = 1:length(data_raw{sub,ensum,face})
                     if std_face(face) ~= 0
@@ -117,19 +128,20 @@ disp('====================================');
                     if std_face(face) == 0
                     data_normed{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_face(face)); end
                 end
+                
+%                 for i = 1:length(data_raw{sub,ensum,face})
+%                     data_normed{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_blank(sub,indexInBlank(face))) / std_face(face);
+%                 end
             end
         end
     end
-     
+    
 %==== Get Mean ====%    
  
     avg_rawData = zeros(subjectNum,5,6);
     std_rawData = zeros(subjectNum,5,6);
     avg_normed = zeros(subjectNum,5,6);
     std_normed = zeros(subjectNum,5,6);
-    avg_blank = zeros(subjectNum,10);
-    std_blank = zeros(subjectNum,10);
-    
      
     for face = 1:6
         for sub = 1:subjectNum
@@ -139,13 +151,6 @@ disp('====================================');
                 avg_normed(sub,ensum,face) = mean(data_normed{sub,ensum,face});
                 std_normed(sub,ensum,face) = std(data_normed{sub,ensum,face});
             end
-        end
-    end
-     
-    for face = 1:10
-        for sub = 1:subjectNum
-            avg_blank(sub,face) = mean(data_blank{sub,face});
-            std_blank(sub,face) = std(data_blank{sub,face});
         end
     end
     
@@ -183,7 +188,7 @@ disp('====================================');
             y = [];
             error = [];
             
-            subplot(5,4,sub);
+            subplot(5,6,sub);
             errorbar(x1,avg_blank(sub,1:5),std_blank(sub,1:5));
             hold on;
             errorbar(x2,avg_blank(sub,6:10),std_blank(sub,6:10));
@@ -216,7 +221,7 @@ disp('====================================');
     x = 1:5;
     
     for sub = 1:subjectNum
-        subplot(5,5,sub);
+        subplot(5,6,sub);
         %errorbar(y,overall(sub,:),overallStd(sub,:));
         scatter(x,overall(sub,:));
         lsline;
@@ -246,7 +251,7 @@ disp('====================================');
     figure
     x = 1:5;
     errorbar(x,overall,overallStd);
-    axis([0 6 -0.3 0.3]);
+    %axis([0 6 -0.3 0.3]);
     set(gca,'XTickLabel', {'','4F','3F1H','2F2H','1F3H','4H'});
     xlabel('Ensemble condition');
     ylabel('Emotion rating (nomalized)');
@@ -274,7 +279,7 @@ disp('====================================');
     x = 1:5;
     subplot(1,2,1);
     errorbar(x,overall1,overallStd1);
-    axis([0 6 -0.3 0.3]);
+    %axis([0 6 -0.3 0.3]);
     set(gca,'XTickLabel', {'','4F','3F1H','2F2H','1F3H','4H'});
     xlabel('Ensemble condition');
     ylabel('Emotion rating (nomalized)');
@@ -282,7 +287,7 @@ disp('====================================');
     
     subplot(1,2,2);
     errorbar(x,overall2,overallStd2);
-    axis([0 6 -0.3 0.3]);
+    %axis([0 6 -0.3 0.3]);
     set(gca,'XTickLabel', {'','4F','3F1H','2F2H','1F3H','4H'});
     xlabel('Ensemble condition');
     ylabel('Emotion rating (nomalized)');
@@ -313,7 +318,6 @@ disp('====================================');
         axis([1 3 -6 6]);
         legend('4F','3F1H','2F2H','1F3H','4H');
 
-
 %=== ANOVA overall normed ====%
     anova = zeros(0,4);
     
@@ -328,6 +332,7 @@ disp('====================================');
         end
     end
     
+    disp('================== ANOVA on normalized data =====================')
     RMAOV2(anova);
     
 %=== ANOVA overall raw data ====%
@@ -344,6 +349,7 @@ disp('====================================');
         end
     end
     
+    disp('================== ANOVA on raw data =====================')
     RMAOV2(anova);
     
 %=== T-test between conditions ====%
