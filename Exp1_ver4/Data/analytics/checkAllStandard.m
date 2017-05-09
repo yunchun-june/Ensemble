@@ -33,15 +33,15 @@ thr_SD = 5;
             thrData{staircase(i),2}(end+1) = t2(i);
             thrData{staircase(i),3}(end+1) = t3(i);
             thrData{staircase(i),4}(end+1) = t4(i);
-            for j = 1:4 breaking{j}(end+1) = 0; end
+            for j = 1:4 breaking{j,ensem(i)}(end+1) = 0; end
             expData{ensem(i),targetFace(i)}(end+1) = judgement(i);
         end
 
         if isExp(i) && ~noBreak(i)
-            breaking{1}(end+1) = s1(i);
-            breaking{2}(end+1) = s2(i);
-            breaking{3}(end+1) = s3(i);
-            breaking{4}(end+1) = s4(i);
+            breaking{1,ensem(i)}(end+1) = s1(i);
+            breaking{2,ensem(i)}(end+1) = s2(i);
+            breaking{3,ensem(i)}(end+1) = s3(i);
+            breaking{4,ensem(i)}(end+1) = s4(i);
         end
 
         if ~isExp(i) && noBreak(i)
@@ -59,8 +59,10 @@ thr_SD = 5;
         std_blank(i) = std(blankData{i});
     end
     
-    for i = 1:4
-        breakingRate(i) = mean(breaking{i});
+    for place = 1:4
+        for ensem = 1:5
+            breakingRate(place,ensem) = mean(breaking{place,ensem});
+        end
     end
     
 %====== Draw StairCases Graph =======%
@@ -95,10 +97,12 @@ thr_SD = 5;
 %====== Check All standards =======%
     exclude = 0;
     pass = [1 1 1];
-    for i=1:4 
-        if breakingRate(i)<thr_break
-            exclude = 1;
-            pass(1) = 0;
+    for place=1:4
+        for ensem = 1:5
+            if breakingRate(place,ensem) < thr_break
+                exclude = 1;
+                pass(1) = 0;
+            end
         end
     end
     
