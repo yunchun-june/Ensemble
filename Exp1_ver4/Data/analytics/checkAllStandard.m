@@ -21,7 +21,7 @@ thr_SD = 5;
     expData = cell(5,6);
     blankData = cell(10);
     falseAlarm = [];
-    breaking = cell(4);
+    breaking = cell(4,5);
 
 %=====Read In Data=====%
     [isExp ensem targetFace judgement noBreak staircase t1 t2 t3 t4 s1 s2 s3 s4 repeat p1 p2 p3 p4]= textread(resultfile.name,'%d %d %d %d %d %d %f %f %f %f %d %d %d %d %d %d %d %d %d ');
