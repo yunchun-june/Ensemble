@@ -118,19 +118,19 @@ for sub = 1:subjectNum checkAllStandard(files(sub).name); end
         end
  
         for face = 1:6
-            indexInBlank = [ 2 3 4 6 7 8];
+            indexInBlank = [ 2 3 4 7 8 9];
             
             for ensum = 1:5
-%                 for i = 1:length(data_raw{sub,ensum,face})
-%                     if std_face(face) ~= 0
-%                     data_normed{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_blank(face)) / std_face(face); end
-%                     if std_face(face) == 0
-%                     data_normed{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_face(face)); end
-%                 end
-                
                 for i = 1:length(data_raw{sub,ensum,face})
-                    data_normed{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_blank(sub,indexInBlank(face)));
+                    if std_face(face) ~= 0
+                    data_normed{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_face(face)) / std_face(face); end
+                    if std_face(face) == 0
+                    data_normed{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_face(face)); end
                 end
+%                 
+%                 for i = 1:length(data_raw{sub,ensum,face})
+%                     data_normed{sub,ensum,face}(i) = (data_raw{sub,ensum,face}(i)-avg_blank(sub,indexInBlank(face)));
+%                 end
             end
         end
     end

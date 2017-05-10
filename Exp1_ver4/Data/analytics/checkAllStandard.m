@@ -11,6 +11,9 @@ thr_break = 0.10;
 thr_falseAlarm = 0.2;
 thr_SD = 5;
 
+TRUE = 1;
+FALSE = 0;
+
 %=====Data to Read=====%
     for position = 1:4
         for sc = 1:2;
@@ -81,41 +84,37 @@ thr_SD = 5;
 %     title(ID);
     
 %====== Check All standards =======%
-    exclude = 0;
-    pass = [1 1 1];
+    pass = [TRUE TRUE TRUE];
     for place=1:4
         for ensem = 1:5
-            if breakingRate(place,ensem) < thr_break
-                exclude = 1;
-                pass(1) = 0;
+            if breakingRate(place,ensem) <thr_break
+                pass(1) = FALSE;
             end
         end
     end
     
     if mean(falseAlarm) > thr_falseAlarm
-            exclude = 1;
-            pass(2) = 0;
+            pass(2) = FALSE;
     end
     
     for i=1:10
         if std_blank(i)>thr_SD
-            exclude = 1;
-            pass(3) = 0;
+            pass(3) = FALSE;
         end
     end
     
 %====== Show Result =======%
-    if ~pass(1)
+    if pass(1) == FALSE
         disp(['Exclude ' filename ' base on breaking rate'])
         disp(breakingRate);
     end
 
-    if ~pass(2)
+    if pass(2) == FALSE
         disp(['Exclude ' filename ' base on false alarm rate'])
         disp(mean(falseAlarm));
     end
     
-    if ~pass(3)
+    if pass(3) == FALSE
         disp(['Exclude ' filename ' base on enstable standard'])
         disp(std_blank);
     end
