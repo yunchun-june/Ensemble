@@ -6,7 +6,7 @@
 
 clear all;
 close all;
-addpath('./function/');
+addpath('./Function/');
 
 try
     
@@ -189,7 +189,7 @@ boxDistance = 210;
 %====== Load image ======% 
      
     % ensumble faces
-    folder = './faces/ensem/';
+    folder = './Face/ensem/';
         for i = 1:5
             ensemFace.file = dir([folder 'con' num2str(i) '_*.jpg']);
             for posi = 1:4
@@ -199,9 +199,9 @@ boxDistance = 210;
         end
         
     % mondrians
-    mon.file = dir('./Mon/*.JPG');
+    mon.file = dir('./Mondrian/*.JPG');
     for i= 1:10
-       mon.img{i} = imread(['./Mon/' mon.file(i).name]);
+       mon.img{i} = imread(['./Mondrian/' mon.file(i).name]);
        mon.tex{i} = Screen('MakeTexture',wPtr,mon.img{i});        
     end
     

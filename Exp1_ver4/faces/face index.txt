@@ -1,8 +1,0 @@
-faces		index	emotion_score
-=====================================
-test1		27	-4.4892
-test3		33	 4.4870
-test4		27	-4.5081	
-test6		30	 4.5296
-happy_w		45	 7.1495	
-fearful_w	41	-7.0996

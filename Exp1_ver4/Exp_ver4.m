@@ -1,6 +1,6 @@
 clear all;
 close all;
-addpath('./function/');
+addpath('./Function/');
 
 Screen('Preference', 'SkipSyncTests', 1);
 
@@ -8,12 +8,14 @@ try
     
 %====== Customize for each subject =====% 
 
-    faceCon(1,1) = 0.6;  faceCon(2,1) = 0.2;
-    faceCon(1,2) = 0.6;  faceCon(2,2) = 0.2;
-    faceCon(1,3) = 0.6;  faceCon(2,3) = 0.2;
-    faceCon(1,4) = 0.6;  faceCon(2,4) = 0.2;
+    roughThr = [0.5 0.5 0.5 0.5]
     maskOpc      = 1;
     boxDistance  = 210;
+
+    for posi = 1:4
+        faceCon(1,posi) = roughThr(posi)+0.2;
+        faceCon(2,posi) = roughThr(posi)-0.2;
+    end
     
 %====== Input ======%
     subjNo          = input('subjNo: ','s');
@@ -202,7 +204,7 @@ try
 %====== Load image ======%
 
     % ------Target Faces(exp trials)-----%
-    folder = './faces/target/';
+    folder = './Face/target/';
     
         targetFace.file = dir([folder 'target*.jpg']);
         for i= 1:length(targetFace.file)
@@ -217,7 +219,7 @@ try
         end
     
     % ------ Target Faces(blank trials) ------%
-    folder = './faces/blank/';
+    folder = './Face/blank/';
         blankFace.file = dir([folder 'blank*.jpg']);
         for i= 1:length(blankFace.file)
            blankFace.img{i} = imread([folder blankFace.file(i).name]);
@@ -231,7 +233,7 @@ try
         end   
      
     % -------- Ensemble Faces ---------%
-    folder = './faces/ensem/';
+    folder = './Face/ensem/';
         for i = 1:5
             ensemFace.file = dir([folder 'con' num2str(i) '_*.jpg']);
             for p = 1:4
@@ -241,7 +243,7 @@ try
         end
         
     % --------Mondrians--------%
-    mon.file = dir('./Mon/*.JPG');
+    mon.file = dir('./Mondrian/*.JPG');
     for i= 1:10
        mon.img{i} = imread(['./Mon/' mon.file(i).name]);
        mon.tex{i} = Screen('MakeTexture',wPtr,mon.img{i});        
