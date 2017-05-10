@@ -1,31 +1,33 @@
+
+% 1. This script is for getting the rough threshold for each individual.
+% 2. The step size is large(10%) so that the program can approach the real threshold fast.
+% 3. The supressed faces are 2 fearful faces and 2 happy faces.
+% 4. Parameters to adjust for each subject is put in "Parameter" section.
+
 clear all;
 close all;
 addpath('./function/');
 
-Screen('Preference', 'SkipSyncTests', 1);
-
 try
     
-%====== Input ======%
+%====== Parameters =====% 
+faceOpc     = [1 1 1 1];    %initial contrast of supressed faces
+maskOpc     = 1;            %contrast of the mondrians
+boxDistance = 210;
 
+%====== Input ======%
     dominantEye               = input('Dominant Eye (1/right 2/left):');
-    ensemble                  = input('Supressed Faces (1/4H 5/4F):');
     keyboard                  = input('Keyboard (1/MAC 2/Dell 3/EEG):');
 
-%====== initial condition =====% 
-
-    faceOpc = [1 1 1 1];
-    maskOpc = 1;
-    disX = 210;
-
-    lowerBound = 0.02; 
-    upperBound = 1.00;     
-    stepsize_down = 0.1;
-    stepsize_up = 0.1;   
-    stairCase_up = 2;
-    
+%====== Constants ======%
     TRUE = 1;
     FALSE = 0;
+    
+    lowerBound  = 0.02; 
+    upperBound  = 1.00;     
+    stepsize_down   = 0.1;
+    stepsize_up     = 0.1;   
+    stairCase_up    = 2;
 
 %====== Setup Screen & Keyboard ======%
     screid = max(Screen('Screens'));
@@ -57,18 +59,18 @@ try
         quitkey = 'ESCAPE';
         space   = 'space';
         
-        placeKey{1} = 'a';
-        placeKey{2} = 's';
-        placeKey{3} = 'z';
-        placeKey{4} = 'x';
+        placeKey{1} = '1';
+        placeKey{2} = '2';
+        placeKey{3} = '3';
+        placeKey{4} = '4';
     
 %====== Position ======%
 
     % general setup
         cenX = width/2;
         cenY = height/2-150;
-        L_cenX = cenX - disX;
-        R_cenX = cenX + disX;
+        L_cenX = cenX - boxDistance;
+        R_cenX = cenX + boxDistance;
         BoxcenY = cenY;
         faceW = 56; %face width 7:9
         faceH = 63; %face height
@@ -156,7 +158,6 @@ try
     SEEN(4)     =14;
     REPEAT      =15;
     
-    
     condList = cell(5);
     for block = 1:5
         temp = zeros(trials/5,15);
@@ -209,7 +210,7 @@ try
     breakRate = [];
     numReportUnseen = [0 0 0 0];
     
-    block = ensemble;
+    block = 3;
     %======== start of the block =======% 
         
         while TRUE
@@ -336,7 +337,7 @@ try
                 
                 %---------- Monitoring ----------%
                     disp('-------------------------------')
-                    disp('threshold: ');
+                    disp('contrast: ');
                     disp(condList{block}(i,OPC(:)));
                     disp(condList{block}(i,SEEN(:)));
                     

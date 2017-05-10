@@ -512,7 +512,6 @@ try
                             end 
                     end 
                     
-                    
                 %--------- Save Result to Result List----------%
                     condList{block}(i,JUDGEMENT)        = answer;
                     condList{block}(i,DONE)             = noBreak;
