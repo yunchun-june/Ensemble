@@ -1,10 +1,11 @@
 clear all;
 close all;
+addpath('./function/');
 
 Screen('Preference', 'SkipSyncTests', 1);
 
 try
-
+    
 %====== Customize for each subject =====% 
 
     faceCon(1,1) = 0.6;  faceCon(2,1) = 0.2;
@@ -252,6 +253,8 @@ try
     breakRate = [];
     numReportUnseen{1} = [0 0 0 0];
     numReportUnseen{2} = [0 0 0 0];
+    breakRate_overall = [0 0 0 0];
+    breakRate_block = zeros(5,4);
     
     block_randomIndex = randperm(5);
     doneBlockNum = 0;

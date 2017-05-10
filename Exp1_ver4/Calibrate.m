@@ -1,27 +1,21 @@
- clear all;
+clear all;
 close all;
+addpath('./function/');
 
-% try
-
+try
+    
 %====== Input ======%
-    subjNo                = input('subjNo: ','s');
+
     DemoEye               = input('DomEye Right 1 Left 2:');
     keymode               = input('keymode1 MAC keymode2 Dell 3 EEG:');
-    fName = ['./Data/Ensem_result_' subjNo  '.txt'];
-    fName_thr = ['./Data/Ensem_threshold_' subjNo '.txt'];
 
 %====== initial condition =====% 
 
     % white faces
     
-    faceOpc(1,1) = 1;  faceOpc(2,1) = 0.1;
-    faceOpc(1,2) = 1;  faceOpc(2,2) = 0.1;
-    faceOpc(1,3) = 1;  faceOpc(2,3) = 0.1;
-    faceOpc(1,4) = 1;  faceOpc(2,4) = 0.5;
-
+    faceOpc = [1 1 1 1];
     maskOpc = 0.15;
     disX = 210;
-    waitTime = 60;
 
     lowerBound = 0.02; 
     upperBound = 1.00;     
@@ -193,43 +187,15 @@ close all;
     MondN  = round(refreshRate/MondFreq); % frames/img
     ConIncr= 7.5 /(10*refreshRate); % 7.5% increase per second
 
-%====== Load image ======%
-
-    % target faces and mask
-    folder = './faces/target/';
-    load mandrill
-        targetFace.file = dir([folder 'target*.jpg']);
-        for i= 1:length(targetFace.file)
-           targetFace.img{i} = imread([folder targetFace.file(i).name]);
-           targetFace.tex{i} = Screen('MakeTexture',wPtr,targetFace.img{i});
-           
-           im =  double(targetFace.img{i})/255;
-           targetMask.img{i} = imscramble(im,0.75,'range');
-           im = uint8(targetMask.img{i}*255);
-           targetMask.tex{i} = Screen('MakeTexture',wPtr,im);
-        end
-    
-    % catch faces and mask
-    folder = './faces/catch/';
-    load mandrill
-        catchFace.file = dir([folder 'catch*.jpg']);
-        for i= 1:length(catchFace.file)
-           catchFace.img{i} = imread([folder catchFace.file(i).name]);
-           catchFace.tex{i} = Screen('MakeTexture',wPtr,catchFace.img{i});
-           
-           im =  double(catchFace.img{i})/255;
-           catchMask.img{i} = imscramble(im,0.75,'range');
-           im = uint8(catchMask.img{i}*255);
-           catchMask.tex{i} = Screen('MakeTexture',wPtr,im);
-        end   
+%====== Load image ======% 
      
     % ensumble faces
     folder = './faces/ensem/';
         for i = 1:5
             ensemFace.file = dir([folder 'con' num2str(i) '_*.jpg']);
-            for j = 1:4
-            ensemFace.img{i,j} = imread([folder ensemFace.file(j).name]);
-            ensemFace.tex{i,j} = Screen('MakeTexture',wPtr,ensemFace.img{i,j});
+            for posi = 1:4
+            ensemFace.img{i,posi} = imread([folder ensemFace.file(posi).name]);
+            ensemFace.tex{i,posi} = Screen('MakeTexture',wPtr,ensemFace.img{i,posi});
             end
         end
         
@@ -325,8 +291,8 @@ close all;
                         %adjust contract and draw faces
                         if isExp
                             for p = 1:4
-                                if contrast(p)< faceOpc(stair,p), contrast(p) = contrast(p)+ConIncr;end
-                                if contrast(p)>= faceOpc(stair,p), contrast(p) = faceOpc(stair,p); end
+                                if contrast(p)< faceOpc(p), contrast(p) = contrast(p)+ConIncr;end
+                                if contrast(p)>= faceOpc(p), contrast(p) = faceOpc(p); end
                                 Screen('DrawTexture', wPtr, ensemFace.tex{ensemIdx,p}, [], facePosi(randPlace(p),:),[],[],contrast(randPlace(p)));
                             end
                         end
@@ -382,8 +348,8 @@ close all;
                             Writetext(wPtr,'2',L_cenX, R_cenX,BoxcenY, -reportdis+5,reportdis+5, [255 255 255],14);
                             Writetext(wPtr,'3',L_cenX, R_cenX,BoxcenY, reportdis+5,-reportdis+5, [255 255 255],14);
                             Writetext(wPtr,'4',L_cenX, R_cenX,BoxcenY, -reportdis+5,-reportdis+5, [255 255 255],14);
-                            for j = 1:4 
-                                if Seen(j) SelectionBox(wPtr,L_reportbox(j,1),R_reportbox(j,1), L_reportbox(j,2),reportboxsize,boxcolor); end
+                            for posi = 1:4 
+                                if Seen(posi) SelectionBox(wPtr,L_reportbox(posi,1),R_reportbox(posi,1), L_reportbox(posi,2),reportboxsize,boxcolor); end
                             end
                             Screen('Flip',wPtr);
 
@@ -393,8 +359,8 @@ close all;
 
                             if  keyIsDown
                                 % report seen faces
-                                for j= 1:4
-                                   if secs(KbName(placeKey{j})) Seen(j) = ~Seen(j); end 
+                                for posi= 1:4
+                                   if secs(KbName(placeKey{posi})) Seen(posi) = ~Seen(posi); end 
                                 end
 
                                 % space pressed
@@ -418,8 +384,8 @@ close all;
                     condList{block}(i,DONE) = noBreak;
                     condList{block}(i,SEEN(:)) = Seen(:);
                     condList{block}(i,REPEAT)= condList{block}(i,REPEAT)+1;
-                    if isExp condList{block}(i,OPC(:)) = faceOpc(stair,:); end
-                    if noBreak, thrList(end+1,1:4) = faceOpc(stair,:);
+                    if isExp condList{block}(i,OPC(:)) = faceOpc(:); end
+                    if noBreak, thrList(end+1,1:4) = faceOpc(:);
                         thrList(end,5) = stair;
                         end
                     
@@ -434,21 +400,21 @@ close all;
                     disp([num2str(block_done) '   ' num2str(sum(condList{block}(:,DONE))) '/' num2str(trials/5)]);
                     
                 %---------- Adjust Threshold ----------%
-                    for j = 1:4
+                    for posi = 1:4
                       % seen, decrease
-                      if(Seen(j)) && isExp
-                         faceOpc(stair,j) = faceOpc(stair,j)-stepsize_down;
-                         if faceOpc(stair,j) <= lowerBound, faceOpc(stair,j) = lowerBound; end
-                         numReportUnseen{stair}(j) = 0;
+                      if(Seen(posi)) && isExp
+                         faceOpc(posi) = faceOpc(posi)-stepsize_down;
+                         if faceOpc(posi) <= lowerBound, faceOpc(posi) = lowerBound; end
+                         numReportUnseen{stair}(posi) = 0;
                       end
 
                       % unseen, increase
-                      if(~Seen(j)) && isExp
-                         numReportUnseen{stair}(j) = numReportUnseen{stair}(j) +1;
-                         if numReportUnseen{stair}(j) == stairCase_up;
-                             faceOpc(stair,j) = faceOpc(stair,j) + stepsize_up;
-                             if faceOpc(stair,j) >= upperBound, faceOpc(stair,j) = upperBound; end
-                             numReportUnseen{stair}(j) = 0;
+                      if(~Seen(posi)) && isExp
+                         numReportUnseen{stair}(posi) = numReportUnseen{stair}(posi) +1;
+                         if numReportUnseen{stair}(posi) == stairCase_up;
+                             faceOpc(posi) = faceOpc(posi) + stepsize_up;
+                             if faceOpc(posi) >= upperBound, faceOpc(posi) = upperBound; end
+                             numReportUnseen{stair}(posi) = 0;
                          end
                       end
                     end     
@@ -467,11 +433,8 @@ close all;
     Screen('CloseAll'); %Closes Screen  
     return;
 
-% catch
-%     Screen('CloseAll'); %Closes Screen  
-%     condListAll = zeros(0,15);
-%     for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
-%     CreateFile(fName, condListAll);
-%     CreateFile_thr(fName_thr, thrList);
-%     return;
-% end
+catch exception
+    Screen('CloseAll'); 
+    disp(getReport(exception));
+    return;
+end
