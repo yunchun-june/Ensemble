@@ -7,8 +7,8 @@ resultfile = dir(filename);
 % Accuracy in blank trials (false alarm < 20%)
 % Judgement on the face in catch trials is unstable (SD>5)
 
-thr_break = 0.20;
-thr_falseAlarm = 0.1;
+thr_break = 0.10;
+thr_falseAlarm = 0.2;
 thr_SD = 5;
 
 %=====Data to Read=====%
@@ -65,20 +65,6 @@ thr_SD = 5;
         end
     end
     
-%====== Draw StairCases Graph =======%
-%     figure
-%     x1 = 1:90;
-%     x2 = 1:90;
-% 
-%     for position = 1:4
-%         subplot(2,2,position)
-%         plot(x1,thrData{1,position},x2, thrData{2,position});
-%         axis([0,120,0,1]);
-%         xlabel('trials');
-%         ylabel('contrast');
-%         if position == 1 title(ID); end
-%     end
-    
 %=== Draw Graph of Judgement on each faces ====%
 %     x1 = 1:5;
 %     x2 = 6:10;
@@ -106,7 +92,7 @@ thr_SD = 5;
         end
     end
     
-    if falseAlarm > thr_falseAlarm
+    if mean(falseAlarm) > thr_falseAlarm
             exclude = 1;
             pass(2) = 0;
     end
