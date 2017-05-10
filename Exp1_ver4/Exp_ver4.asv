@@ -299,7 +299,6 @@ try
         
         blockUnDone = TRUE;
         break_thisBlock = cell(4);
-        breakRate_thisBlock = [0 0 0 0];
         
         while(blockUnDone)
             for i = 1:trialNumInBlock
@@ -539,8 +538,10 @@ try
                     disp(condList{block}(i,SEEN(:)));
                     disp('Blk DoneTrials');
                     disp([num2str(doneBlockNum+1) '   ' num2str(sum(condList{block}(:,DONE))) '/' num2str(trialNumInBlock)]);
-                    disp('Breaking rate for each quadrant in this block')
-                    disp(breakRate_thisBlock);
+                    disp('Overall Break Rate')
+                    disp(1-mean(resultList(:,DONE)));
+                    disp('Breaking rate in this block')
+                    disp(mean(break_thisBlock{:}));
                     
                 %---------- Adjust Threshold ----------%
                     for p = 1:4
