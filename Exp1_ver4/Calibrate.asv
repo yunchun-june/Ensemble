@@ -15,7 +15,7 @@ try
 %====== initial condition =====% 
 
     faceOpc = [1 1 1 1];
-    maskOpc = 1;
+    maskOpc = 0.15;
     disX = 210;
 
     lowerBound = 0.02; 
@@ -235,7 +235,7 @@ try
                 % --------Show faces and Mon ------------%
                 
                      noBreak = TRUE;
-                     seen = [FALSE FALSE FALSE FALSE];
+                     Seen = [FALSE FALSE FALSE FALSE];
 
                      % inititialize group face & Mon
                      randPlace = randperm(4);
@@ -279,6 +279,10 @@ try
                         KbEventFlush();
                         [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
                         if secs(KbName(quitkey))
+                            condListAll = zeros(0,15);
+                            for block  =1:5 condListAll(end+1:end+trials/5,:) = condList{block}; end
+                            CreateFile(fName, condListAll);
+                            CreateFile_thr(fName_thr, thrList);
                             Screen('CloseAll'); %Closes Screen  
                             return;
                         end
@@ -305,7 +309,7 @@ try
                             Writetext(wPtr,'3',L_cenX, R_cenX,BoxcenY, reportdis+5,-reportdis+5, [255 255 255],14);
                             Writetext(wPtr,'4',L_cenX, R_cenX,BoxcenY, -reportdis+5,-reportdis+5, [255 255 255],14);
                             for posi = 1:4 
-                                if seen(posi) SelectionBox(wPtr,L_reportbox(posi,1),R_reportbox(posi,1), L_reportbox(posi,2),reportboxsize,boxcolor); end
+                                if Seen(posi) SelectionBox(wPtr,L_reportbox(posi,1),R_reportbox(posi,1), L_reportbox(posi,2),reportboxsize,boxcolor); end
                             end
                             Screen('Flip',wPtr);
 
@@ -316,7 +320,7 @@ try
                             if  keyIsDown
                                 % report seen faces
                                 for posi= 1:4
-                                   if secs(KbName(placeKey{posi})) seen(posi) = ~seen(posi); end 
+                                   if secs(KbName(placeKey{posi})) Seen(posi) = ~Seen(posi); end 
                                 end
 
                                 % space pressed
@@ -331,7 +335,7 @@ try
                     end
                     
                 %--------- Save Result to Result List----------%
-                   condList{block}(i,OPC(:))  = faceOpc(:);
+                   condList{block}(i,OPC(:))  = contrast(:);
                    condList{block}(i,SEEN(:))  = seen(:);
                 
                 %---------- Monitoring ----------%
@@ -343,14 +347,14 @@ try
                 %---------- Adjust Threshold ----------%
                     for posi = 1:4
                       % seen, decrease
-                      if(seen(posi)) && isExp
+                      if(Seen(posi)) && isExp
                          faceOpc(posi) = faceOpc(posi)-stepsize_down;
                          if faceOpc(posi) <= lowerBound, faceOpc(posi) = lowerBound; end
                          numReportUnseen(posi) = 0;
                       end
 
                       % unseen, increase
-                      if(~seen(posi)) && isExp
+                      if(~Seen(posi)) && isExp
                          numReportUnseen(posi) = numReportUnseen(posi) +1;
                          if numReportUnseen(posi) == stairCase_up;
                              faceOpc(posi) = faceOpc(posi) + stepsize_up;

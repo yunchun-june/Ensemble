@@ -17,8 +17,8 @@ try
     
 %====== Input ======%
     subjNo          = input('subjNo: ','s');
-    dominantEye     = input('DonimantEye (Right 1 Left 2):');
-    keyboard        = input('keyboard (MAC1 Dell2 EEG3):');
+    dominantEye     = input('DonimantEye (1/Right 2/Left):');
+    keyboard        = input('keyboard (1/MAC 2/Dell 3/EEG):');
     filePath = ['./Data/Ensem_result_' subjNo '.txt'];  
     
 %====== Constants ======%
