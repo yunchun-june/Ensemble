@@ -21,7 +21,8 @@ try
     subjNo          = input('subjNo: ','s');
     dominantEye     = input('DonimantEye (1/Right 2/Left):');
     keyboard        = input('keyboard (1/MAC 2/Dell 3/EEG):');
-    filePath = ['./Data/Ensem_result_' subjNo '.txt'];  
+    resultFilePath = ['./Data/Ensem_result_' subjNo '.txt'];
+    setupFilePath = ['./ExperimentalSetup/Setup_' subjNo '.txt'];  
     
 %====== Constants ======%
     
@@ -56,7 +57,6 @@ try
     resultFileColNum = 19;
  
 %====== Experimental Design ======%
-
     
     %--- Thresholding Procedure ---%
     lowerBound      = 0.02;
@@ -287,11 +287,11 @@ try
             %ESC pressed
             [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
             if secs(KbName(quitkey))
-                CreateFile(filePath, resultList);
+                CreateResultFile(resultFilePath, resultList);
+                CreateSetupFile(setupFilePath, condList);
                 Screen('CloseAll');
                 return;
             end
-            
             Screen('Flip',wPtr);
         end
         
@@ -329,7 +329,8 @@ try
                     
                     %ESC pressed
                     if secs(KbName(quitkey))
-                        CreateFile(filePath, resultList);
+                        CreateResultFile(resultFilePath, resultList);
+                        CreateSetupFile(setupFilePath, condList);
                         Screen('CloseAll');
                         return;
                     end
@@ -381,7 +382,8 @@ try
                     [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
                     if secs(KbName(breakKey))-timezero > 0, noBreak = FALSE; end
                     if secs(KbName(quitkey))
-                        CreateFile(filePath, resultList);
+                        CreateResultFile(resultFilePath, resultList);
+                        CreateSetupFile(setupFilePath, condList);
                         Screen('CloseAll');
                         return;
                     end
@@ -472,7 +474,8 @@ try
 
                                 % ESC pressed
                                 if secs(KbName(quitkey))
-                                    CreateFile(filePath, resultList);
+                                    CreateResultFile(resultFilePath, resultList);
+                                    CreateSetupFile(setupFilePath, condList);
                                     Screen('CloseAll');
                                     return;
                                 end
@@ -510,7 +513,8 @@ try
 
                                 % ESC pressed
                                 if secs(KbName(quitkey))
-                                    CreateFile(filePath, resultList);
+                                    CreateResultFile(resultFilePath, resultList);
+                                    CreateSetupFile(setupFilePath, condList);
                                     Screen('CloseAll'); %Closes Screen  
                                     return;
                                 end
@@ -572,7 +576,8 @@ try
     
 %===== Write Results and Quit =====%
     
-    CreateFile(filePath, resultList);
+    CreateResultFile(resultFilePath, resultList);
+    CreateSetupFile(setupFilePath, condList);
     Screen('CloseAll');
     return;
 
@@ -580,6 +585,7 @@ catch exception
     Screen('CloseAll');
     disp('*** ERROR DETECTED ***');
     disp(getReport(exception));
-    CreateFile(filePath, resultList);
+    CreateResultFile(resultFilePath, resultList);
+    CreateSetupFile(setupFilePath, condList);
     return;
 end
