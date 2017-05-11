@@ -301,9 +301,9 @@ try
             %ESC pressed
             [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
             if secs(KbName(quitkey))
+                Screen('CloseAll');
                 CreateFile(resultFilePath, resultList);
                 CreateFile(setupFilePath, condList);
-                Screen('CloseAll');
                 return;
             end
             Screen('Flip',wPtr);
@@ -347,9 +347,9 @@ try
                     
                     %ESC pressed
                     if secs(KbName(quitkey))
+                        Screen('CloseAll');
                         CreateFile(resultFilePath, resultList);
                         CreateFile(setupFilePath, condList);
-                        Screen('CloseAll');
                         return;
                     end
                 end
@@ -400,9 +400,9 @@ try
                     [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
                     if secs(KbName(breakKey))-timezero > 0, noBreak = FALSE; end
                     if secs(KbName(quitkey))
+                        Screen('CloseAll');
                         CreateFile(resultFilePath, resultList);
                         CreateFile(setupFilePath, condList);
-                        Screen('CloseAll');
                         return;
                     end
                  end
@@ -492,9 +492,9 @@ try
 
                                 % ESC pressed
                                 if secs(KbName(quitkey))
+                                    Screen('CloseAll');
                                     CreateFile(resultFilePath, resultList);
                                     CreateFile(setupFilePath, condList);
-                                    Screen('CloseAll');
                                     return;
                                 end
                             end 
@@ -535,9 +535,9 @@ try
 
                                 % ESC pressed
                                 if secs(KbName(quitkey))
+                                    Screen('CloseAll'); 
                                     CreateFile(resultFilePath, resultList);
                                     CreateFile(setupFilePath, condList);
-                                    Screen('CloseAll'); %Closes Screen  
                                     return;
                                 end
                             end 
@@ -598,16 +598,14 @@ try
     
 %===== Write Results and Quit =====%
     
+    Screen('CloseAll');
     CreateFile(resultFilePath, resultList);
     CreateFile(setupFilePath, condList);
-    Screen('CloseAll');
     return;
 
 catch exception
     Screen('CloseAll');
     disp('*** ERROR DETECTED ***');
     disp(getReport(exception));
-    CreateFile(resultFilePath, resultList);
-    CreateFile(setupFilePath, condList);
     return;
 end
