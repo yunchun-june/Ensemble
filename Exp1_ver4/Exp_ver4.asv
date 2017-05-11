@@ -106,11 +106,11 @@ try
         for i = randomIndex
             temp_condList{block}(end+1,:) = temp(i,:);
         end
-    end
-    
-    randomIndex = randperm(5);
-    for i = 1:5
-        condList(blockIndex{i},:) = temp_condList{randomIndex(i)}(:,:);
+        
+        randomIndex = randperm(5);
+        for i = 1:5
+            condList(blockIndex{i},:) = temp_condList{randomIndex(i)}(1:trialPerBlock,:);
+        end
     end
     
 %====== Setup Screen & Keyboard ======%
@@ -301,8 +301,8 @@ try
             %ESC pressed
             [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
             if secs(KbName(quitkey))
-                CreateFile(resultFilePath, resultList);
-                CreateFile(setupFilePath, condList);
+                CreateResultFile(resultFilePath, resultList);
+                CreateSetupFile(setupFilePath, condList);
                 Screen('CloseAll');
                 return;
             end
@@ -347,8 +347,8 @@ try
                     
                     %ESC pressed
                     if secs(KbName(quitkey))
-                        CreateFile(resultFilePath, resultList);
-                        CreateFile(setupFilePath, condList);
+                        CreateResultFile(resultFilePath, resultList);
+                        CreateSetupFile(setupFilePath, condList);
                         Screen('CloseAll');
                         return;
                     end
@@ -400,8 +400,8 @@ try
                     [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
                     if secs(KbName(breakKey))-timezero > 0, noBreak = FALSE; end
                     if secs(KbName(quitkey))
-                        CreateFile(resultFilePath, resultList);
-                        CreateFile(setupFilePath, condList);
+                        CreateResultFile(resultFilePath, resultList);
+                        CreateSetupFile(setupFilePath, condList);
                         Screen('CloseAll');
                         return;
                     end
@@ -492,8 +492,8 @@ try
 
                                 % ESC pressed
                                 if secs(KbName(quitkey))
-                                    CreateFile(resultFilePath, resultList);
-                                    CreateFile(setupFilePath, condList);
+                                    CreateResultFile(resultFilePath, resultList);
+                                    CreateSetupFile(setupFilePath, condList);
                                     Screen('CloseAll');
                                     return;
                                 end
@@ -535,8 +535,8 @@ try
 
                                 % ESC pressed
                                 if secs(KbName(quitkey))
-                                    CreateFile(resultFilePath, resultList);
-                                    CreateFile(setupFilePath, condList);
+                                    CreateResultFile(resultFilePath, resultList);
+                                    CreateSetupFile(setupFilePath, condList);
                                     Screen('CloseAll'); %Closes Screen  
                                     return;
                                 end
@@ -589,7 +589,7 @@ try
                     end     
                 
             end %end of trials
-            blockUnDone = sum(condList(blockIndex{block},DONE)) ~= trialPerBlock;
+            blockUnDone = sum(condList{block}(:,DONE)) ~= trialPerBlock;
         end %end of the block
         
         doneBlockNum = doneBlockNum+1;
@@ -598,8 +598,8 @@ try
     
 %===== Write Results and Quit =====%
     
-    CreateFile(resultFilePath, resultList);
-    CreateFile(setupFilePath, condList);
+    CreateResultFile(resultFilePath, resultList);
+    CreateSetupFile(setupFilePath, condList);
     Screen('CloseAll');
     return;
 
@@ -607,7 +607,7 @@ catch exception
     Screen('CloseAll');
     disp('*** ERROR DETECTED ***');
     disp(getReport(exception));
-    CreateFile(resultFilePath, resultList);
-    CreateFile(setupFilePath, condList);
+    CreateResultFile(resultFilePath, resultList);
+    CreateSetupFile(setupFilePath, condList);
     return;
 end

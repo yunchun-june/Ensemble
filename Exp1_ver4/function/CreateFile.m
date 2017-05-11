@@ -1,4 +1,5 @@
-function[] = CreateSetupFile(fName, condList)
+function[] = CreateFile(fName, resultList)
+
 
 %====== Content of Result File ======%
 %   column name    colunm number  
@@ -24,11 +25,9 @@ function[] = CreateSetupFile(fName, condList)
     
 
     fd = fopen(fName, 'w');
-    for block = 1:5
-        fileLength = length(condList{block});
-        for i=1:fileLength
-            fprintf(fd, '%3d %3d %3d %3d %3d %3d %0.2f %0.2f %0.2f %0.2f %3d %3d %3d %3d %3d %3d %3d %3d %3d\n', condList{block}(i,:));
-        end
+    fileLength = length(resultList);
+    for i=1:fileLength
+        fprintf(fd, '%3d %3d %3d %3d %3d %3d %0.2f %0.2f %0.2f %0.2f %3d %3d %3d %3d %3d %3d %3d %3d %3d\n', resultList(i,:));
     end
     fclose(fd);
 

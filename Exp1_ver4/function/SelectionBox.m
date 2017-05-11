@@ -1,4 +1,4 @@
-function [] = FixationBox(wPtr,LeftboxXCenter,RightboxXCenter,YCenter,boxsize,boxcolor)
+function [] = SelectionBox(wPtr,LeftboxXCenter,RightboxXCenter,YCenter,boxsize,boxcolor)
 
 % if nargin<6,
 %     boxcolor=[255 255 255];
