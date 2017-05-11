@@ -1,4 +1,4 @@
-function[] = CreateFile(fName, resultList)
+function[] = CreateFile(filepath, list)
 
 
 %====== Content of Result File ======%
@@ -24,10 +24,10 @@ function[] = CreateFile(fName, resultList)
 %     PLACE(4)        =19;
     
 
-    fd = fopen(fName, 'w');
-    fileLength = length(resultList);
-    for i=1:fileLength
-        fprintf(fd, '%3d %3d %3d %3d %3d %3d %0.2f %0.2f %0.2f %0.2f %3d %3d %3d %3d %3d %3d %3d %3d %3d\n', resultList(i,:));
+    fd = fopen(filepath, 'w');
+    [row,col] = size(list);
+    for i=1:row
+        fprintf(fd, '%3d %3d %3d %3d %3d %3d %0.2f %0.2f %0.2f %0.2f %3d %3d %3d %3d %3d %3d %3d %3d %3d\n', list(i,:));
     end
     fclose(fd);
 
