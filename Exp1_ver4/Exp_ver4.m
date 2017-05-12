@@ -22,6 +22,7 @@ try
     subjNo          = input('subjNo: ','s');
     dominantEye     = input('DonimantEye (1/Right 2/Left):');
     keyboard        = input('keyboard (1/MAC 2/Dell 3/EEG):');
+    
     resultFilePath = ['./Data/Ensem_result_' subjNo '.txt'];
     condFilePath = ['./Data/condList/Ensem_condList_' subjNo '.txt']; 
     
