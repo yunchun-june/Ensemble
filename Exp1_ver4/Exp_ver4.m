@@ -23,7 +23,7 @@ try
     dominantEye     = input('DonimantEye (1/Right 2/Left):');
     keyboard        = input('keyboard (1/MAC 2/Dell 3/EEG):');
     resultFilePath = ['./Data/Ensem_result_' subjNo '.txt'];
-    setupFilePath = ['./ExperimentalSetup/Setup_' subjNo '.txt'];  
+    condFilePath = ['./Data/condList/Ensem_condList_' subjNo '.txt']; 
     
 %====== Constants ======%
     
@@ -85,32 +85,50 @@ try
     end
     
     %--- Generate Condition List ---%
-    temp_condList = cell(5);
+    
     condList = zeros(trialPerBlock*5,resultFileColNum);
     
-    for block = 1:ensemConditionNum
-        expTrialIndex   = 1:expTrialNumInBlock;
-        blankTrialIndex = expTrialNumInBlock+1:trialPerBlock;
-        
-        temp = zeros(trialPerBlock,resultFileColNum);
-        temp(1:trialPerBlock,ENSEM)         = block;
-        temp(expTrialIndex    ,IS_EXP_TRIAL)  = 1;
-        temp(expTrialIndex    ,TARGET)        = repmat(1:targetFaceNum,1,expTrialNumInBlock/targetFaceNum);
-        temp(expTrialIndex    ,STAIRCASE)     = repmat(1:stairCaseNum,1,expTrialNumInBlock/stairCaseNum);
-        
-        temp(blankTrialIndex  ,IS_EXP_TRIAL) = 0;
-        temp(blankTrialIndex  ,TARGET)       = repmat(1:blankFaceNum,1,blank_rep/ensemConditionNum);
-        temp(blankTrialIndex  ,STAIRCASE)    = 0;
-        
-        randomIndex = randperm(trialPerBlock);
-        for i = randomIndex
-            temp_condList{block}(end+1,:) = temp(i,:);
+    try
+        formatSpec = '%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d';
+        [isExp,ensem,target,judgement ,noBreak ,stairCase ,t1 ,t2 ,t3 ,t4 ,s1 ,s2 ,s3 ,s4 ,rep ,p1 ,p2 ,p3 ,p4]= textread(condFilePath,formatSpec);
+        fileLength = length(isExp);
+        for i = 1:fileLength
+            condList(i,IS_EXP_TRIAL) = isExp(i);
+            condList(i,ENSEM) = ensem(i);
+            condList(i,TARGET) = target(i);
+            condList(i,STAIRCASE) = stairCase(i);
         end
-    end
-    
-    randomIndex = randperm(5);
-    for i = 1:5
-        condList(blockIndex{i},:) = temp_condList{randomIndex(i)}(:,:);
+        disp('ConditionList for this subject exist. Read from file successful');
+    catch exception
+        disp(getReport(exception));
+        temp_condList = cell(5);
+        for block = 1:ensemConditionNum
+            expTrialIndex   = 1:expTrialNumInBlock;
+            blankTrialIndex = expTrialNumInBlock+1:trialPerBlock;
+
+            temp = zeros(trialPerBlock,resultFileColNum);
+            temp(1:trialPerBlock,ENSEM)         = block;
+            temp(expTrialIndex    ,IS_EXP_TRIAL)  = 1;
+            temp(expTrialIndex    ,TARGET)        = repmat(1:targetFaceNum,1,expTrialNumInBlock/targetFaceNum);
+            temp(expTrialIndex    ,STAIRCASE)     = repmat(1:stairCaseNum,1,expTrialNumInBlock/stairCaseNum);
+
+            temp(blankTrialIndex  ,IS_EXP_TRIAL) = 0;
+            temp(blankTrialIndex  ,TARGET)       = repmat(1:blankFaceNum,1,blank_rep/ensemConditionNum);
+            temp(blankTrialIndex  ,STAIRCASE)    = 0;
+
+            randomIndex = randperm(trialPerBlock);
+            for i = randomIndex
+                temp_condList{block}(end+1,:) = temp(i,:);
+            end
+        end
+
+        randomIndex = randperm(5);
+        for i = 1:5
+            condList(blockIndex{i},:) = temp_condList{randomIndex(i)}(:,:);
+        end
+        
+        CreateCondListFile(condFilePath, condList)
+        disp('condition for this subject does not exist. Generate a new one and save file');
     end
     
 %====== Setup Screen & Keyboard ======%
@@ -225,10 +243,10 @@ try
            targetFace.tex{i} = Screen('MakeTexture',wPtr,targetFace.img{i});
            
            %create scramble mask
-           im =  double(targetFace.img{i})/255;
-           targetMask.img{i} = imscramble(im,0.75,'range');
-           im = uint8(targetMask.img{i}*255);
-           targetMask.tex{i} = Screen('MakeTexture',wPtr,im);
+           image_double =  double(targetFace.img{i})/255;
+           targetMask.img{i} = imscramble(image_double,0.75,'range');
+           image = uint8(targetMask.img{i}*255);
+           targetMask.tex{i} = Screen('MakeTexture',wPtr,image);
         end
     
     % ------ Target Faces(blank trials) ------%
@@ -239,10 +257,10 @@ try
            blankFace.tex{i} = Screen('MakeTexture',wPtr,blankFace.img{i});
            
            %create scramble mask
-           im =  double(blankFace.img{i})/255;
-           blankMask.img{i} = imscramble(im,0.75,'range');
-           im = uint8(blankMask.img{i}*255);
-           blankMask.tex{i} = Screen('MakeTexture',wPtr,im);
+           image_double =  double(blankFace.img{i})/255;
+           blankMask.img{i} = imscramble(image_double,0.75,'range');
+           image = uint8(blankMask.img{i}*255);
+           blankMask.tex{i} = Screen('MakeTexture',wPtr,image);
         end   
      
     % -------- Ensemble Faces ---------%
@@ -302,8 +320,7 @@ try
             [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
             if secs(KbName(quitkey))
                 Screen('CloseAll');
-                CreateFile(resultFilePath, resultList);
-                CreateFile(setupFilePath, condList);
+                CreateResultFile(resultFilePath, resultList);
                 return;
             end
             Screen('Flip',wPtr);
@@ -348,8 +365,7 @@ try
                     %ESC pressed
                     if secs(KbName(quitkey))
                         Screen('CloseAll');
-                        CreateFile(resultFilePath, resultList);
-                        CreateFile(setupFilePath, condList);
+                        CreateResultFile(resultFilePath, resultList);
                         return;
                     end
                 end
@@ -401,8 +417,7 @@ try
                     if secs(KbName(breakKey))-timezero > 0, noBreak = FALSE; end
                     if secs(KbName(quitkey))
                         Screen('CloseAll');
-                        CreateFile(resultFilePath, resultList);
-                        CreateFile(setupFilePath, condList);
+                        CreateResultFile(resultFilePath, resultList);
                         return;
                     end
                  end
@@ -493,8 +508,7 @@ try
                                 % ESC pressed
                                 if secs(KbName(quitkey))
                                     Screen('CloseAll');
-                                    CreateFile(resultFilePath, resultList);
-                                    CreateFile(setupFilePath, condList);
+                                    CreateResultFile(resultFilePath, resultList);
                                     return;
                                 end
                             end 
@@ -536,8 +550,7 @@ try
                                 % ESC pressed
                                 if secs(KbName(quitkey))
                                     Screen('CloseAll'); 
-                                    CreateFile(resultFilePath, resultList);
-                                    CreateFile(setupFilePath, condList);
+                                    CreateResultFile(resultFilePath, resultList);
                                     return;
                                 end
                             end 
@@ -599,13 +612,12 @@ try
 %===== Write Results and Quit =====%
     
     Screen('CloseAll');
-    CreateFile(resultFilePath, resultList);
-    CreateFile(setupFilePath, condList);
+    CreateResultFile(resultFilePath, resultList);
     return;
 
 catch exception
     Screen('CloseAll');
-    disp('*** ERROR DETECTED ***');
+    disp('*** ERROR ***');
     disp(getReport(exception));
     return;
 end

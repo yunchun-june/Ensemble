@@ -1,4 +1,4 @@
-function[] = CreateFile(filepath, list)
+function[] = CreateCondListFile(filepath, list)
 
 
 %====== Content of Result File ======%
@@ -26,8 +26,8 @@ function[] = CreateFile(filepath, list)
 
     fd = fopen(filepath, 'w');
     [row,col] = size(list);
-    for i=1:row
-        fprintf(fd, '%3d %3d %3d %3d %3d %3d %0.2f %0.2f %0.2f %0.2f %3d %3d %3d %3d %3d %3d %3d %3d %3d\n', list(i,:));
+    for i = 1:row
+        fprintf(fd, '%3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d\n', list(i,:));
     end
     fclose(fd);
 
