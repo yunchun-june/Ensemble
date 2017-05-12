@@ -1,6 +1,9 @@
 
 clear all;
 close all;
+addpath('./Function/');
+
+Screen('Preference', 'SkipSyncTests', 1);
 
 try
 
@@ -11,11 +14,11 @@ try
         fName = ['./Data/Ensem2_result_' subjNo '.txt'];
         
     %====== initial condition =====% 
-        initialThr = [0.6 0.9 0.6 1 1 0.6];
+        initialThr = [0.6 0.6 0.6 0.6 0.6 0.6];
     
         for i = 1:6
-            faceOpc{1}(1,i) = initialThr(i);  faceOpc{1}(2,i) = initialThr(i)-0.45;  % white faces
-            faceOpc{2}(1,i) = initialThr(i);  faceOpc{2}(2,i) = initialThr(i)-0.3;  % black faces
+            faceOpc(1,i) = initialThr(i)+0.2;
+            faceOpc(2,i) = initialThr(i)-0.2;
         end
         
         conOpc = 1;
@@ -27,31 +30,21 @@ try
         stepsize_up = 0.03;
         stairCase_up = 2;
         
-    %====== Setup Screen ======%
-        screid = max(Screen('Screens'));
-        [wPtr, screenRect]=Screen('OpenWindow',1, 0,[],32,2); % open screen
-        [width, height] = Screen('WindowSize', wPtr); %get windows size 
+%====== Setup Screen & Keyboard ======%
 
-    %===== Devices======%
-        
-        if keymode==1,
-            targetUsageName = 'Keyboard';
-            targetProduct = 'Apple Keyboard';
-            dev=PsychHID('Devices');
-            devInd = find(strcmpi(targetUsageName, {dev.usageName}) & strcmpi(targetProduct, {dev.product}));
-        elseif keymode==2,
-            targetUsageName = 'Keyboard';
-            targetProduct = 'USB Keykoard';
-            dev=PsychHID('Devices');
-            devInd = find(strcmpi(targetUsageName, {dev.usageName}) & strcmpi(targetProduct, {dev.product}));
-        elseif keymode==3,
-            targetUsageName = 'Keyboard';
-            targetProduct = 'Dell USB Keyboard';
-            dev=PsychHID('Devices');
-            devInd = find(strcmpi(targetUsageName, {dev.usageName}) & strcmpi(targetProduct, {dev.product}));
-        end
-        KbQueueCreate(devInd);  
-        KbQueueStart(devInd);
+    screid = max(Screen('Screens'));
+    [wPtr, screenRect]=Screen('OpenWindow',screid, 0,[],32,2);
+    [width, height] = Screen('WindowSize', wPtr);
+    
+    if keyboard==1, targetProduct = 'Apple Keyboard'; end
+    if keyboard==2, targetProduct = 'USB Keykoard'; end
+    if keyboard==3, targetProduct = 'Dell USB Keyboard'; end
+    
+    targetUsageName = 'Keyboard';
+    dev=PsychHID('Devices');
+    devInd = find(strcmpi(targetUsageName, {dev.usageName}) & strcmpi(targetProduct, {dev.product}));
+    KbQueueCreate(devInd);  
+    KbQueueStart(devInd);
         
     %======Keyboard======%
      
@@ -139,42 +132,39 @@ try
         folder = './faces/';
         
         % conscious and unconscious stimuli
+
         for condition = 1:3
             whiteCon.file{condition} = dir([folder 'white_con' num2str(condition) '*.jpg']);
-            blackCon.file{condition} = dir([folder 'black_con' num2str(condition) '*.jpg']);
             whiteUncon.file{condition} = dir([folder 'white_uncon' num2str(condition) '*.jpg']);
-            blackUncon.file{condition} = dir([folder 'black_uncon' num2str(condition) '*.jpg']);
-        end
-        
-        
-        
-        for condition = 1:3
+            
             for faceNum = 1:4 
                 whiteCon.img{condition,faceNum} = imread([folder whiteCon.file{condition}(faceNum).name]);
                 whiteCon.tex{condition,faceNum} = Screen('MakeTexture',wPtr,whiteCon.img{condition,faceNum});
-                blackCon.img{condition,faceNum} = imread([folder blackCon.file{condition}(faceNum).name]);
-                blackCon.tex{condition,faceNum} = Screen('MakeTexture',wPtr,blackCon.img{condition,faceNum});
+                
+                image = uint8(imscramble(double(whiteCon.img{condition,faceNum})/255,0.75,'range')*255);
+                whiteCon.mask{condition,faceNum} = Screen('MakeTexture',wPtr,image);
             end
         end
-        
         
         
         for condition = 1:3
             for faceNum = 1:2
                 whiteUncon.img{condition,faceNum} = imread([folder whiteUncon.file{condition}(faceNum).name]);
                 whiteUncon.tex{condition,faceNum} = Screen('MakeTexture',wPtr,whiteUncon.img{condition,faceNum});
-                blackUncon.img{condition,faceNum} = imread([folder blackUncon.file{condition}(faceNum).name]);
-                blackUncon.tex{condition,faceNum} = Screen('MakeTexture',wPtr,blackUncon.img{condition,faceNum});
+                
+                image = uint8(imscramble(double(whiteUncon.img{condition,faceNum})/255,0.75,'range')*255);
+                whiteUncon.mask{condition,faceNum} = Screen('MakeTexture',wPtr,image);
             end
         end
-        
-        
             
         % faces for catch trials
         catchFace.file = dir([folder 'catch*.jpg']);
         for faceNum = 1:12
             catchFace.img{faceNum} = imread([folder catchFace.file(faceNum).name]);
             catchFace.tex{faceNum} = Screen('MakeTexture',wPtr,catchFace.img{faceNum});
+            
+            image = uint8(imscramble(double(catchFace.img{faceNum})/255,0.75,'range')*255);
+            catchFace.mask{faceNum} = Screen('MakeTexture',wPtr,image);
         end
         
         % mondrians
@@ -363,8 +353,8 @@ try
                             end
 
                             for j = 5:6
-                                if contrast(place(j))< faceOpc{stimuliIdx}(stairCaseToUse,j), contrast(place(j)) = contrast(place(j))+ConIncr; end
-                                if contrast(place(j))>= faceOpc{stimuliIdx}(stairCaseToUse,j), contrast(place(j)) = faceOpc{stimuliIdx}(stairCaseToUse,j); end
+                                if contrast(place(j))< faceOpc(stairCaseToUse,j), contrast(place(j)) = contrast(place(j))+ConIncr; end
+                                if contrast(place(j))>= faceOpc(stairCaseToUse,j), contrast(place(j)) = faceOpc(stairCaseToUse,j); end
                             end
                         end
                     
@@ -538,7 +528,7 @@ try
                 condList(i,6) = isBreak;
                 if isBreak~=0 breakRate(end+1) = 1;
                 else breakRate(end+1) = 0; end
-                for j=1:6, condList(i,j+7) = faceOpc{stimuliIdx}(stairCaseToUse,j); end
+                for j=1:6, condList(i,j+7) = faceOpc(stairCaseToUse,j); end
                 condList(i,14:19) = Seen(1:6);
                 condList(i,20:25) = place(:);
              
@@ -559,8 +549,8 @@ try
                   % seen, decrease
                   idx = place(j);
                   if(Seen(idx))
-                     faceOpc{stimuliIdx}(stairCaseToUse,idx) = faceOpc{stimuliIdx}(stairCaseToUse,idx)-stepsize_down;
-                     if faceOpc{stimuliIdx}(stairCaseToUse,idx) <= lowerBound, faceOpc{stimuliIdx}(stairCaseToUse,idx) = lowerBound; end
+                     faceOpc(stairCaseToUse,idx) = faceOpc(stairCaseToUse,idx)-stepsize_down;
+                     if faceOpc(stairCaseToUse,idx) <= lowerBound, faceOpc(stairCaseToUse,idx) = lowerBound; end
                      numReportUnseen{stimuliIdx,stairCaseToUse}(idx) = 0;
                   end
                     
@@ -568,8 +558,8 @@ try
                   if(~Seen(idx)) && isBreak == 0
                      numReportUnseen{stimuliIdx,stairCaseToUse}(idx) = numReportUnseen{stimuliIdx,stairCaseToUse}(idx) +1;
                      if numReportUnseen{stimuliIdx,stairCaseToUse}(idx) == stairCase_up;
-                         faceOpc{stimuliIdx}(stairCaseToUse,idx) = faceOpc{stimuliIdx}(stairCaseToUse,idx) + stepsize_up;
-                         if faceOpc{stimuliIdx}(stairCaseToUse,idx) >= upperBound, faceOpc{stimuliIdx}(stairCaseToUse,idx) = upperBound; end
+                         faceOpc(stairCaseToUse,idx) = faceOpc(stairCaseToUse,idx) + stepsize_up;
+                         if faceOpc(stairCaseToUse,idx) >= upperBound, faceOpc(stairCaseToUse,idx) = upperBound; end
                          numReportUnseen{stimuliIdx,stairCaseToUse}(idx) = 0;
                      end
                   end
@@ -585,8 +575,9 @@ try
         return;
     
 
-catch
-    disp('*******Error Catched*******')
+catch exception
+    disp('*** ERROR ***')
+    disp(getReport(exception));
     Screen('CloseAll');
     CreateFile(fName, condList);
     return;
