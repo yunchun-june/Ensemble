@@ -10,7 +10,7 @@ try
     %====== Input ======%
         subjNo                = input('subjNo: ','s');
         DemoEye               = input('DomEye Right 1 Left 2:');
-        keymode               = input('keymode1 MAC keymode2 Dell 3 EEG:');
+        keyboard               = input('keymode1 MAC keymode2 Dell 3 EEG:');
         fName = ['./Data/Ensem2_result_' subjNo '.txt'];
         
     %====== initial condition =====% 
@@ -86,39 +86,37 @@ try
 %                     [ 3    1       0   2 ]
 %                     [ 2    2       0   2 ]
 %                     [ 1    3       0   2 ]];
+         
+        %====== result list  ======%
+            TRIAL = 1;
+            IS_EXP = 2;
+            COND = 3;
+            JUDGEMNET = 4;
+            BREAK  =5;
+            STAIRCASE = 6;
+            CON = 7:12;
+            SEEN = 13:18;
+            POSI = 19:24;
+            COL_NUM = 24;
 
-
-        % set up condition list
-
-            %1 trial number
-            %2 isExptrial 1 / isCatchTrial 0
-            %3 condition
-            %4 face used
-            %5 judgement
-            %6 break
-            %7 staircase
-            %8-13 contrast 
-
-            exp_condtemp = zeros(expTrial,13);
-            catch_condtemp = zeros(catchTrial,13);
+            exp_condtemp = zeros(expTrial,COL_NUM);
+            catch_condtemp = zeros(catchTrial,COL_NUM);
 
             %exp trials
-            exp_condtemp(1:expTrial,2) = 1;  % 2 exp trial
-            exp_condtemp(1:expTrial,3) = repmat(1:9,1,expTrial/9);  % 3 conscious condition
-            exp_condtemp(1:expTrial,4) = 1;  % 4 face used %use white face only
-            exp_condtemp(1:expTrial/2,7) = 1;  % 7 staircase
-            exp_condtemp(expTrial/2+1:expTrial,7) = 2;
+            exp_condtemp(1:expTrial,IS_EXP) = 1;  % 2 exp trial
+            exp_condtemp(1:expTrial,COND) = repmat(1:9,1,expTrial/9);  % 3 conscious condition
+            exp_condtemp(1:expTrial/2,STAIRCASE) = 1;  % 7 staircase
+            exp_condtemp(expTrial/2+1:expTrial,STAIRCASE) = 2;
 
             %catch trials
-            catch_condtemp(1:catchTrial,2) = 0;  %2 catch trial
-            catch_condtemp(1:catchTrial,3) = repmat(1:6,1,catchTrial/6); %3 condition
-            catch_condtemp(1:catchTrial,4) = 1; %is white faces
-            catch_condtemp(1:catchTrial/2,7) = 1;  % 7 staircase
-            catch_condtemp(catchTrial/2+1:catchTrial,7) = 2;
+            catch_condtemp(1:catchTrial,IS_EXP) = 0;  %2 catch trial
+            catch_condtemp(1:catchTrial,COND) = repmat(1:6,1,catchTrial/6); %3 condition
+            catch_condtemp(1:catchTrial/2,STAIRCASE) = 1;  % 7 staircase
+            catch_condtemp(catchTrial/2+1:catchTrial,STAIRCASE) = 2;
 
             randIdx = randperm(expTrial+catchTrial);
 
-            condList = zeros(expTrial+catchTrial,25); % nTrial cond testfaceNum judgement
+            condList = zeros(expTrial+catchTrial,COL_NUM); % nTrial cond testfaceNum judgement
             for i=1:expTrial+catchTrial
                 condList(i,1) = i;
                 if randIdx(i) <= expTrial
@@ -159,7 +157,7 @@ try
             
         % faces for catch trials
         catchFace.file = dir([folder 'catch*.jpg']);
-        for faceNum = 1:12
+        for faceNum = 1:6
             catchFace.img{faceNum} = imread([folder catchFace.file(faceNum).name]);
             catchFace.tex{faceNum} = Screen('MakeTexture',wPtr,catchFace.img{faceNum});
             
@@ -272,10 +270,8 @@ try
      %====== Experiment running ======%
      
         breakRate = [];
-        numReportUnseen{1,1} = [0 0 0 0 0 0];
-        numReportUnseen{1,2} = [0 0 0 0 0 0];
-        numReportUnseen{2,1} = [0 0 0 0 0 0];
-        numReportUnseen{2,2} = [0 0 0 0 0 0];           
+        numReportUnseen{1} = [0 0 0 0 0 0];
+        numReportUnseen{2} = [0 0 0 0 0 0];       
         
         for i= 1:expTrial+catchTrial
             
@@ -324,10 +320,9 @@ try
                  MonTimer = 0;
                  contrast = [0 0 0 0 0 0];
                  place = randperm(6);
-                 isExpTrial = condList(i,2);
-                 stimuliIdx = condList(i,4);
-                 stairCaseToUse = condList(i,7);
-                 condition = condList(i,3);
+                 isExpTrial = condList(i,IS_EXP);
+                 staircase = condList(i,STAIRCASE);
+                 condition = condList(i,COND);
                  if condition == 1, conCon = 1; unCon = 1; end
                  if condition == 2, conCon = 2; unCon = 1; end
                  if condition == 3, conCon = 3; unCon = 1; end
@@ -353,8 +348,8 @@ try
                             end
 
                             for j = 5:6
-                                if contrast(place(j))< faceOpc(stairCaseToUse,j), contrast(place(j)) = contrast(place(j))+ConIncr; end
-                                if contrast(place(j))>= faceOpc(stairCaseToUse,j), contrast(place(j)) = faceOpc(stairCaseToUse,j); end
+                                if contrast(place(j))< faceOpc(staircase,j), contrast(place(j)) = contrast(place(j))+ConIncr; end
+                                if contrast(place(j))>= faceOpc(staircase,j), contrast(place(j)) = faceOpc(staircase,j); end
                             end
                         end
                     
@@ -368,24 +363,12 @@ try
 
                     %draw faces
 
-                        if isExpTrial && stimuliIdx == 1 %white face
-                            for k=1:4 %conscious faces
-                                    Screen('DrawTexture', wPtr, whiteCon.tex{conCon,k}, [], FacePosi{place(k)},[],[],conOpc);
-                            end;
-                            
-                            for k=1:2 %unconscious faces
-                                    Screen('DrawTexture', wPtr, whiteUncon.tex{unCon,k}, [], FacePosi{place(k+4)},[],[],contrast(place(k+4)));
-                            end
-                        end
-                        
-                        if isExpTrial && stimuliIdx == 2 %blackface
-                            for k=1:4 %conscious faces
-                                    Screen('DrawTexture', wPtr, blackCon.tex{conCon,k}, [], FacePosi{place(k)},[],[],conOpc);
-                            end;
-                            
-                            for k=1:2 %unconscious faces
-                                    Screen('DrawTexture', wPtr, blackUncon.tex{unCon,k}, [], FacePosi{place(k+4)},[],[],contrast(place(k+4)));
-                            end
+                        for k=1:4 %conscious faces
+                                Screen('DrawTexture', wPtr, whiteCon.tex{conCon,k}, [], FacePosi{place(k)},[],[],conOpc);
+                        end;
+
+                        for k=1:2 %unconscious faces
+                                Screen('DrawTexture', wPtr, whiteUncon.tex{unCon,k}, [], FacePosi{place(k+4)},[],[],contrast(place(k+4)));
                         end
                         
                         if ~isExpTrial %is catch trial
@@ -511,33 +494,22 @@ try
                if(Seen(7))
                    forgetLocation = 1;
                    isBreak = 4; end
-
-               
-            %1 trial number
-            %2 isExptrial 1 / isCatchTrial 0
-            %3 condition
-            %4 face used
-            %5 judgement***
-            %6 break***
-            %7 staircase
-            %8-13 contrast ****
-            %14-19 seen
-            
+       
             % Save Result
-                condList(i,5) = answer;
-                condList(i,6) = isBreak;
+                condList(i,JUDGEMENT) = answer;
+                condList(i,BREAK) = isBreak;
                 if isBreak~=0 breakRate(end+1) = 1;
                 else breakRate(end+1) = 0; end
-                for j=1:6, condList(i,j+7) = faceOpc(stairCaseToUse,j); end
-                condList(i,14:19) = Seen(1:6);
-                condList(i,20:25) = place(:);
+                condList(i,CON) = faceOpc(staircase,:);
+                condList(i,SEEN) = Seen(1:6);
+                condList(i,PLACE) = place(:);
              
             % Monitoring
                 disp('-------------------------------')
                 disp('trial condition: ');
                 disp(condList(i,1:7));
                 disp('threshold: ');
-                disp(condList(i,8:13));
+                disp(condList(i,CON));
                 disp(Seen);
                 disp('break rate:');
                 disp(mean(breakRate));
@@ -549,18 +521,18 @@ try
                   % seen, decrease
                   idx = place(j);
                   if(Seen(idx))
-                     faceOpc(stairCaseToUse,idx) = faceOpc(stairCaseToUse,idx)-stepsize_down;
-                     if faceOpc(stairCaseToUse,idx) <= lowerBound, faceOpc(stairCaseToUse,idx) = lowerBound; end
-                     numReportUnseen{stimuliIdx,stairCaseToUse}(idx) = 0;
+                     faceOpc(staircase,idx) = faceOpc(staircase,idx)-stepsize_down;
+                     if faceOpc(staircase,idx) <= lowerBound, faceOpc(staircase,idx) = lowerBound; end
+                     numReportUnseen{staircase}(idx) = 0;
                   end
                     
                   % unseen, increase
                   if(~Seen(idx)) && isBreak == 0
-                     numReportUnseen{stimuliIdx,stairCaseToUse}(idx) = numReportUnseen{stimuliIdx,stairCaseToUse}(idx) +1;
-                     if numReportUnseen{stimuliIdx,stairCaseToUse}(idx) == stairCase_up;
-                         faceOpc(stairCaseToUse,idx) = faceOpc(stairCaseToUse,idx) + stepsize_up;
-                         if faceOpc(stairCaseToUse,idx) >= upperBound, faceOpc(stairCaseToUse,idx) = upperBound; end
-                         numReportUnseen{stimuliIdx,stairCaseToUse}(idx) = 0;
+                     numReportUnseen{staircase}(idx) = numReportUnseen{staircase}(idx) +1;
+                     if numReportUnseen{staircase}(idx) == stairCase_up;
+                         faceOpc(staircase,idx) = faceOpc(staircase,idx) + stepsize_up;
+                         if faceOpc(staircase,idx) >= upperBound, faceOpc(staircase,idx) = upperBound; end
+                         numReportUnseen{staircase}(idx) = 0;
                      end
                   end
                 end 
