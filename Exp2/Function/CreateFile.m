@@ -13,8 +13,9 @@ function[] = CreateFile(fName, condList)
 %         COL_NUM = 24;
 
     fd = fopen(fName, 'w');
-    for i=1:length(condList)
-        fprintf(fd, '%3d %3d %3d %3d %3d %3d %3d     %0.2f %0.2f %0.2f %0.2f %0.2f %0.2f    %d %d %d %d %d %d  %d %d %d %d %d %d\n', condList(i,:));
+    [row col] = size(condList);
+    for i=1:row
+        fprintf(fd, '%3d %3d %3d %3d %3d %3d %0.2f %0.2f %0.2f %0.2f %0.2f %0.2f %d %d %d %d %d %d %d %d %d %d %d %d\r\n', condList(i,:));
     end
     fclose(fd);
 

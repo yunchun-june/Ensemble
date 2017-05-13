@@ -30,21 +30,21 @@ try
         stepsize_up = 0.03;
         stairCase_up = 2;
         
-%====== Setup Screen & Keyboard ======%
+    %====== Setup Screen & Keyboard ======%
 
-    screid = max(Screen('Screens'));
-    [wPtr, screenRect]=Screen('OpenWindow',screid, 0,[],32,2);
-    [width, height] = Screen('WindowSize', wPtr);
-    
-    if keyboard==1, targetProduct = 'Apple Keyboard'; end
-    if keyboard==2, targetProduct = 'USB Keykoard'; end
-    if keyboard==3, targetProduct = 'Dell USB Keyboard'; end
-    
-    targetUsageName = 'Keyboard';
-    dev=PsychHID('Devices');
-    devInd = find(strcmpi(targetUsageName, {dev.usageName}) & strcmpi(targetProduct, {dev.product}));
-    KbQueueCreate(devInd);  
-    KbQueueStart(devInd);
+        screid = max(Screen('Screens'));
+        [wPtr, screenRect]=Screen('OpenWindow',screid, 0,[],32,2);
+        [width, height] = Screen('WindowSize', wPtr);
+
+        if keyboard==1, targetProduct = 'Apple Keyboard'; end
+        if keyboard==2, targetProduct = 'USB Keykoard'; end
+        if keyboard==3, targetProduct = 'Dell USB Keyboard'; end
+
+        targetUsageName = 'Keyboard';
+        dev=PsychHID('Devices');
+        devInd = find(strcmpi(targetUsageName, {dev.usageName}) & strcmpi(targetProduct, {dev.product}));
+        KbQueueCreate(devInd);  
+        KbQueueStart(devInd);
         
     %======Keyboard======%
      
@@ -91,7 +91,7 @@ try
             TRIAL = 1;
             IS_EXP = 2;
             COND = 3;
-            JUDGEMNET = 4;
+            JUDGEMENT = 4;
             BREAK  =5;
             STAIRCASE = 6;
             CON = 7:12;
@@ -293,10 +293,8 @@ try
                     if secs(KbName(breakKey))
                         break; end 
                  end 
-             
              end
-            
-             
+
              % --------- Wait press space to start --------%
                 while 1,
                     FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
@@ -355,7 +353,6 @@ try
                     
                     
                     %draw mondrians
-
                         for k = 1:4 %for conscious faces
                             Screen('DrawTexture', wPtr, mon.tex{MonIdx}, [], conMonPosi{place(k)},[],[],maskOpc); end              
                         for k = 5:6 %for unconscious faces
@@ -502,7 +499,7 @@ try
                 else breakRate(end+1) = 0; end
                 condList(i,CON) = faceOpc(staircase,:);
                 condList(i,SEEN) = Seen(1:6);
-                condList(i,PLACE) = place(:);
+                condList(i,POSI) = place(:);
              
             % Monitoring
                 disp('-------------------------------')

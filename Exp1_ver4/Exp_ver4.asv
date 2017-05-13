@@ -22,8 +22,9 @@ try
     subjNo          = input('subjNo: ','s');
     dominantEye     = input('DonimantEye (1/Right 2/Left):');
     keyboard        = input('keyboard (1/MAC 2/Dell 3/EEG):');
+    
     resultFilePath = ['./Data/Ensem_result_' subjNo '.txt'];
-    condFilePath = ['./Data/condList/Ensem_condList_' subjNo '.txt'];  
+    condFilePath = ['./Data/condList/Ensem_condList_' subjNo '.txt']; 
     
 %====== Constants ======%
     
@@ -41,10 +42,7 @@ try
     JUDGEMENT       =4;
     DONE            =5;
     STAIRCASE       =6;
-    CON(1)          =7;
-    CON(2)          =8;
-    CON(3)          =9;
-    CON(4)          =10;
+    CON             =7:10;
     SEEN(1)         =11;
     SEEN(2)         =12;
     SEEN(3)         =13;
@@ -86,21 +84,17 @@ try
     
     %--- Generate Condition List ---%
     
-    condList = zeros(2,19);
-    %CreateCondListFile(condFilePath, resultList);
-
-    return;
+    condList = zeros(trialPerBlock*5,resultFileColNum);
     
     try
-        condListFile = dir(condFilePath);
         formatSpec = '%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d';
-        [isExp ensem targetFace judgement noBreak staircase]= textread(condListFile.name,formatSpec);
+        [isExp,ensem,target,judgement ,noBreak ,stairCase ,t1 ,t2 ,t3 ,t4 ,s1 ,s2 ,s3 ,s4 ,rep ,p1 ,p2 ,p3 ,p4]= textread(condFilePath,formatSpec);
         fileLength = length(isExp);
         for i = 1:fileLength
             condList(i,IS_EXP_TRIAL) = isExp(i);
             condList(i,ENSEM) = ensem(i);
-            condList(i,TARGET) = targetFace(i);
-            condList(i,STAIRCASE) = staircase(i);
+            condList(i,TARGET) = target(i);
+            condList(i,STAIRCASE) = stairCase(i);
         end
         disp('ConditionList for this subject exist. Read from file successful');
     catch exception
