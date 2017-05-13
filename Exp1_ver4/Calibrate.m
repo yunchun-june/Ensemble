@@ -1,8 +1,10 @@
 
-% 1. This script is for getting the rough threshold for each individual.
-% 2. The step size is large(10%) so that the program can approach the real threshold fast.
-% 3. The supressed faces are 2 fearful faces and 2 happy faces.
-% 4. Parameters to adjust for each subject is put in "Parameter" section.
+% ============================== INTRODUCTION ====================================%
+% This script is for getting the rough threshold for each subject.
+% The step size is large(10%) so that the program can approach the real threshold fast.
+% The supressed faces are 2 fearful faces and 2 happy faces.
+% Parameters to adjust for each subject are put in "Parameter" section.
+% ================================================================================%
 
 clear all;
 close all;

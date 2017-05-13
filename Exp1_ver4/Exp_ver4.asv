@@ -1,3 +1,12 @@
+
+% ============================== INTRODUCTION ====================================%
+% Parameters to adjust for each subject are put in "Parameter" section.
+% The program will store the experimental condition for each subject in 'Data/condList' folder
+% You can restart any block if there is something wrong, but the program wont let you start a block if any previous block is not done.
+% ex: you cant start block 4 if only block 1,2 is done
+% The program will generate 5 small result file for each block, and combine them into one file automatically upon all blocks are done.
+% ================================================================================%
+
 clear all;
 close all;
 addpath('./Function/');
@@ -6,7 +15,7 @@ Screen('Preference', 'SkipSyncTests', 1);
 
 try
     
-%====== Customize for each subject =====% 
+%====== Parameters =====% 
 
     roughThr    = [0.5 0.5 0.5 0.5];
     maskOpc     = 1;
@@ -47,7 +56,7 @@ try
     
     resultFileColNum = 19;
  
-%====== Experimental Design ======%
+%====== Experimental Condition ======%
     
     %--- Thresholding Procedure ---%
     lowerBound      = 0.02;
@@ -302,7 +311,7 @@ try
                     continue;
                 end
                 
-                %-----Initialize Trials----%
+                %-----Initialize Trial----%
 
                      ensemCon       = condList(i,ENSEM);
                      targetFaceIdx  = condList(i,TARGET);

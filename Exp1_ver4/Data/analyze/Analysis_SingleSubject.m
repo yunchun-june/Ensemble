@@ -1,17 +1,14 @@
+
+% ============================== INTRODUCTION ====================================%
+% This script is for getting detialed look into single subject
+% Enter subject ID
+% ================================================================================%
+
 clear all;
 close all;
 
-ID = '1705032';
+ID = '1703231';
 resultfile = dir(['Ensem_result_' ID '.txt']);
-
-% Standards for excluding subjects
-% Breaking rate in any quadrant below 10%
-% Accuracy in blank trials (false alarm < 20%)
-% Judgement on the face in catch trials is unstable (SD>5)
-
-thr_break = 0.1;
-thr_falseAlarm = 0.2;
-thr_SD = 5;
 
 %=====Data to Read=====%
     for position = 1:4
@@ -76,7 +73,7 @@ thr_SD = 5;
         axis([0,120,0,1]);
         xlabel('trials');
         ylabel('contrast');
-        if position == 1 title(ID); end
+        if position == 1 title(['ID: 'ID ' Contrast']); end
     end
     
 %=== Draw Graph of Judgement on each faces ====%
@@ -92,19 +89,7 @@ thr_SD = 5;
     axis([0,11,-10,10]);
     ylabel('judgement score');
     xlabel('face No.');
-    title(ID);
-    
-%====== Check All standards =======%
-    exclude = 0;
-    for i=1:4 
-        if breakingRate(i)<thr_break exclude = 1; end
-    end
-    
-    if falseAlarm > thr_falseAlarm exclude = 2; end
-    
-    for i=1:10
-        if std_blank(i)>thr_SD exclude = 3; end
-    end
+    title(['ID: 'ID ' Judgement in catch trials']);
     
 %====== Show Result =======%
 

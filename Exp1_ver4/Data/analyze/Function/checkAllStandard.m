@@ -1,11 +1,14 @@
+%======================= INTRODUCTION ============================%
+% This script set the standard for excluding subject
+% There are 3 standard
+% 1. Breaking rate in any quadrant below 10%
+% 2. Accuracy in blank trials (false alarm < 20%)
+% 3. Judgement on the face in catch trials is unstable (SD>5)
+%=================================================================%
+
 function checkAllStandard(filename)
 
 resultfile = dir(filename);
-
-% Standards for excluding subjects
-% Breaking rate in any quadrant below 10%
-% Accuracy in blank trials (false alarm < 20%)
-% Judgement on the face in catch trials is unstable (SD>5)
 
 thr_break = 0.10;
 thr_falseAlarm = 0.2;

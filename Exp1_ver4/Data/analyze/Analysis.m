@@ -1,5 +1,14 @@
+%======================= INTRODUCTION ============================%
+% This script set the standard for excluding subject
+% There are 3 standard
+% 1. Breaking rate in any quadrant below 10%
+% 2. Accuracy in blank trials (false alarm < 20%)
+% 3. Judgement on the face in catch trials is unstable (SD>5)
+%=================================================================%
+
 clear all;
 close all;
+addpath('./Function/');
 
 singleOutlierStd= 2.5;
 overallOutlierStd = 2.5;
