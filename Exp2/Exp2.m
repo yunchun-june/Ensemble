@@ -375,7 +375,7 @@ try
                         end
                                  
 
-                    Screen('Flip',wPtr); % now visible on screen
+                    Screen('Flip',wPtr);
                     
                     %Control Mon frequency
                     if MonTimer == 0,
@@ -384,6 +384,20 @@ try
                     end
                     MonTimer = MonTimer +1;
                     MonTimer = mod(MonTimer,MondN);
+                 end
+                 
+                 % scramble mask
+                 timezero = GetSecs; 
+                 while GetSecs - timezero < 0.1
+                     FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
+                     for k=1:4 %conscious faces
+                                Screen('DrawTexture', wPtr, whiteCon.mask{conCon,k}, [], FacePosi{place(k)},[],[],conOpc);
+                        end;
+
+                     for k=1:2 %unconscious faces
+                                Screen('DrawTexture', wPtr, whiteUncon.mask{unCon,k}, [], FacePosi{place(k+4)},[],[],contrast(place(k+4)));
+                     end
+                     Screen('Flip',wPtr);
                  end
 
             % delay
