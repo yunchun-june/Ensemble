@@ -30,21 +30,21 @@ try
         stepsize_up = 0.03;
         stairCase_up = 2;
         
-%====== Setup Screen & Keyboard ======%
+    %====== Setup Screen & Keyboard ======%
 
-    screid = max(Screen('Screens'));
-    [wPtr, screenRect]=Screen('OpenWindow',screid, 0,[],32,2);
-    [width, height] = Screen('WindowSize', wPtr);
-    
-    if keyboard==1, targetProduct = 'Apple Keyboard'; end
-    if keyboard==2, targetProduct = 'USB Keykoard'; end
-    if keyboard==3, targetProduct = 'Dell USB Keyboard'; end
-    
-    targetUsageName = 'Keyboard';
-    dev=PsychHID('Devices');
-    devInd = find(strcmpi(targetUsageName, {dev.usageName}) & strcmpi(targetProduct, {dev.product}));
-    KbQueueCreate(devInd);  
-    KbQueueStart(devInd);
+        screid = max(Screen('Screens'));
+        [wPtr, screenRect]=Screen('OpenWindow',screid, 0,[],32,2);
+        [width, height] = Screen('WindowSize', wPtr);
+
+        if keyboard==1, targetProduct = 'Apple Keyboard'; end
+        if keyboard==2, targetProduct = 'USB Keykoard'; end
+        if keyboard==3, targetProduct = 'Dell USB Keyboard'; end
+
+        targetUsageName = 'Keyboard';
+        dev=PsychHID('Devices');
+        devInd = find(strcmpi(targetUsageName, {dev.usageName}) & strcmpi(targetProduct, {dev.product}));
+        KbQueueCreate(devInd);  
+        KbQueueStart(devInd);
         
     %======Keyboard======%
      
@@ -91,16 +91,13 @@ try
             TRIAL = 1;
             IS_EXP = 2;
             COND = 3;
-            JUDGEMNET = 4;
+            JUDGEMENT = 4;
             BREAK  =5;
             STAIRCASE = 6;
-            CON(1) = 7;
-            CON(2) = 8;
-            CON(3) = 9;
-            CON(4) = 10;
-            CON(5) = 11;
-            CON(6) = 12;
-            COL_NUM = 12;
+            CON = 7:12;
+            SEEN = 13:18;
+            POSI = 19:24;
+            COL_NUM = 24;
 
             exp_condtemp = zeros(expTrial,COL_NUM);
             catch_condtemp = zeros(catchTrial,COL_NUM);
@@ -296,10 +293,8 @@ try
                     if secs(KbName(breakKey))
                         break; end 
                  end 
-             
              end
-            
-             
+
              % --------- Wait press space to start --------%
                 while 1,
                     FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
@@ -358,7 +353,6 @@ try
                     
                     
                     %draw mondrians
-
                         for k = 1:4 %for conscious faces
                             Screen('DrawTexture', wPtr, mon.tex{MonIdx}, [], conMonPosi{place(k)},[],[],maskOpc); end              
                         for k = 5:6 %for unconscious faces
@@ -497,33 +491,22 @@ try
                if(Seen(7))
                    forgetLocation = 1;
                    isBreak = 4; end
-
-               
-            %1 trial number
-            %2 isExptrial 1 / isCatchTrial 0
-            %3 condition
-            %4 face used
-            %5 judgement***
-            %6 break***
-            %7 staircase
-            %8-13 contrast ****
-            %14-19 seen
-            
+       
             % Save Result
                 condList(i,JUDGEMENT) = answer;
-                condList(i,BR) = isBreak;
+                condList(i,BREAK) = isBreak;
                 if isBreak~=0 breakRate(end+1) = 1;
                 else breakRate(end+1) = 0; end
-                for j=1:6, condList(i,j+7) = faceOpc(staircase,j); end
-                condList(i,14:19) = Seen(1:6);
-                condList(i,20:25) = place(:);
+                condList(i,CON) = faceOpc(staircase,:);
+                condList(i,SEEN) = Seen(1:6);
+                condList(i,POSI) = place(:);
              
             % Monitoring
                 disp('-------------------------------')
                 disp('trial condition: ');
                 disp(condList(i,1:7));
                 disp('threshold: ');
-                disp(condList(i,8:13));
+                disp(condList(i,CON));
                 disp(Seen);
                 disp('break rate:');
                 disp(mean(breakRate));

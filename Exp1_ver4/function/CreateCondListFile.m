@@ -27,7 +27,7 @@ function[] = CreateCondListFile(filepath, list)
     fd = fopen(filepath, 'w');
     [row,col] = size(list);
     for i = 1:row
-        fprintf(fd, '%3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d\n', list(i,:));
+        fprintf(fd, '%3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d\r\n', list(i,:));
     end
     fclose(fd);
 
