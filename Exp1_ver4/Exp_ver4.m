@@ -19,12 +19,13 @@ try
     end
     
 %====== Input ======%
-    subjNo          = input('subjNo: ','s');
+    subjID          = input('subjID: ','s');
     dominantEye     = input('DonimantEye (1/Right 2/Left):');
     keyboard        = input('keyboard (1/MAC 2/Dell 3/EEG):');
+    startingBlock   = input('starting from block:');
     
-    resultFilePath = ['./Data/Ensem_result_' subjNo '.txt'];
-    condFilePath = ['./Data/condList/Ensem_condList_' subjNo '.txt']; 
+    CombindAllResultFile(subjID);
+    return;
     
 %====== Constants ======%
     
@@ -59,14 +60,14 @@ try
     stairCase_up	= 2; %2up1down
     stairCaseNum    = 2;
     
-    waitTime        = 60;
+    waitTime        = 5;
     
     %--- Experiment Condition ---%
     targetFaceNum       = 6;
     blankFaceNum        = 10;
     ensemConditionNum   = 5;
-    exp_rep             = 6;
-    blank_rep           = 5;
+    exp_rep             = 1;
+    blank_rep           = 0;
     expTrialNumInBlock      = targetFaceNum*exp_rep;
     blankTrialNumInBlock    = blankFaceNum*blank_rep/ensemConditionNum;
     trialPerBlock         = expTrialNumInBlock + blankTrialNumInBlock;
@@ -81,6 +82,7 @@ try
     condList = zeros(trialPerBlock*5,resultFileColNum);
     
     try
+        condFilePath = ['./Data/condList/Ensem_condList_' subjID '.txt']; 
         formatSpec = '%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d';
         [isExp,ensem,target,judgement ,noBreak ,stairCase ,t1 ,t2 ,t3 ,t4 ,s1 ,s2 ,s3 ,s4 ,rep ,p1 ,p2 ,p3 ,p4]= textread(condFilePath,formatSpec);
         fileLength = length(isExp);
@@ -91,6 +93,7 @@ try
             condList(i,STAIRCASE) = stairCase(i);
         end
         disp('ConditionList for this subject exist. Read from file successful');
+        
     catch exception
         disp(getReport(exception));
         temp_condList = cell(5);
@@ -274,57 +277,28 @@ try
     
 %====== Start of the Experiment ======%
 
-    resultList = zeros(0,resultFileColNum);
-    breakRate = [];
     numReportUnseen{1} = [0 0 0 0];
     numReportUnseen{2} = [0 0 0 0];
-    breakRate_overall = [0 0 0 0];
-    breakRate_block = zeros(5,4);
+ 
+    doneBlockNum = GetDoneBlockNumFromResultFile(subjID);
+    if startingBlock > doneBlockNum +1
+        disp(['Previous block is not done yet. Starting from block' doneBlockNum+1 ]);
+        startingBlock = doneBlockNum +1;
+    end
     
-    doneBlockNum = 0;
-    
-    for block = 1:5
-        
-        %---- Conpulsory Resting Between Blocks ---%
-        keepWaiting = TRUE;
-        timeLimit = GetSecs+waitTime;
-        while keepWaiting && doneBlockNum ~= 0
-            remainingTime = ceil(timeLimit-GetSecs);
-            FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
-            if doneBlockNum == 1, Writetext(wPtr,'20% done',L_cenX, R_cenX,BoxcenY, 70,50, [255 255 255],20); end
-            if doneBlockNum == 2, Writetext(wPtr,'40% done',L_cenX, R_cenX,BoxcenY, 70,50, [255 255 255],20); end
-            if doneBlockNum == 3, Writetext(wPtr,'60% done',L_cenX, R_cenX,BoxcenY, 70,50, [255 255 255],20); end
-            if doneBlockNum == 4, Writetext(wPtr,'80% done',L_cenX, R_cenX,BoxcenY, 70,50, [255 255 255],20); end
-            Writetext(wPtr,'take a rest',L_cenX, R_cenX,BoxcenY, 70,15, [255 255 255],20);
-
-            if remainingTime > 0
-                Writetext(wPtr,[num2str(remainingTime) 's'],L_cenX, R_cenX,BoxcenY, 30,-25, [255 255 255],20);
-            else
-                Writetext(wPtr,'press down to start',L_cenX, R_cenX,BoxcenY, 70,-25, [255 255 255],15);  
-                KbEventFlush();
-                [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
-                if secs(KbName(breakKey))
-                    keepWaiting = FALSE;
-                end 
-            end
-            
-            %ESC pressed
-            [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
-            if secs(KbName(quitkey))
-                Screen('CloseAll');
-                CreateResultFile(resultFilePath, resultList);
-                return;
-            end
-            Screen('Flip',wPtr);
-        end
+    for block = startingBlock:5
+        disp(['starting block ' num2str(block)]);
         
         %======== start of the block =======% 
+        
+        resultList = zeros(0,resultFileColNum);
+        resultFilePath = ['./Data/Ensem_result_' subjID '_block' num2str(block) '.txt'];
         
         blockUnDone = TRUE;
         break_thisBlock = cell(4);
         breakRate_thisBlock = [0 0 0 0];
         
-        while(blockUnDone)
+        while blockUnDone
             for i = blockIndex{block}
                 if condList(i,DONE)
                     continue;
@@ -357,7 +331,6 @@ try
                     %ESC pressed
                     if secs(KbName(quitkey))
                         Screen('CloseAll');
-                        CreateResultFile(resultFilePath, resultList);
                         return;
                     end
                 end
@@ -409,7 +382,6 @@ try
                     if secs(KbName(breakKey))-timezero > 0, noBreak = FALSE; end
                     if secs(KbName(quitkey))
                         Screen('CloseAll');
-                        CreateResultFile(resultFilePath, resultList);
                         return;
                     end
                  end
@@ -500,7 +472,6 @@ try
                                 % ESC pressed
                                 if secs(KbName(quitkey))
                                     Screen('CloseAll');
-                                    CreateResultFile(resultFilePath, resultList);
                                     return;
                                 end
                             end 
@@ -542,7 +513,6 @@ try
                                 % ESC pressed
                                 if secs(KbName(quitkey))
                                     Screen('CloseAll'); 
-                                    CreateResultFile(resultFilePath, resultList);
                                     return;
                                 end
                             end 
@@ -594,17 +564,53 @@ try
                     end     
                 
             end %end of trials
-            blockUnDone = sum(condList(blockIndex{block},DONE)) ~= trialPerBlock;
+            
+            if sum(condList(blockIndex{block},DONE)) == trialPerBlock
+                blockUnDone = FALSE;
+                doneBlockNum = doneBlockNum+1;
+                WriteToResultFile(resultFilePath, resultList);
+            end
         end %end of the block
         
-        doneBlockNum = doneBlockNum+1;
+        %===== Conpulsory Resting Between Blocks =====%
+        keepWaiting = TRUE;
+        timeLimit = GetSecs+waitTime;
+        while keepWaiting
+            remainingTime = ceil(timeLimit-GetSecs);
+            FixationBox(wPtr,L_cenX,R_cenX, BoxcenY,boxsize,boxcolor);
+            if doneBlockNum == 1, Writetext(wPtr,'20% done',L_cenX, R_cenX,BoxcenY, 70,50, [255 255 255],20); end
+            if doneBlockNum == 2, Writetext(wPtr,'40% done',L_cenX, R_cenX,BoxcenY, 70,50, [255 255 255],20); end
+            if doneBlockNum == 3, Writetext(wPtr,'60% done',L_cenX, R_cenX,BoxcenY, 70,50, [255 255 255],20); end
+            if doneBlockNum == 4, Writetext(wPtr,'80% done',L_cenX, R_cenX,BoxcenY, 70,50, [255 255 255],20); end
+            if doneBlockNum == 5, break; end
+            Writetext(wPtr,'take a rest',L_cenX, R_cenX,BoxcenY, 70,15, [255 255 255],20);
+
+            if remainingTime > 0
+                Writetext(wPtr,[num2str(remainingTime) 's'],L_cenX, R_cenX,BoxcenY, 30,-25, [255 255 255],20);
+            else
+                Writetext(wPtr,'press down to start',L_cenX, R_cenX,BoxcenY, 70,-25, [255 255 255],15);  
+                KbEventFlush();
+                [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
+                if secs(KbName(breakKey))
+                    keepWaiting = FALSE;
+                end 
+            end
+            
+            %ESC pressed
+            [keyIsDown, secs, keyCode] = KbQueueCheck(devInd);
+            if secs(KbName(quitkey))
+                Screen('CloseAll');
+                return;
+            end
+            Screen('Flip',wPtr);
+        end
+        
     end
         
     
-%===== Write Results and Quit =====%
-    
+%===== Combine Result Files and Quit =====%
+    CombindAllResultFile(subjID);
     Screen('CloseAll');
-    CreateResultFile(resultFilePath, resultList);
     return;
 
 catch exception

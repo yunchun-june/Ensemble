@@ -1,4 +1,4 @@
-function[] = CreateResultFile(filepath, list)
+function [] = WriteToResultFile(filepath, list)
 
 %====== Content of Result File ======%
 %   column name    colunm number  
@@ -22,12 +22,11 @@ function[] = CreateResultFile(filepath, list)
 %     PLACE(3)        =18;
 %     PLACE(4)        =19;
     
-
-    fd = fopen(filepath, 'w');
-    [row,col] = size(list);
-    for i = 1:row
-        fprintf(fd, '%3d %3d %3d %3d %3d %3d %0.2f %0.2f %0.2f %0.2f %3d %3d %3d %3d %3d %3d %3d %3d %3d\r\n', list(i,:));
-    end
-    fclose(fd);
+        fd = fopen(filepath, 'w');
+        [row,col] = size(list);
+        for i = 1:row
+            fprintf(fd, '%3d %3d %3d %3d %3d %3d %0.2f %0.2f %0.2f %0.2f %3d %3d %3d %3d %3d %3d %3d %3d %3d\r\n', list(i,:));
+        end
+        fclose(fd);
 
 end
