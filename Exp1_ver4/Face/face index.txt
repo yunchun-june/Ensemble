@@ -1,8 +1,21 @@
-faces		index	emotion_score
-=====================================
-test1		27	-4.4892
-test3		33	 4.4870
-test4		27	-4.5081	
-test6		30	 4.5296
-happy_w		45	 7.1495	
-fearful_w	41	-7.0996
+faces		index	emotion intensity
+=========================================
+target1		39	6.0084 (fearful)
+target2		27	4.4892 (fearful)
+target3		neutral face
+target4		23	4.48705(happy)
+target5		50	5.8785 (happy)
+target6		43	6.0489 (fearful)
+target7		27	4.5081 (fearful)
+target8		neutral face
+target9		30	4.5296 (happy)
+target10	43	5.0597 (happy)
+ensem_happy	42	7.0996	
+ensem_fearful	41	7.0996
+=========================================
+
+target 1-5 is the thinner guy
+target 6-10 is the fatter guy
+
+emotional intensity of faces use in experimental trials : -4.5 0 4.5
+emotional intensity of faces use in catch trials : -6 -4.5 0 4.5 6

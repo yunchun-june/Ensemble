@@ -392,7 +392,6 @@ try
                         return;
                     end
                  end
-                 
             
                 % delay 500ms
                 while GetSecs-timezero < 1.5 && noBreak
